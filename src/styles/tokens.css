@@ -1,0 +1,38 @@
+:root {
+  /* tła */
+  --paper: #f3efe6;
+  --paper-2: #ebe5d8;
+  --card: #fbf9f4;
+
+  /* tekst: --ink i --ink-2 do treści; --ink-3 tylko do ozdobników i ikon */
+  --ink: #1d1b18;
+  --ink-2: #5a554c;
+  --ink-3: #8b857a;
+  --line: #d9d2c3;
+
+  /* akcent i słońce */
+  --accent: #b5462a;
+  --accent-ink: #ffffff;
+  --accent-soft: #f4dfd6;
+  --sun: #f0b23a;
+
+  /* statusy: kolor znaku + ciemny tekst + jasne tło plakietki */
+  --ok: #2f7a55;
+  --ok-ink: #1f5a3d;
+  --ok-soft: #dcebe1;
+  --hold: #b97a12;
+  --hold-ink: #7a4f08;
+  --hold-soft: #f5e6c8;
+  --sold: #8d887d;
+  --sold-ink: #57534b;
+  --sold-soft: #e6e2d8;
+
+  --radius: 14px;
+  --radius-s: 8px;
+  --shadow: 0 1px 2px rgb(29 27 24 / 0.06), 0 8px 24px rgb(29 27 24 / 0.08);
+
+  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --font-body: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
