@@ -1,0 +1,95 @@
+.floor-plan {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+
+.floor-plan__room {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.floor-plan__room--salon {
+  fill: var(--paper-2);
+}
+
+.floor-plan__room--sypialnia {
+  fill: var(--paper);
+}
+
+.floor-plan__room--hol {
+  fill: var(--card);
+}
+
+.floor-plan__room--kuchnia {
+  fill: color-mix(in srgb, var(--hold-soft) 65%, var(--paper));
+}
+
+.floor-plan__room--lazienka {
+  fill: color-mix(in srgb, var(--ok-soft) 60%, var(--paper));
+}
+
+.floor-plan__room--balkon {
+  fill: var(--card);
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  stroke-dasharray: 5 4;
+}
+
+.floor-plan__outline {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 4.5;
+  stroke-linejoin: miter;
+}
+
+.floor-plan__window-gap,
+.floor-plan__door-gap {
+  stroke: var(--card);
+  stroke-width: 6;
+}
+
+.floor-plan__window,
+.floor-plan__door,
+.floor-plan__direction {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 1.2;
+}
+
+.floor-plan__direction {
+  stroke-width: 1.5;
+}
+
+.floor-plan__name,
+.floor-plan__area,
+.floor-plan__dimension-label,
+.floor-plan__orientation {
+  fill: var(--ink);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  stroke: none;
+}
+
+.floor-plan__name {
+  font-weight: 600;
+}
+
+.floor-plan__area {
+  fill: var(--ink-2);
+  font-size: 0.92em;
+}
+
+.floor-plan__dimensions {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 0.8;
+}
+
+.floor-plan__dimension-label,
+.floor-plan__orientation {
+  fill: var(--ink-2);
+}

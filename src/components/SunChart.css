@@ -1,0 +1,88 @@
+.sun-chart {
+  min-width: 0;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+
+.sun-chart__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.sun-chart__gradient-start,
+.sun-chart__gradient-end {
+  stop-color: var(--sun);
+}
+
+.sun-chart__gradient-start {
+  stop-opacity: 0.5;
+}
+
+.sun-chart__gradient-end {
+  stop-opacity: 0;
+}
+
+.sun-chart__curve {
+  fill: none;
+  stroke: var(--sun);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+.sun-chart__baseline,
+.sun-chart__tick {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.sun-chart__hour,
+.sun-chart__label {
+  fill: var(--ink-2);
+  font-family: var(--font-body);
+  font-size: 12px;
+  text-anchor: middle;
+}
+
+.sun-chart__marker {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.sun-chart__point {
+  fill: var(--sun);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.sun-chart__label-background {
+  fill: var(--paper-2);
+}
+
+.sun-chart__label {
+  fill: var(--ink);
+  font-weight: 600;
+}
+
+.sun-chart__summary,
+.sun-chart__current {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.sun-chart__summary {
+  font-weight: 600;
+}
+
+.sun-chart__current {
+  margin-top: 4px;
+  color: var(--ink-2);
+}
