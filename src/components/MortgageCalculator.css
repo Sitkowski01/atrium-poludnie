@@ -1,0 +1,140 @@
+.mortgage {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.mortgage__slider {
+  display: grid;
+  gap: 4px;
+}
+
+.mortgage__label {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.mortgage__label strong {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.mortgage__slider input[type='range'] {
+  min-height: 44px;
+  margin: 0;
+}
+
+.mortgage__result {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.mortgage__monthly {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+}
+
+.mortgage__monthly-value {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.mortgage__monthly-unit {
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.mortgage__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.mortgage__facts div {
+  display: grid;
+  gap: 2px;
+}
+
+.mortgage__facts dt {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.mortgage__facts dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.mortgage__bar {
+  display: flex;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--paper-2);
+}
+
+.mortgage__bar-capital {
+  background: var(--ink);
+}
+
+.mortgage__bar-interest {
+  background: var(--accent);
+}
+
+.mortgage__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.mortgage__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mortgage__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.mortgage__swatch--capital {
+  background: var(--ink);
+}
+
+.mortgage__swatch--interest {
+  background: var(--accent);
+}
+
+.mortgage__note {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mortgage__bar-capital,
+  .mortgage__bar-interest {
+    transition: width 0.2s var(--ease);
+  }
+}

@@ -1,0 +1,94 @@
+.inquiry {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.inquiry .field {
+  min-width: 0;
+}
+
+.inquiry .field input,
+.inquiry .field textarea {
+  width: 100%;
+  min-width: 0;
+}
+
+.inquiry .field textarea {
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.inquiry .field [aria-invalid='true'] {
+  border-color: var(--accent);
+}
+
+.inquiry__notice {
+  padding: 10px 12px;
+  border-radius: var(--radius-s);
+  background: var(--hold-soft);
+  color: var(--hold-ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.inquiry__counter {
+  justify-self: end;
+  font-size: 13px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.inquiry__consent-wrap {
+  display: grid;
+  gap: 6px;
+}
+
+.inquiry__consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.inquiry__consent input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.inquiry__submit {
+  width: 100%;
+  height: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.inquiry__done {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.inquiry__done-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.inquiry__done-demo {
+  color: var(--ink);
+  font-weight: 600;
+}
