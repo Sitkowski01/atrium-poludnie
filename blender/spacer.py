@@ -1,7 +1,11 @@
 """Buduje mieszkanie 3D z rzutu (plany.json) i renderuje przelot kamery.
 
 Uruchomienie (zawsze w tle):
-  blender --background --python blender/spacer.py -- <plany.json> <slot> <katalog_wyjscia> <podglad|film>
+  blender --background --python blender/spacer.py -- <plany.json> <id, np. s0> <katalog_wyjscia> <podglad|film|wezly|pano> [indeks pomieszczenia]
+
+Tryby: podglad = 5 klatek przelotu, film = cały przelot, wezly = każde pomieszczenie
+z wysokości oczu w 4 kierunkach, pano = panorama 360° każdego pomieszczenia w Cycles
+(realistyczne światło; opcjonalny indeks renderuje tylko jedno pomieszczenie).
 
 Układ: x rzutu -> X, y rzutu (w stronę okien) -> -Y. Ściana z oknami leży na Y = -planH,
 słońce wpada od strony -Y. Sufit rzuca cień, ale kamera go nie widzi (makieta bez dachu).
@@ -15,8 +19,10 @@ import bpy
 from mathutils import Vector
 
 argv = sys.argv[sys.argv.index("--") + 1 :]
-PLANS, SLOT, OUT, MODE = argv[0], int(argv[1]), argv[2], argv[3]
-plan = next(p for p in json.load(open(PLANS, encoding="utf-8")) if p["slot"] == SLOT)
+PLANS, SLOT, OUT, MODE = argv[0], argv[1], argv[2], argv[3]
+ONLY = int(argv[4]) if len(argv) > 4 else None
+PANO_W = int(argv[5]) if len(argv) > 5 else 4096
+plan = next(p for p in json.load(open(PLANS, encoding="utf-8")) if p["id"] == SLOT)
 W, H = plan["planW"], plan["planH"]
 ROOMS = [r for r in plan["plan"] if r["kind"] != "balkon"]
 BALCONY = next((r for r in plan["plan"] if r["kind"] == "balkon"), None)
@@ -197,48 +203,30 @@ def seg_len(s):
     return s[3] - s[2]
 
 
-pairs = []
+# przejścia przychodzą z plany.json (liczy je src/domain/walk.ts) — tu tylko wycinamy otwory
+INDEX = {id(r): i for i, r in enumerate(plan["plan"])}
+LINK = {}
+for l in plan["links"]:
+    LINK[(l["from"], l["to"])] = l["type"]
+    LINK[(l["to"], l["from"])] = l["type"]
+
 for i, a in enumerate(ROOMS):
     for b in ROOMS[i + 1 :]:
         s = shared(a, b)
-        if s:
-            pairs.append((a, b, s))
-
-is_open = lambda a, b: {a["kind"], b["kind"]} == {"kuchnia", "salon"}
-doors = set()
-reach = {id(r) for r in ROOMS if r["kind"] == "hol"}
-# drzwi z holu do wszystkiego, co ma z nim porządny wspólny odcinek
-for a, b, s in pairs:
-    if "hol" in (a["kind"], b["kind"]) and seg_len(s) >= 1.0:
-        doors.add((id(a), id(b)))
-        reach |= {id(a), id(b)}
-# reszta: dopóki coś jest odcięte, dodaj przejście od pomieszczenia już dostępnego
-changed = True
-while changed:
-    changed = False
-    for a, b, s in pairs:
-        if (id(a) in reach) == (id(b) in reach):
+        if not s:
             continue
-        if is_open(a, b):
-            reach |= {id(a), id(b)}
-            changed = True
+        kind, c, t0, t1 = s
+        link = LINK.get((INDEX[id(a)], INDEX[id(b)]))
+        if link == "otwarte":
             continue
-        inside = a if id(a) in reach else b
-        if inside["kind"] == "lazienka" or seg_len(s) < 1.0:
-            continue
-        doors.add((id(a), id(b)))
-        reach |= {id(a), id(b)}
-        changed = True
-
-for a, b, s in pairs:
-    if is_open(a, b):
-        continue
-    kind, c, t0, t1 = s
-    opening = None
-    if (id(a), id(b)) in doors:
+        opening = None
         mid = (t0 + t1) / 2
-        opening = (mid - DOOR_W / 2, mid + DOOR_W / 2, 0, DOOR_H)
-    (wall_v if kind == "v" else wall_h)(c, t0, t1, T_IN, M["wall"], opening)
+        if link == "drzwi":
+            opening = (mid - DOOR_W / 2, mid + DOOR_W / 2, 0, DOOR_H)
+        elif link == "przejscie":
+            ow = min(t1 - t0 - 0.2, 1.6)
+            opening = (mid - ow / 2, mid + ow / 2, 0, 2.3)
+        (wall_v if kind == "v" else wall_h)(c, t0, t1, T_IN, M["wall"], opening)
 
 # ściany zewnętrzne
 wall_v(0, 0, H, T_OUT, M["wall_out"])
@@ -274,8 +262,8 @@ for r in ROOMS:
 ceiling = pbox("sufit", -0.2, -0.2, W + 0.4, H + 0.4, WALL_H, 0.12, M["white"])
 ceiling.visible_camera = False
 
-pbox("podstawa", -1.4, -1.4, W + 2.8, H + (3.4 if BALCONY else 2.8), -0.34, 0.24, M["base"], 0.03)
-pbox("stol", -40, -40, W + 80, H + 80, -0.4, 0.06, M["table"])
+base = pbox("podstawa", -1.4, -1.4, W + 2.8, H + (3.4 if BALCONY else 2.8), -0.34, 0.24, M["base"], 0.03)
+table = pbox("stol", -40, -40, W + 80, H + 80, -0.4, 0.06, M["table"])
 
 
 # ---------- meble ----------
@@ -488,18 +476,117 @@ try:
 except Exception as e:
     print("kolor: ustawienia domyślne", e)
 
-print("silnik:", scene.render.engine, "| pomieszczeń:", len(ROOMS), "| drzwi:", len(doors))
+print("silnik:", scene.render.engine, "| pomieszczeń:", len(ROOMS), "| przejść:", len(plan["links"]))
 
-if MODE == "podglad":
+if MODE == "pano":
+    # panoramy 360°: Cycles na GPU, światło odbite liczone naprawdę, fizyczne niebo
+    ceiling.visible_camera = True
+    base.hide_render = True
+    table.location.z = -9.0
+    table.data.materials[0] = material("Ziemia", (0.22, 0.30, 0.18), 1.0)
+    cam.constraints.remove(track)
+    cam.animation_data_clear()
+    scene.render.engine = "CYCLES"
+    try:
+        prefs = bpy.context.preferences.addons["cycles"].preferences
+        for kind in ("OPTIX", "CUDA"):
+            try:
+                prefs.compute_device_type = kind
+                break
+            except TypeError:
+                continue
+        prefs.get_devices()
+        for device in prefs.devices:
+            device.use = True
+        scene.cycles.device = "GPU"
+        print("cycles:", prefs.compute_device_type, [d.name for d in prefs.devices if d.use])
+    except Exception as e:
+        print("cycles: CPU", e)
+    scene.cycles.samples = 160
+    scene.cycles.use_denoising = True
+    try:
+        scene.cycles.max_bounces = 8
+    except Exception:
+        pass
+    cam_data.type = "PANO"
+    for owner in (cam_data, getattr(cam_data, "cycles", None)):
+        try:
+            owner.panorama_type = "EQUIRECTANGULAR"
+            break
+        except Exception:
+            continue
+    # wypełnienie z sufitu tylko symboliczne — resztę robi światło odbite
+    for light in bpy.data.lights:
+        if light.type == "AREA":
+            light.energy *= 0.12
+    sun_data.energy = 4.0
+    try:
+        nt = world.node_tree
+        sky = nt.nodes.new("ShaderNodeTexSky")
+        for attr, val in (("sun_disc", False), ("sun_elevation", math.radians(38)), ("sun_rotation", math.radians(200))):
+            try:
+                setattr(sky, attr, val)
+            except Exception:
+                pass
+        nt.links.new(sky.outputs[0], bg.inputs[0])
+        bg.inputs[1].default_value = 0.35
+        print("niebo:", getattr(sky, "sky_type", "?"))
+    except Exception as e:
+        print("niebo: jednolite", e)
+    try:
+        scene.view_settings.exposure = 0.6
+    except Exception:
+        pass
+    scene.render.resolution_x, scene.render.resolution_y = PANO_W, PANO_W // 2
+    scene.render.image_settings.file_format = "JPEG"
+    scene.render.image_settings.quality = 92
+    cam.rotation_euler = (math.radians(90), 0, 0)  # środek panoramy patrzy w stronę wejścia (+Y)
+    for i, r in enumerate(plan["plan"]):
+        if ONLY is not None and i != ONLY:
+            continue
+        px, py = P(r["x"] + r["w"] / 2, r["y"] + r["h"] / 2)
+        cam.location = (px, py, 1.55)
+        scene.render.filepath = f"{OUT}/{SLOT}/{i}.jpg"
+        bpy.ops.render.render(write_still=True)
+elif MODE == "wezly":
+    # widoki z wysokości oczu: sufit widoczny, bez podstawy makiety, daleka ziemia za oknem
+    ceiling.visible_camera = True
+    base.hide_render = True
+    table.location.z = -9.0
+    table.data.materials[0] = material("Ziemia", (0.30, 0.36, 0.26), 1.0)
+    cam.constraints.remove(track)
+    cam.animation_data_clear()
+    cam_data.lens = 16
+    scene.render.resolution_x, scene.render.resolution_y = 1120, 700
+    scene.render.image_settings.file_format = "WEBP"
+    scene.render.image_settings.quality = 80
+    YAW = {"u": 0, "r": -90, "d": 180, "l": 90}  # u = w stronę wejścia (+Y), d = w stronę okien
+    for i, r in enumerate(plan["plan"]):
+        mx = min(0.45, r["w"] * 0.2)
+        my = min(0.45, r["h"] * 0.2)
+        # stajemy plecami do przeciwległej ściany, żeby widok miał całą głębię pomieszczenia
+        STAND = {
+            "u": (r["x"] + r["w"] / 2, r["y"] + r["h"] - my),
+            "d": (r["x"] + r["w"] / 2, r["y"] + my),
+            "r": (r["x"] + mx, r["y"] + r["h"] / 2),
+            "l": (r["x"] + r["w"] - mx, r["y"] + r["h"] / 2),
+        }
+        for key, yaw in YAW.items():
+            px, py = P(*STAND[key])
+            cam.location = (px, py, 1.55)
+            cam.rotation_euler = (math.radians(90), 0, math.radians(yaw))
+            scene.render.filepath = f"{OUT}/{SLOT}/{i}-{key}.webp"
+            bpy.ops.render.render(write_still=True)
+elif MODE == "podglad":
     scene.render.resolution_x, scene.render.resolution_y = 768, 432
     scene.render.image_settings.file_format = "PNG"
     for frame in (1, 96, 176, 232, FRAMES):
         scene.frame_set(frame)
-        scene.render.filepath = f"{OUT}/slot{SLOT}-k{frame:03d}.png"
+        scene.render.filepath = f"{OUT}/{SLOT}-k{frame:03d}.png"
         bpy.ops.render.render(write_still=True)
 else:
     scene.render.resolution_x, scene.render.resolution_y = 1280, 720
     scene.render.image_settings.file_format = "PNG"
-    scene.render.filepath = f"{OUT}/slot{SLOT}/k"
+    scene.render.filepath = f"{OUT}/{SLOT}/k"
     bpy.ops.render.render(animation=True)
 print("gotowe")

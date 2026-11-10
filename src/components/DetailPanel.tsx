@@ -15,6 +15,7 @@ import { FloorPlan } from './FloorPlan'
 import { InquiryForm } from './InquiryForm'
 import { MortgageCalculator } from './MortgageCalculator'
 import { SunChart } from './SunChart'
+import { WalkViewer } from './WalkViewer'
 
 export function DetailPanel() {
   const { selected, state, dispatch } = useStore()
@@ -113,6 +114,11 @@ export function DetailPanel() {
           <section className="detail__section" aria-labelledby="detail-plan">
             <h3 id="detail-plan">Rzut</h3>
             <FloorPlan apartment={a} />
+          </section>
+
+          <section className="detail__section" aria-labelledby="detail-walk">
+            <h3 id="detail-walk">Spacer po mieszkaniu</h3>
+            <WalkViewer key={a.id} apartment={a} />
           </section>
 
           <section className="detail__section" aria-labelledby="detail-sun">

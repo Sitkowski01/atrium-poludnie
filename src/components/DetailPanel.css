@@ -42,7 +42,8 @@ dialog.detail::backdrop {
 
 /* sekcje wchodzą kaskadą za wjeżdżającym panelem */
 dialog.detail[open] .detail__body > * {
-  animation: detail-item 0.4s var(--ease) both;
+  /* backwards, nie both: po animacji nie może zostać transform, bo psuje position: fixed spaceru */
+  animation: detail-item 0.4s var(--ease) backwards;
 }
 dialog.detail[open] .detail__body > :nth-child(1) {
   animation-delay: 0.06s;

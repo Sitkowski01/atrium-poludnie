@@ -21,7 +21,11 @@ const r = (kind: Room['kind'], label: string, x: number, y: number, w: number, h
   h,
 })
 
-/** Jeden szablon na pozycję na piętrze. Pomieszczenia wypełniają obrys bez dziur. */
+/**
+ * Jeden szablon na pozycję na piętrze. Pomieszczenia wypełniają obrys bez dziur.
+ * Układ ma prawdziwą komunikację: z holu lub korytarza wchodzi się do każdego pokoju,
+ * kuchnia jest otwarta na salon. Przejścia wylicza domain/walk.ts.
+ */
 const TEMPLATES: Template[] = [
   {
     // slot 0 — trzy pokoje, południe
@@ -30,14 +34,15 @@ const TEMPLATES: Template[] = [
     planW: 8.4,
     planH: 7.6,
     plan: [
-      r('hol', 'Hol', 0, 0, 3.0, 2.4),
-      r('lazienka', 'Łazienka', 3.0, 0, 2.4, 2.4),
-      r('kuchnia', 'Kuchnia', 5.4, 0, 3.0, 2.4),
-      r('sypialnia', 'Sypialnia', 0, 2.4, 2.8, 5.2),
-      r('sypialnia', 'Pokój', 2.8, 2.4, 2.6, 5.2),
-      r('salon', 'Salon', 5.4, 2.4, 3.0, 5.2),
+      r('lazienka', 'Łazienka', 0, 0, 2.4, 2.4),
+      r('hol', 'Hol', 2.4, 0, 2.2, 2.4),
+      r('kuchnia', 'Kuchnia', 4.6, 0, 3.8, 2.4),
+      r('hol', 'Korytarz', 0, 2.4, 4.6, 1.2),
+      r('sypialnia', 'Sypialnia', 0, 3.6, 2.4, 4.0),
+      r('sypialnia', 'Pokój', 2.4, 3.6, 2.2, 4.0),
+      r('salon', 'Salon', 4.6, 2.4, 3.8, 5.2),
     ],
-    balcony: r('balkon', 'Balkon', 5.4, 7.6, 3.0, 1.4),
+    balcony: r('balkon', 'Balkon', 4.6, 7.6, 3.8, 1.4),
   },
   {
     // slot 1 — dwa pokoje, południe
@@ -46,13 +51,13 @@ const TEMPLATES: Template[] = [
     planW: 6.0,
     planH: 7.0,
     plan: [
-      r('hol', 'Hol', 0, 0, 2.2, 2.2),
-      r('lazienka', 'Łazienka', 2.2, 0, 1.8, 2.2),
-      r('kuchnia', 'Kuchnia', 4.0, 0, 2.0, 2.2),
-      r('sypialnia', 'Sypialnia', 0, 2.2, 2.6, 4.8),
-      r('salon', 'Salon', 2.6, 2.2, 3.4, 4.8),
+      r('lazienka', 'Łazienka', 0, 0, 1.8, 2.2),
+      r('hol', 'Hol', 1.8, 0, 2.0, 2.2),
+      r('kuchnia', 'Kuchnia', 3.8, 0, 2.2, 2.2),
+      r('sypialnia', 'Sypialnia', 0, 2.2, 2.8, 4.8),
+      r('salon', 'Salon', 2.8, 2.2, 3.2, 4.8),
     ],
-    balcony: r('balkon', 'Balkon', 2.6, 7.0, 3.4, 1.3),
+    balcony: r('balkon', 'Balkon', 2.8, 7.0, 3.2, 1.3),
   },
   {
     // slot 2 — cztery pokoje, narożne, południe
@@ -61,15 +66,16 @@ const TEMPLATES: Template[] = [
     planW: 10.6,
     planH: 8.2,
     plan: [
-      r('hol', 'Hol', 0, 0, 3.4, 2.6),
-      r('lazienka', 'Łazienka', 3.4, 0, 2.2, 2.6),
-      r('kuchnia', 'Kuchnia', 5.6, 0, 3.0, 2.6),
-      r('sypialnia', 'Gabinet', 8.6, 0, 2.0, 2.6),
-      r('sypialnia', 'Sypialnia', 0, 2.6, 3.0, 5.6),
-      r('sypialnia', 'Pokój', 3.0, 2.6, 2.8, 5.6),
-      r('salon', 'Salon', 5.8, 2.6, 4.8, 5.6),
+      r('lazienka', 'Łazienka', 0, 0, 2.4, 2.6),
+      r('hol', 'Hol', 2.4, 0, 2.4, 2.6),
+      r('kuchnia', 'Kuchnia', 4.8, 0, 3.6, 2.6),
+      r('sypialnia', 'Gabinet', 8.4, 0, 2.2, 2.6),
+      r('hol', 'Korytarz', 0, 2.6, 5.6, 1.2),
+      r('sypialnia', 'Sypialnia', 0, 3.8, 2.9, 4.4),
+      r('sypialnia', 'Pokój', 2.9, 3.8, 2.7, 4.4),
+      r('salon', 'Salon', 5.6, 2.6, 5.0, 5.6),
     ],
-    balcony: r('balkon', 'Taras', 5.8, 8.2, 4.8, 1.5),
+    balcony: r('balkon', 'Taras', 5.6, 8.2, 5.0, 1.5),
   },
   {
     // slot 3 — dwa pokoje, wschód
@@ -78,13 +84,13 @@ const TEMPLATES: Template[] = [
     planW: 6.6,
     planH: 7.2,
     plan: [
-      r('hol', 'Hol', 0, 0, 2.4, 2.4),
-      r('lazienka', 'Łazienka', 2.4, 0, 2.0, 2.4),
-      r('kuchnia', 'Kuchnia', 4.4, 0, 2.2, 2.4),
-      r('salon', 'Salon', 0, 2.4, 3.8, 4.8),
-      r('sypialnia', 'Sypialnia', 3.8, 2.4, 2.8, 4.8),
+      r('lazienka', 'Łazienka', 0, 0, 2.0, 2.4),
+      r('hol', 'Hol', 2.0, 0, 2.2, 2.4),
+      r('kuchnia', 'Kuchnia', 4.2, 0, 2.4, 2.4),
+      r('sypialnia', 'Sypialnia', 0, 2.4, 3.0, 4.8),
+      r('salon', 'Salon', 3.0, 2.4, 3.6, 4.8),
     ],
-    balcony: r('balkon', 'Balkon', 0, 7.2, 3.8, 1.3),
+    balcony: r('balkon', 'Balkon', 3.0, 7.2, 3.6, 1.3),
   },
   {
     // slot 4 — kawalerka, wschód
