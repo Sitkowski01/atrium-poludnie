@@ -1,0 +1,170 @@
+.building {
+  display: grid;
+  gap: 10px;
+}
+
+.building__canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 740 / 720;
+  max-height: min(72vh, 760px);
+  min-height: 380px;
+  overflow: hidden;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.building__hint {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgb(29 27 24 / 0.72);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.building__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.building__cell {
+  cursor: pointer;
+  outline: none;
+  animation: building-rise 0.55s var(--ease) both;
+  animation-delay: calc(var(--f, 0) * 70ms + 120ms);
+}
+
+.building__late {
+  animation: building-fade 0.45s var(--ease) both;
+  animation-delay: 0.75s;
+}
+
+@keyframes building-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+}
+
+@keyframes building-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.building__cell:focus-visible > polygon:first-child {
+  stroke: var(--accent);
+  stroke-width: 4;
+  stroke-opacity: 1;
+}
+
+.building__tint {
+  pointer-events: none;
+}
+.building__tint--hold {
+  fill: var(--hold);
+  opacity: 0.42;
+}
+.building__tint--sold {
+  fill: #77726a;
+  opacity: 0.62;
+}
+.building__tint--dim {
+  fill: #1d1b18;
+  opacity: 0.5;
+}
+
+.building__balconies {
+  pointer-events: none;
+}
+
+.building__outline {
+  fill: var(--accent);
+  fill-opacity: 0.22;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+.building__outline.is-selected {
+  fill-opacity: 0.4;
+  stroke: #fff;
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 3px rgb(29 27 24 / 0.6));
+}
+
+.building__floor {
+  font-size: 15px;
+  font-weight: 700;
+  fill: #fff;
+  stroke: rgb(29 27 24 / 0.6);
+  stroke-width: 3.5px;
+  paint-order: stroke;
+}
+
+.building__compass {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  fill: #1d1b18;
+  fill-opacity: 0.55;
+}
+
+.building__tip {
+  pointer-events: none;
+}
+.building__tip rect {
+  fill: #1d1b18;
+  fill-opacity: 0.94;
+}
+.building__tip-main {
+  font-size: 15px;
+  font-weight: 700;
+  fill: #fff;
+}
+.building__tip-sub {
+  font-size: 14px;
+  fill: #e9e2d2;
+}
+
+.building__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+.building__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.building__swatch {
+  width: 18px;
+  height: 14px;
+  border: 1px solid rgb(29 27 24 / 0.3);
+  border-radius: 3px;
+}
+.building__swatch--free {
+  background: #fdf5e4;
+}
+.building__swatch--hold {
+  background: #dcb46b;
+}
+.building__swatch--sold {
+  background: #a6a096;
+}
+.building__swatch--dim {
+  background: #5f5a52;
+}
