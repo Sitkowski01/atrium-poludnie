@@ -1,0 +1,298 @@
+import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import './PanoView.css'
+
+export interface Hotspot {
+  key: string
+  /** kierunek w stopniach: 0 = środek panoramy (strona wejścia), 90 = w prawo */
+  angle: number
+  /** odległość w metrach */
+  distance: number
+  label: string
+  onGo: () => void
+}
+
+interface Props {
+  /** panorama równoprostokątna 2:1; środek obrazu to kierunek 0° */
+  src: string
+  /** obrót w poziomie w stopniach, bez zawijania; dodatni = w prawo */
+  yaw: number
+  /** pochylenie w stopniach; dodatnie = w górę */
+  pitch: number
+  /** płynne dojście do yaw/pitch (obrót przyciskiem); przeciąganie idzie bez wygładzania */
+  animate: boolean
+  /** krótki najazd przed przejściem do następnego pomieszczenia */
+  leaving: boolean
+  alt: string
+  hotspots: Hotspot[]
+  onLook: (yaw: number, pitch: number) => void
+}
+
+const FOV = 100 // poziomy kąt widzenia w stopniach
+const DROP = 0.85 // punkt przejścia wisi tyle metrów pod linią wzroku
+const PITCH_LIMIT = 60
+const RAD = Math.PI / 180
+
+const VERTEX = `
+attribute vec2 a;
+void main() { gl_Position = vec4(a, 0.0, 1.0); }`
+
+// Dla każdego piksela liczymy promień widzenia i czytamy kolor z panoramy.
+// Jeden prostokąt na cały ekran: nie ma geometrii, więc nie ma szwów ani przycinania.
+const FRAGMENT = `
+precision highp float;
+uniform sampler2D tex;
+uniform vec2 res;
+uniform float yaw;
+uniform float pitch;
+uniform float focal;
+void main() {
+  vec2 p = gl_FragCoord.xy - res * 0.5;
+  vec3 d = normalize(vec3(p.x, p.y, -focal));
+  float cp = cos(pitch), sp = sin(pitch);
+  d = vec3(d.x, d.y * cp - d.z * sp, d.y * sp + d.z * cp);
+  float cy = cos(yaw), sy = sin(yaw);
+  d = vec3(d.x * cy - d.z * sy, d.y, d.x * sy + d.z * cy);
+  float lon = atan(d.x, -d.z);
+  float lat = asin(clamp(d.y, -1.0, 1.0));
+  gl_FragColor = texture2D(tex, vec2(lon / 6.28318530718 + 0.5, 0.5 - lat / 3.14159265359));
+}`
+
+interface Scene {
+  gl: WebGLRenderingContext
+  uniforms: Record<'res' | 'yaw' | 'pitch' | 'focal', WebGLUniformLocation | null>
+}
+
+function createScene(canvas: HTMLCanvasElement): Scene | null {
+  const gl = canvas.getContext('webgl', { antialias: false, alpha: false })
+  if (!gl) return null
+  const compile = (type: number, source: string) => {
+    const shader = gl.createShader(type)!
+    gl.shaderSource(shader, source)
+    gl.compileShader(shader)
+    return shader
+  }
+  const program = gl.createProgram()!
+  gl.attachShader(program, compile(gl.VERTEX_SHADER, VERTEX))
+  gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FRAGMENT))
+  gl.linkProgram(program)
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return null
+  gl.useProgram(program)
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer())
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW)
+  const a = gl.getAttribLocation(program, 'a')
+  gl.enableVertexAttribArray(a)
+  gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0)
+  gl.bindTexture(gl.TEXTURE_2D, gl.createTexture())
+  // panorama ma wymiary będące potęgą dwójki, więc może się zawijać w poziomie
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+  return {
+    gl,
+    uniforms: {
+      res: gl.getUniformLocation(program, 'res'),
+      yaw: gl.getUniformLocation(program, 'yaw'),
+      pitch: gl.getUniformLocation(program, 'pitch'),
+      focal: gl.getUniformLocation(program, 'focal'),
+    },
+  }
+}
+
+/**
+ * Panorama 360° rysowana jednym shaderem WebGL, bez bibliotek.
+ * Przeciąganie obraca widok; punkty przejść to zwykłe przyciski HTML ustawiane
+ * w miejscu, w które rzutuje się kierunek drzwi.
+ */
+export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onLook }: Props) {
+  const wrap = useRef<HTMLDivElement>(null)
+  const canvas = useRef<HTMLCanvasElement>(null)
+  const scene = useRef<Scene | null>(null)
+  const ready = useRef(false)
+  // to, co faktycznie jest na ekranie; przy obrocie przyciskiem dogania wartości docelowe
+  const shown = useRef({ yaw, pitch })
+  const target = useRef({ yaw, pitch, animate })
+  target.current = { yaw, pitch, animate }
+  const raf = useRef(0)
+  const drag = useRef<{ x: number; y: number; yaw: number; pitch: number; moved: boolean } | null>(null)
+  const justDragged = useRef(false)
+  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading')
+  const [size, setSize] = useState({ w: 0, h: 0 })
+  const [, setFrame] = useState(0) // odświeża pozycje punktów przejść w trakcie animacji
+
+  const draw = () => {
+    const s = scene.current
+    const el = canvas.current
+    if (!s || !el || !ready.current) return
+    s.gl.viewport(0, 0, el.width, el.height)
+    s.gl.uniform2f(s.uniforms.res, el.width, el.height)
+    s.gl.uniform1f(s.uniforms.yaw, shown.current.yaw * RAD)
+    s.gl.uniform1f(s.uniforms.pitch, shown.current.pitch * RAD)
+    s.gl.uniform1f(s.uniforms.focal, el.width / 2 / Math.tan((FOV * RAD) / 2))
+    s.gl.drawArrays(s.gl.TRIANGLE_STRIP, 0, 4)
+  }
+
+  // kontekst WebGL i tekstura
+  useEffect(() => {
+    const el = canvas.current
+    if (!el) return
+    const created = createScene(el)
+    scene.current = created
+    if (!created) {
+      setStatus('failed')
+      return
+    }
+    let cancelled = false
+    const image = new Image()
+    image.onload = () => {
+      if (cancelled) return
+      const { gl } = created
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image)
+      ready.current = true
+      setStatus('ready')
+      draw()
+    }
+    image.onerror = () => !cancelled && setStatus('failed')
+    image.src = src
+    return () => {
+      cancelled = true
+      ready.current = false
+      cancelAnimationFrame(raf.current)
+      created.gl.getExtension('WEBGL_lose_context')?.loseContext()
+      scene.current = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [src])
+
+  // rozmiar płótna podąża za rozmiarem ramki
+  useEffect(() => {
+    const el = wrap.current
+    if (!el) return
+    const measure = () => {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2)
+      const w = el.clientWidth
+      const h = el.clientHeight
+      if (canvas.current) {
+        canvas.current.width = Math.max(1, Math.round(w * ratio))
+        canvas.current.height = Math.max(1, Math.round(h * ratio))
+      }
+      setSize({ w, h })
+      draw()
+    }
+    measure()
+    if (typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // dojście do zadanego kierunku: od razu przy przeciąganiu, płynnie przy obrocie przyciskiem
+  useEffect(() => {
+    cancelAnimationFrame(raf.current)
+    const step = () => {
+      const t = target.current
+      const dy = t.yaw - shown.current.yaw
+      const dp = t.pitch - shown.current.pitch
+      const done = !t.animate || (Math.abs(dy) < 0.05 && Math.abs(dp) < 0.05)
+      shown.current = done ? { yaw: t.yaw, pitch: t.pitch } : { yaw: shown.current.yaw + dy * 0.18, pitch: shown.current.pitch + dp * 0.18 }
+      draw()
+      setFrame((n) => n + 1)
+      if (!done) raf.current = requestAnimationFrame(step)
+    }
+    step()
+    return () => cancelAnimationFrame(raf.current)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [yaw, pitch, animate])
+
+  const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return
+    drag.current = { x: e.clientX, y: e.clientY, yaw: shown.current.yaw, pitch: shown.current.pitch, moved: false }
+    justDragged.current = false
+  }
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    const d = drag.current
+    if (!d) return
+    const dx = e.clientX - d.x
+    const dy = e.clientY - d.y
+    if (!d.moved) {
+      if (Math.hypot(dx, dy) < 5) return
+      d.moved = true
+      justDragged.current = true
+      e.currentTarget.setPointerCapture(e.pointerId)
+    }
+    const perPx = FOV / e.currentTarget.clientWidth
+    // obraz idzie za palcem: przeciągnięcie w prawo to spojrzenie w lewo
+    onLook(d.yaw - dx * perPx, Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, d.pitch + dy * perPx)))
+  }
+  const endDrag = () => {
+    drag.current = null
+  }
+
+  /** miejsce na ekranie, w które rzutuje się kierunek; null, gdy jest poza polem widzenia */
+  const project = (angle: number, distance: number) => {
+    const a = angle * RAD
+    const dist = Math.max(distance, 1.5)
+    let x = Math.sin(a) * dist
+    let y = -DROP
+    let z = -Math.cos(a) * dist
+    const cy = Math.cos(-shown.current.yaw * RAD)
+    const sy = Math.sin(-shown.current.yaw * RAD)
+    ;[x, z] = [x * cy - z * sy, x * sy + z * cy]
+    const cp = Math.cos(-shown.current.pitch * RAD)
+    const sp = Math.sin(-shown.current.pitch * RAD)
+    ;[y, z] = [y * cp - z * sp, y * sp + z * cp]
+    if (z > -0.05) return null
+    const focal = size.w / 2 / Math.tan((FOV * RAD) / 2)
+    const px = size.w / 2 + (focal * x) / -z
+    const py = size.h / 2 - (focal * y) / -z
+    if (px < -40 || px > size.w + 40 || py < -40 || py > size.h + 40) return null
+    return { left: px, top: Math.min(py, size.h - 46) }
+  }
+
+  return (
+    <div
+      ref={wrap}
+      className={`pano${leaving ? ' pano--leaving' : ''}`}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+    >
+      <canvas ref={canvas} className="pano__canvas" role="img" aria-label={alt} />
+      {status === 'ready' &&
+        hotspots.map((h) => {
+          const at = project(h.angle, h.distance)
+          if (!at) return null
+          return (
+            <button
+              key={h.key}
+              type="button"
+              className="pano__spot"
+              style={at}
+              aria-label={`Przejdź do: ${h.label}`}
+              onClick={() => {
+                if (!justDragged.current) h.onGo()
+              }}
+            >
+              <span className="pano__spot-ring" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26">
+                  <path
+                    d="M6 14.5 L12 8.5 L18 14.5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+              <span className="pano__spot-label">{h.label}</span>
+            </button>
+          )
+        })}
+      {status === 'failed' && <p className="pano__missing">Tego widoku jeszcze nie ma</p>}
+      {status === 'loading' && <span className="pano__loading" aria-hidden="true" />}
+    </div>
+  )
+}

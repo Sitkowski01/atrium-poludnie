@@ -20,7 +20,7 @@ from mathutils import Vector
 
 argv = sys.argv[sys.argv.index("--") + 1 :]
 PLANS, SLOT, OUT, MODE = argv[0], argv[1], argv[2], argv[3]
-ONLY = int(argv[4]) if len(argv) > 4 else None
+ONLY = int(argv[4]) if len(argv) > 4 and argv[4] != "-" else None
 PANO_W = int(argv[5]) if len(argv) > 5 else 4096
 plan = next(p for p in json.load(open(PLANS, encoding="utf-8")) if p["id"] == SLOT)
 W, H = plan["planW"], plan["planH"]
@@ -502,7 +502,7 @@ if MODE == "pano":
         print("cycles:", prefs.compute_device_type, [d.name for d in prefs.devices if d.use])
     except Exception as e:
         print("cycles: CPU", e)
-    scene.cycles.samples = 160
+    scene.cycles.samples = int(argv[6]) if len(argv) > 6 else 160
     scene.cycles.use_denoising = True
     try:
         scene.cycles.max_bounces = 8
