@@ -1,0 +1,45 @@
+.sun-control {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.sun-control__play {
+  min-width: 164px;
+}
+
+.sun-control__slider {
+  display: grid;
+  gap: 4px;
+}
+
+.sun-control__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.sun-control__label strong {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.sun-control__presets {
+  display: flex;
+  gap: 6px;
+}
+
+@media (max-width: 640px) {
+  .sun-control {
+    grid-template-columns: 1fr;
+  }
+  .sun-control__presets {
+    flex-wrap: wrap;
+  }
+}
