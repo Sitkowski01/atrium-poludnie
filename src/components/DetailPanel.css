@@ -40,6 +40,33 @@ dialog.detail::backdrop {
   padding: 22px 24px 40px;
 }
 
+/* sekcje wchodzą kaskadą za wjeżdżającym panelem */
+dialog.detail[open] .detail__body > * {
+  animation: detail-item 0.4s var(--ease) both;
+}
+dialog.detail[open] .detail__body > :nth-child(1) {
+  animation-delay: 0.06s;
+}
+dialog.detail[open] .detail__body > :nth-child(2) {
+  animation-delay: 0.11s;
+}
+dialog.detail[open] .detail__body > :nth-child(3) {
+  animation-delay: 0.16s;
+}
+dialog.detail[open] .detail__body > :nth-child(4) {
+  animation-delay: 0.21s;
+}
+dialog.detail[open] .detail__body > :nth-child(n + 5) {
+  animation-delay: 0.26s;
+}
+
+@keyframes detail-item {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
 .detail__head {
   display: flex;
   align-items: start;
@@ -102,6 +129,7 @@ dialog.detail::backdrop {
   border-radius: var(--radius);
   background: var(--line);
   overflow: hidden;
+  box-shadow: var(--shadow-s);
 }
 .detail__facts div {
   display: grid;

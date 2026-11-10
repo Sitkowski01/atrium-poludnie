@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 import {
   FACADE_LABEL,
   STATUS_LABEL,
@@ -30,6 +30,46 @@ function Heart({ filled }: { filled: boolean }) {
         strokeWidth="1.8"
         strokeLinejoin="round"
       />
+    </svg>
+  )
+}
+
+function EmptyArt() {
+  const windows = [0, 1, 2].flatMap((row) => [0, 1].map((col) => ({ row, col })))
+  return (
+    <svg
+      className="apt-list__empty-art"
+      viewBox="0 0 96 96"
+      width="96"
+      height="96"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M8 86h80" fill="none" stroke="var(--line)" strokeWidth="2" strokeLinecap="round" />
+      <rect
+        x="24"
+        y="14"
+        width="48"
+        height="72"
+        rx="3"
+        fill="none"
+        stroke="var(--ink-3)"
+        strokeWidth="2"
+      />
+      {windows.map(({ row, col }) => (
+        <rect
+          key={`${row}-${col}`}
+          x={33 + col * 18}
+          y={24 + row * 16}
+          width="12"
+          height="10"
+          rx="1.5"
+          fill="none"
+          stroke="var(--line)"
+          strokeWidth="2"
+        />
+      ))}
+      <rect x="42" y="68" width="12" height="18" rx="1.5" fill="none" stroke="var(--accent)" strokeWidth="2" />
     </svg>
   )
 }
@@ -140,10 +180,12 @@ export function ApartmentList() {
 
       {visible.length === 0 ? (
         <div className="apt-list__empty">
-          <p>Żadne mieszkanie nie spełnia tych filtrów.</p>
+          <EmptyArt />
+          <h2 className="apt-list__empty-title">Nic tu nie pasuje</h2>
+          <p>Żadne mieszkanie nie spełnia tych filtrów. Poluzuj cenę albo metraż.</p>
           <button
             type="button"
-            className="btn"
+            className="btn btn--primary"
             onClick={() => {
               // przycisk zaraz zniknie — fokus przechodzi na licznik wyników
               countRef.current?.focus()
@@ -166,7 +208,7 @@ export function ApartmentList() {
             pointerInside.current = false
           }}
         >
-          {shown.map((a) => {
+          {shown.map((a, index) => {
             const sun = sunWindow(a.facade, a.floor)
             const fav = favourites.includes(a.id)
             const cls = [
@@ -181,6 +223,7 @@ export function ApartmentList() {
               <li
                 key={a.id}
                 className={cls}
+                style={{ '--i': Math.min(index, 8) } as CSSProperties}
                 ref={(el) => {
                   if (el) rowRefs.current.set(a.id, el)
                   else rowRefs.current.delete(a.id)
@@ -199,8 +242,19 @@ export function ApartmentList() {
                   <span className="apt-list__id">{a.id}</span>
                   <span className="apt-list__info">
                     <span className="apt-list__facts">
-                      {roomsLabel(a.rooms)} · {formatArea(a.area)} · {floorLabel(a.floor)} ·{' '}
-                      {FACADE_LABEL[a.facade]}
+                      <span className="apt-list__facts-row">
+                        {[
+                          roomsLabel(a.rooms),
+                          formatArea(a.area),
+                          floorLabel(a.floor),
+                          FACADE_LABEL[a.facade],
+                        ].map((fact, fi, all) => (
+                          <span key={fi} className="apt-list__fact">
+                            {fact}
+                            {fi < all.length - 1 && <span className="visually-hidden">, </span>}
+                          </span>
+                        ))}
+                      </span>
                     </span>
                     <span className="apt-list__sun">
                       {sun

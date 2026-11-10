@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formatPrice } from '../domain/format'
 import { calcMortgage } from '../domain/mortgage'
+import { useCountUp } from '../hooks/useCountUp'
 import './MortgageCalculator.css'
 
 const decimal = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
@@ -13,6 +14,11 @@ export function MortgageCalculator({ price }: { price: number }) {
   const res = calcMortgage({ price, downPaymentPct: downPct, years, ratePct: rate })
   const interestPct = res.totalPaid > 0 ? Math.round((res.totalInterest / res.totalPaid) * 100) : 0
   const capitalPct = res.totalPaid > 0 ? 100 - interestPct : 0
+
+  const monthlyFinal = Math.round(res.monthly)
+  const monthlyShown = Math.round(useCountUp(res.monthly, { duration: 350 }))
+  const loanShown = Math.round(useCountUp(res.loan, { duration: 350 }))
+  const interestShown = Math.round(useCountUp(res.totalInterest, { duration: 350 }))
 
   return (
     <section className="mortgage" aria-label="Kalkulator raty">
@@ -68,18 +74,25 @@ export function MortgageCalculator({ price }: { price: number }) {
       </label>
 
       <div className="mortgage__result">
-        <p className="mortgage__monthly" aria-live="polite">
-          <span className="mortgage__monthly-value">{formatPrice(Math.round(res.monthly))}</span>
+        <p className="mortgage__monthly">
+          <span className="mortgage__monthly-value" aria-hidden="true">
+            {formatPrice(monthlyShown)}
+          </span>
           <span className="mortgage__monthly-unit">/ miesiąc</span>
         </p>
+        <span className="visually-hidden" aria-live="polite">
+          Rata miesięczna: {formatPrice(monthlyFinal)}
+        </span>
         <dl className="mortgage__facts">
           <div>
             <dt>Kwota kredytu</dt>
-            <dd>{formatPrice(Math.round(res.loan))}</dd>
+            <dd aria-hidden="true">{formatPrice(loanShown)}</dd>
+            <dd className="visually-hidden">{formatPrice(Math.round(res.loan))}</dd>
           </div>
           <div>
             <dt>Suma odsetek</dt>
-            <dd>{formatPrice(Math.round(res.totalInterest))}</dd>
+            <dd aria-hidden="true">{formatPrice(interestShown)}</dd>
+            <dd className="visually-hidden">{formatPrice(Math.round(res.totalInterest))}</dd>
           </div>
         </dl>
 

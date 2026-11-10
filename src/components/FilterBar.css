@@ -6,6 +6,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--card);
+  box-shadow: var(--shadow-s);
 }
 
 .filter-bar__group {
@@ -67,8 +68,9 @@
 }
 
 .filter-bar__check input {
-  width: 20px;
-  height: 20px;
+  flex: none;
+  width: 24px;
+  height: 24px;
   margin: 0;
   accent-color: var(--accent);
 }

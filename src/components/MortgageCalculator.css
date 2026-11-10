@@ -12,6 +12,7 @@
 .mortgage__label {
   display: flex;
   flex-wrap: wrap;
+  align-items: baseline;
   justify-content: space-between;
   gap: 2px 12px;
   font-size: 14px;
@@ -19,7 +20,9 @@
 }
 
 .mortgage__label strong {
-  font-variant-numeric: tabular-nums;
+  margin-left: auto;
+  font-weight: 700;
+  white-space: nowrap;
   color: var(--ink);
 }
 
@@ -35,6 +38,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--card);
+  box-shadow: var(--shadow-s);
 }
 
 .mortgage__monthly {
@@ -48,7 +52,6 @@
   font-family: var(--font-display);
   font-size: 40px;
   line-height: 1.1;
-  font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
 
@@ -77,15 +80,21 @@
 .mortgage__facts dd {
   margin: 0;
   font-weight: 600;
-  font-variant-numeric: tabular-nums;
 }
 
 .mortgage__bar {
   display: flex;
   height: 12px;
+  min-height: 10px;
   overflow: hidden;
   border-radius: 999px;
   background: var(--paper-2);
+}
+
+.mortgage__bar-capital,
+.mortgage__bar-interest {
+  min-width: 0;
+  transition: width 350ms var(--ease);
 }
 
 .mortgage__bar-capital {
@@ -130,11 +139,4 @@
 .mortgage__note {
   font-size: 13px;
   color: var(--ink-2);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .mortgage__bar-capital,
-  .mortgage__bar-interest {
-    transition: width 0.2s var(--ease);
-  }
 }

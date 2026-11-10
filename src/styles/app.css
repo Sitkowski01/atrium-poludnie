@@ -10,9 +10,14 @@ html {
 
 body {
   margin: 0;
-  background: var(--paper);
+  background:
+    radial-gradient(1100px 520px at 88% -8%, #fbf7ec, transparent 62%),
+    radial-gradient(900px 480px at -6% 22%, #ece5d6, transparent 60%),
+    var(--paper);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-body);
+  font-variant-numeric: lining-nums tabular-nums;
   font-size: 16px;
   line-height: 1.5;
 }
@@ -79,6 +84,12 @@ textarea {
 .btn--primary:hover {
   background: #9f3c23;
   border-color: #9f3c23;
+}
+.btn--primary {
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.25) inset, 0 6px 14px rgb(181 70 42 / 0.28);
+}
+.btn--primary:active {
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.2) inset, 0 2px 6px rgb(181 70 42 / 0.3);
 }
 .btn--ghost {
   background: transparent;
@@ -168,7 +179,22 @@ textarea {
 
 input[type='range'] {
   width: 100%;
+  min-height: 28px;
   accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* palec: pełne 44 px na pigułkach i suwakach */
+@media (pointer: coarse), (max-width: 980px) {
+  .chip {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 16px;
+    justify-content: center;
+  }
+  input[type='range'] {
+    min-height: 44px;
+  }
 }
 
 .eyebrow {
@@ -207,6 +233,7 @@ input[type='range'] {
   color: var(--accent);
 }
 .hero__lead {
+  text-wrap: balance;
   max-width: 46ch;
   margin-top: 18px;
   font-size: 18px;
@@ -222,6 +249,12 @@ input[type='range'] {
 .hero__stats div {
   display: grid;
   gap: 2px;
+  padding-left: 28px;
+  border-left: 1px solid var(--line);
+}
+.hero__stats div:first-child {
+  padding-left: 0;
+  border-left: 0;
 }
 .hero__stats dt {
   order: 2;
@@ -273,7 +306,10 @@ input[type='range'] {
   }
   .hero__stats {
     justify-content: start;
-    gap: 20px;
+    gap: 16px;
+  }
+  .hero__stats div {
+    padding-left: 16px;
   }
   .hero__stats dd {
     font-size: 24px;

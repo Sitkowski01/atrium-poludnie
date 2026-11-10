@@ -12,6 +12,9 @@
 .inquiry .field textarea {
   width: 100%;
   min-width: 0;
+  transition:
+    border-color 0.15s var(--ease),
+    box-shadow 0.15s var(--ease);
 }
 
 .inquiry .field textarea {
@@ -19,24 +22,53 @@
   line-height: 1.4;
 }
 
+.inquiry .field input:focus-visible,
+.inquiry .field textarea:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  outline: 2px solid transparent;
+}
+
 .inquiry .field [aria-invalid='true'] {
   border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.inquiry__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.inquiry__error-icon {
+  flex: none;
+  margin-top: 2px;
 }
 
 .inquiry__notice {
   padding: 10px 12px;
+  border: 1px solid transparent;
   border-radius: var(--radius-s);
-  background: var(--hold-soft);
-  color: var(--hold-ink);
   font-size: 14px;
   font-weight: 600;
+}
+
+.inquiry__notice--sold {
+  background: var(--sold-soft);
+  border-color: var(--sold);
+  color: var(--sold-ink);
+}
+
+.inquiry__notice--hold {
+  background: var(--hold-soft);
+  border-color: var(--hold);
+  color: var(--hold-ink);
 }
 
 .inquiry__counter {
   justify-self: end;
   font-size: 13px;
   color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
 }
 
 .inquiry__consent-wrap {
@@ -46,7 +78,7 @@
 
 .inquiry__consent {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
   min-height: 44px;
   padding: 6px 0;
@@ -57,10 +89,11 @@
 
 .inquiry__consent input {
   flex: none;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   margin: 0;
   accent-color: var(--accent);
+  cursor: pointer;
 }
 
 .inquiry__submit {
@@ -79,6 +112,32 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--card);
+  box-shadow: var(--shadow-s);
+}
+
+.inquiry__done-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--ok-soft);
+  color: var(--ok-ink);
+}
+
+.inquiry__done-check {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: inquiry-check 450ms var(--ease) 150ms both;
+}
+
+@keyframes inquiry-check {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .inquiry__done-title {

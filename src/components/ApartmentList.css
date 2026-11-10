@@ -6,6 +6,7 @@
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--card);
+  box-shadow: var(--shadow-s);
 }
 
 .apt-list__head {
@@ -52,7 +53,8 @@
   gap: 8px;
   max-height: 62vh;
   margin: 0;
-  padding: 2px 4px 2px 2px;
+  /* zapas na uniesienie wiersza i jego cień, żeby overflow ich nie ciął */
+  padding: 4px 8px 12px 4px;
   overflow-y: auto;
   list-style: none;
 }
@@ -65,23 +67,60 @@
   padding-right: 4px;
   border: 1px solid var(--line);
   border-radius: var(--radius-s);
-  background: var(--card);
+  background-color: var(--card);
   transition:
-    background 0.15s var(--ease),
-    border-color 0.15s var(--ease);
+    transform 150ms var(--ease),
+    box-shadow 150ms var(--ease),
+    background-color 150ms var(--ease),
+    border-color 150ms var(--ease);
+  /* backwards: po wejściu animacja nie blokuje transform z :hover */
+  animation: apt-list-in 300ms var(--ease) backwards;
+  animation-delay: calc(var(--i, 0) * 35ms);
+}
+
+@keyframes apt-list-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.apt-list__item--sold {
+  background-color: var(--paper-2);
 }
 
 .apt-list__item--hover {
   border-color: var(--accent);
-  background: var(--accent-soft);
+  background-color: var(--accent-soft);
 }
 
 .apt-list__item--selected {
   border-color: var(--accent);
-  background: var(--accent-soft);
+  background-color: var(--accent-soft);
   box-shadow:
     inset 0 0 0 1px var(--accent),
     var(--shadow);
+}
+
+@media (hover: hover) {
+  .apt-list__item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-m);
+  }
+  .apt-list__item--selected:hover {
+    box-shadow:
+      inset 0 0 0 1px var(--accent),
+      var(--shadow-m);
+  }
+}
+
+.apt-list__item:active {
+  transform: translateY(0) scale(0.995);
+  box-shadow: var(--shadow-s);
 }
 
 .apt-list__main {
@@ -98,8 +137,13 @@
   cursor: pointer;
 }
 
-.apt-list__item--sold .apt-list__main {
-  opacity: 0.65;
+/* sprzedane: przygaszone kolorami, nie przezroczystością (kontrast --ink-2 na --paper-2 ok. 5,9:1) */
+.apt-list__item--sold .apt-list__id,
+.apt-list__item--sold .apt-list__facts,
+.apt-list__item--sold .apt-list__sun,
+.apt-list__item--sold .apt-list__price strong,
+.apt-list__item--sold .apt-list__ppm {
+  color: var(--ink-2);
 }
 
 .apt-list__id {
@@ -118,9 +162,39 @@
 }
 
 .apt-list__facts {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
   font-size: 15px;
   font-weight: 600;
   color: var(--ink);
+}
+
+/* separator sąsiaduje z elementem po lewej; wiersz przesunięty o szerokość separatora,
+   więc separator elementu zaczynającego linię ląduje poza krawędzią i jest przycięty */
+.apt-list__facts-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -14px;
+}
+
+.apt-list__fact {
+  position: relative;
+  padding-left: 14px;
+  white-space: nowrap;
+}
+
+.apt-list__fact + .apt-list__fact::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin-top: -2px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
 }
 
 .apt-list__sun {
@@ -136,8 +210,11 @@
 }
 
 .apt-list__price strong {
-  font-size: 16px;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.15;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .apt-list__ppm {
@@ -159,13 +236,15 @@
   color: var(--ink-2);
   cursor: pointer;
   transition:
-    background 0.15s var(--ease),
-    color 0.15s var(--ease);
+    background-color 150ms var(--ease),
+    color 150ms var(--ease);
 }
 
-.apt-list__fav:hover {
-  background: var(--paper-2);
-  color: var(--accent);
+@media (hover: hover) {
+  .apt-list__fav:hover {
+    background-color: var(--paper-2);
+    color: var(--accent);
+  }
 }
 
 .apt-list__fav--on {
@@ -183,6 +262,19 @@
   padding: 32px 16px;
   text-align: center;
   color: var(--ink-2);
+}
+
+.apt-list__empty-art {
+  display: block;
+  max-width: 100%;
+}
+
+.apt-list__empty-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ink);
 }
 
 @media (max-width: 980px) {

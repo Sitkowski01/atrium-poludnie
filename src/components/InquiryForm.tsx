@@ -91,6 +91,19 @@ export function InquiryForm({ apartment }: { apartment: Apartment }) {
   if (sentName !== null) {
     return (
       <div className="inquiry__done" role="status" tabIndex={-1} ref={doneRef}>
+        <span className="inquiry__done-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="48" height="48" fill="none">
+            <path
+              className="inquiry__done-check"
+              d="M14 25 L21 32 L34 17"
+              pathLength={1}
+              stroke="currentColor"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
         <p className="inquiry__done-title">Dziękujemy, {sentName}.</p>
         <p className="inquiry__done-demo">To demo — wiadomość nie została nigdzie wysłana.</p>
         <button type="button" className="btn" onClick={reset}>
@@ -109,18 +122,23 @@ export function InquiryForm({ apartment }: { apartment: Apartment }) {
   })
   const error = (k: keyof Values) =>
     errors[k] ? (
-      <span className="field__error" id={`${idOf(k)}-error`}>
-        {errors[k]}
+      <span className="field__error inquiry__error" id={`${idOf(k)}-error`}>
+        <svg className="inquiry__error-icon" viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+          <path d="M8 1.5 15 14H1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+          <path d="M8 6.2v3.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="8" cy="11.8" r="0.9" fill="currentColor" />
+        </svg>
+        <span>{errors[k]}</span>
       </span>
     ) : null
 
   return (
     <form className="inquiry" noValidate onSubmit={onSubmit}>
       {apartment.status === 'sprzedane' && (
-        <p className="inquiry__notice">To mieszkanie jest już sprzedane. Napisz, a wskażemy podobne.</p>
+        <p className="inquiry__notice inquiry__notice--sold">To mieszkanie jest już sprzedane. Napisz, a wskażemy podobne.</p>
       )}
       {apartment.status === 'rezerwacja' && (
-        <p className="inquiry__notice">Mieszkanie jest zarezerwowane. Możemy wpisać Cię na listę oczekujących.</p>
+        <p className="inquiry__notice inquiry__notice--hold">Mieszkanie jest zarezerwowane. Możemy wpisać Cię na listę oczekujących.</p>
       )}
 
       <div className="field">
