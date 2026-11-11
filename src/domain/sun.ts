@@ -121,3 +121,28 @@ export function sunProfile(facade: Facade, floor: number, step = 0.5): SunSample
   }
   return out
 }
+
+const shareCache = new Map<string, number>()
+
+/**
+ * Jaka część okna godzin [from, to] ma bezpośrednie słońce w salonie (0..1), próbkowanie co 5 minut.
+ * Odpowiada na pytanie „czy słońce jest wtedy, kiedy jestem w domu”. Puste okno (from >= to) daje 0.
+ */
+export function sunShare(facade: Facade, floor: number, from: number, to: number): number {
+  const a = Math.max(DAY_START, Math.min(from, to))
+  const b = Math.min(DAY_END, Math.max(from, to))
+  if (b - a < 1e-9) return 0
+  const key = `${facade}${floor}:${a.toFixed(3)}-${b.toFixed(3)}`
+  const cached = shareCache.get(key)
+  if (cached !== undefined) return cached
+  const step = 1 / 12
+  let lit = 0
+  let all = 0
+  for (let h = a; h <= b + 1e-9; h += step) {
+    all++
+    if (directSun(facade, floor, h) > SUN_THRESHOLD) lit++
+  }
+  const result = all ? lit / all : 0
+  shareCache.set(key, result)
+  return result
+}

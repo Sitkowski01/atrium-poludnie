@@ -21,6 +21,14 @@ interface FullState {
   hoveredId: string | null
   selectedId: string | null
   favourites: string[]
+  /** mieszkania podświetlone na bryle przez sekcję strony (typ, „kiedy jesteś w domu”); null = brak */
+  spotlight: Spotlight | null
+}
+
+export interface Spotlight {
+  ids: readonly string[]
+  /** krótki opis dla karty przy bryle i czytnika, np. „4 pokoje, narożne” */
+  label: string
 }
 
 /**
@@ -44,6 +52,8 @@ export type Action =
   | { type: 'hover'; id: string | null }
   | { type: 'select'; id: string | null }
   | { type: 'toggleFavourite'; id: string }
+  /** owner: gasząc (spot: null), podaj swoje podświetlenie — cudze zostaje nietknięte */
+  | { type: 'spotlight'; spot: Spotlight | null; owner?: Spotlight | null }
 
 const LIMITS = limitsOf(APARTMENTS)
 const STORAGE_KEY = 'atrium-poludnie:ulubione'
@@ -85,6 +95,11 @@ function reducer(state: FullState, action: Action): FullState {
       return action.id
         ? { ...state, selectedId: action.id, introCancelled: true }
         : { ...state, selectedId: null, hoveredId: null }
+    case 'spotlight':
+      // dwa rozdziały mogą podświetlać naraz (zjechanie z karty typu po przewinięciu do „Światła”):
+      // gaszenie z właścicielem działa tylko na własne podświetlenie
+      if (action.spot === null && action.owner !== undefined && state.spotlight !== action.owner) return state
+      return state.spotlight === action.spot ? state : { ...state, spotlight: action.spot }
     case 'toggleFavourite': {
       const has = state.favourites.includes(action.id)
       return {
@@ -121,11 +136,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     hoveredId: null,
     selectedId: null,
     favourites: loadFavourites(),
+    spotlight: null,
   }))
-  const { filters, sort, hoveredId, selectedId, favourites } = full
+  const { filters, sort, hoveredId, selectedId, favourites, spotlight } = full
   const state = useMemo<State>(
-    () => ({ filters, sort, hoveredId, selectedId, favourites }),
-    [filters, sort, hoveredId, selectedId, favourites],
+    () => ({ filters, sort, hoveredId, selectedId, favourites, spotlight }),
+    [filters, sort, hoveredId, selectedId, favourites, spotlight],
   )
   const hour = useMemo<Hour>(
     () => ({ hour: full.hour, introCancelled: full.introCancelled }),
