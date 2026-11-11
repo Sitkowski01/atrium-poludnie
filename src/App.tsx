@@ -4,6 +4,7 @@ import { DetailPanel } from './components/DetailPanel'
 import { FilterBar } from './components/FilterBar'
 import { Hero } from './components/Hero'
 import { SunControl } from './components/SunControl'
+import { TopNav } from './components/TopNav'
 import { StoreProvider } from './state/store'
 
 export default function App() {
@@ -17,10 +18,7 @@ export default function App() {
         <a className="topbar__logo" href="#top">
           Atrium <em>Południe</em>
         </a>
-        <nav className="topbar__nav" aria-label="Sekcje strony">
-          <a href="#mieszkania">Mieszkania</a>
-          <a href="#budynek">Budynek</a>
-        </nav>
+        <TopNav />
         <a className="btn btn--outline topbar__cta" href="#mieszkania">
           Wybierz <span className="topbar__cta-long">mieszkanie</span>
         </a>
