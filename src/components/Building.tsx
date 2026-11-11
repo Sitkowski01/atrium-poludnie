@@ -60,7 +60,8 @@ const SPOTS: { key: Spot; label: string }[] = [
   { key: 'sprzedane', label: 'sprzedane' },
   { key: 'poza', label: 'poza filtrami' },
 ]
-const inSpot = (a: Apartment, spot: Spot, dim: boolean) => (spot === 'poza' ? dim : a.status === spot)
+/** grupy statusu obejmują tylko mieszkania w filtrach, resztę zbiera „poza filtrami”, więc liczniki sumują się do 35 */
+const inSpot = (a: Apartment, spot: Spot, dim: boolean) => (spot === 'poza' ? dim : !dim && a.status === spot)
 
 const cellLabel = (a: Apartment, dim: boolean) =>
   `${dim ? 'Poza filtrami: ' : ''}Mieszkanie ${a.id}, ${roomsLabel(a.rooms)}, ${formatArea(a.area)}, ${floorLabel(a.floor)}, ${formatPrice(a.price)}, ${STATUS_LABEL[a.status]}`
@@ -88,6 +89,8 @@ export function Building() {
     const el = boxRef.current
     if (!el) return
     const measure = () => {
+      // ile jednostek rysunku przypada na piksel ekranu: podpisy SVG mnożą przez to swój rozmiar
+      if (el.clientWidth) el.style.setProperty('--svg-k', String(VB.w / el.clientWidth))
       const hi = el.clientWidth * (window.devicePixelRatio || 1) > 820
       setHiRes((prev) => (prev === true ? true : hi))
     }
@@ -177,7 +180,7 @@ export function Building() {
             </defs>
 
             {/* skąd pada światło: łuk słońca na niebie, za budynkiem */}
-            <SunPath hour={hour} cx={330} horizon={330} rx={370} ry={385} minX={VB.x} maxX={VB.x + VB.w} layer="sky" />
+            <SunPath hour={hour} cx={310} horizon={300} rx={300} ry={340} minX={VB.x} maxX={VB.x + VB.w} layer="sky" />
 
             {/* rendery: bieżący i następny przenikają się wraz z godziną */}
             <g aria-hidden="true" className="building__renders">
@@ -213,7 +216,7 @@ export function Building() {
               </text>
             </g>
 
-            <SunPath hour={hour} cx={330} horizon={330} rx={370} ry={385} minX={VB.x} maxX={VB.x + VB.w} layer="label" />
+            <SunPath hour={hour} cx={310} horizon={300} rx={300} ry={340} minX={VB.x} maxX={VB.x + VB.w} layer="label" />
 
             {/* klikalne pola mieszkań: przezroczyste, pokazują się dopiero przy stanie */}
             {ordered.map((a) => {
@@ -338,8 +341,12 @@ export function Building() {
               type="button"
               className={`building__legend-item${on ? ' is-on' : ''}`}
               aria-pressed={on}
-              disabled={count === 0 && !on}
-              onClick={() => setSpot(on ? null : key)}
+              // aria-disabled, nie disabled: przycisk z fokusem nie może zniknąć spod klawiatury
+              aria-disabled={count === 0 && !on}
+              onClick={() => {
+                if (count === 0 && !on) return
+                setSpot(on ? null : key)
+              }}
             >
               <span className={`building__swatch building__swatch--${key}`} aria-hidden="true" />
               {label}

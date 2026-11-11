@@ -103,14 +103,15 @@
 }
 .building__floor {
   font-family: var(--font-body);
-  font-size: 13px;
+  /* ok. 11,5 px na ekranie bez względu na rozmiar rysunku (--svg-k ustawia Building.tsx) */
+  font-size: max(13px, calc(11.5px * var(--svg-k, 1)));
   font-weight: 600;
   letter-spacing: 0.08em;
   fill: var(--ink-2);
 }
 .building__compass {
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: max(11px, calc(10px * var(--svg-k, 1)));
   font-weight: 600;
   letter-spacing: 0.3em;
   fill: var(--ink-2);
@@ -201,10 +202,11 @@
 }
 .building__legend-count {
   font-variant-numeric: tabular-nums;
-  color: var(--ink-3);
+  color: var(--ink-2);
+  font-weight: 400;
 }
 @media (hover: hover) {
-  .building__legend-item:hover:not(:disabled) {
+  .building__legend-item:hover:not([aria-disabled='true']) {
     color: var(--ink);
     border-color: var(--line-2);
   }
@@ -217,9 +219,11 @@
 .building__legend-item.is-on .building__legend-count {
   color: var(--accent-2);
 }
-.building__legend-item:disabled {
+/* pusta grupa: przerywana ramka zamiast przezroczystości, tekst nadal czytelny */
+.building__legend-item[aria-disabled='true'] {
   cursor: default;
-  opacity: 0.45;
+  border-style: dashed;
+  background: transparent;
 }
 .building__swatch {
   width: 12px;
@@ -318,7 +322,7 @@
 }
 .sunpath__label {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: max(12px, calc(11.5px * var(--svg-k, 1)));
   font-weight: 600;
   letter-spacing: 0.08em;
   fill: var(--sun);
@@ -327,16 +331,8 @@
   stroke-width: 4px;
 }
 
-/* telefon: rysunek jest o połowę mniejszy, więc podpisy w SVG rosną, żeby wyjść na ok. 11 px;
-   karta pod bryłą niższa, żeby pora dnia mieściła się na pierwszym ekranie z budynkiem */
+/* telefon: karta pod bryłą niższa, żeby pora dnia mieściła się na pierwszym ekranie z budynkiem */
 @media (max-width: 560px) {
-  .building__floor,
-  .sunpath__label {
-    font-size: 23px;
-  }
-  .building__compass {
-    font-size: 19px;
-  }
   .building__card {
     gap: 2px;
     padding: 12px 16px 14px;

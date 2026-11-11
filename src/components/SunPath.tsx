@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { DAY_END, DAY_START, sunAt, sunFrom } from '../domain/sun'
 
 type P = [number, number]
@@ -47,17 +47,31 @@ export function SunPath({ hour, cx, horizon, rx, ry, minX, maxX, layer }: Props)
   const [sx, sy] = at(hour)
   const up = Math.max(0, Math.min(1, sun.elevation / 10)) // przy horyzoncie tarcza gaśnie
 
-  // podpis trzyma się tarczy, ale nie wychodzi poza kadr; szerokość zależy od kroju i ekranu, więc ją mierzymy
-  useLayoutEffect(() => {
+  // podpis trzyma się tarczy, ale nie wychodzi poza kadr; szerokość zależy od kroju i rozmiaru ekranu,
+  // więc ją mierzymy: po każdym renderze, po wczytaniu fontu i po zmianie rozmiaru okna
+  const place = useRef(() => {})
+  place.current = () => {
     const el = labelRef.current
     if (!el || typeof el.getComputedTextLength !== 'function') return
     const half = el.getComputedTextLength() / 2 + 10
     el.setAttribute('x', String(Math.max(minX + half, Math.min(maxX - half, sx))))
-  })
+  }
+  useLayoutEffect(() => place.current())
+  useEffect(() => {
+    if (layer !== 'label') return
+    let alive = true
+    const again = () => alive && place.current()
+    document.fonts?.ready.then(again)
+    window.addEventListener('resize', again)
+    return () => {
+      alive = false
+      window.removeEventListener('resize', again)
+    }
+  }, [layer])
 
   if (layer === 'label') {
     return (
-      <text ref={labelRef} className="sunpath__label" x={sx} y={sy + 34} textAnchor="middle" style={{ opacity: 0.3 + 0.7 * up }} aria-hidden="true">
+      <text ref={labelRef} className="sunpath__label" x={sx} y={sy + 34} textAnchor="middle" aria-hidden="true">
         słońce {sunFrom(sun.azimuth)}
       </text>
     )
