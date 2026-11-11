@@ -22,11 +22,9 @@ export function ContactSection() {
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    if (prefersReducedMotion()) {
-      el.style.setProperty('--p', '0.5')
-      return
-    }
+    const mq = typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null
     let frame = 0
+    let listening = false
     const update = () => {
       frame = 0
       const rect = el.getBoundingClientRect()
@@ -39,17 +37,38 @@ export function ContactSection() {
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update)
     }
-    update()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
+    const start = () => {
+      if (listening) return
+      listening = true
+      update()
+      window.addEventListener('scroll', onScroll, { passive: true })
+      window.addEventListener('resize', onScroll)
+    }
+    const stop = () => {
+      listening = false
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
       if (frame) cancelAnimationFrame(frame)
+      frame = 0
+    }
+    const apply = () => {
+      if (mq?.matches) {
+        stop()
+        el.style.setProperty('--p', '0.5')
+      } else {
+        start()
+      }
+    }
+    apply()
+    mq?.addEventListener('change', apply)
+    return () => {
+      mq?.removeEventListener('change', apply)
+      stop()
     }
   }, [])
 
   return (
+    <>
     <section className="contact" id="kontakt" tabIndex={-1} aria-labelledby="kontakt-title" ref={ref}>
       <div className="contact__inner">
         <div className="contact__horizon" aria-hidden="true">
@@ -97,12 +116,16 @@ export function ContactSection() {
             <dd>kontakt@atrium-poludnie.example</dd>
           </div>
         </dl>
-
-        <p className="contact__foot">
-          Atrium Południe to inwestycja fikcyjna. Strona jest demonstracją wyszukiwarki mieszkań: ceny, dostępność,
-          wnętrza i nasłonecznienie są przykładowe.
-        </p>
       </div>
     </section>
+    <footer className="contact__footer">
+      <div className="contact__inner">
+          <p className="contact__foot">
+            Atrium Południe to inwestycja fikcyjna. Strona jest demonstracją wyszukiwarki mieszkań: ceny, dostępność,
+            wnętrza i nasłonecznienie są przykładowe.
+          </p>
+      </div>
+    </footer>
+    </>
   )
 }

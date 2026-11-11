@@ -47,7 +47,7 @@ function EmptyArt() {
       aria-hidden="true"
       focusable="false"
     >
-      <path d="M8 86h80" fill="none" stroke="var(--line-2)"strokeWidth="2" strokeLinecap="round" />
+      <path d="M8 86h80" fill="none" stroke="var(--line-2)" strokeWidth="2" strokeLinecap="round" />
       <rect
         x="24"
         y="14"
@@ -71,7 +71,7 @@ function EmptyArt() {
           strokeWidth="2"
         />
       ))}
-      <rect x="42" y="68" width="12" height="18" rx="1.5" fill="none" stroke="var(--accent)" strokeWidth="2" />
+      <rect x="42" y="68" width="12" height="18" rx="1.5" fill="none" stroke="var(--ink-3)" strokeWidth="2" />
     </svg>
   )
 }
@@ -192,7 +192,7 @@ export function ApartmentList() {
       {visible.length === 0 ? (
         <div className="apt-list__empty">
           <EmptyArt />
-          <h2 className="apt-list__empty-title">Nic tu nie pasuje</h2>
+          <h3 className="apt-list__empty-title">Nic tu nie pasuje</h3>
           <p>Żadne mieszkanie nie spełnia tych filtrów. Poluzuj cenę albo metraż.</p>
           <button
             type="button"

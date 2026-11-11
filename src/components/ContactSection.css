@@ -39,9 +39,10 @@
 }
 .contact__label {
   margin: 0 0 20px;
-  font-size: 11px;
-  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 600;
   letter-spacing: 0.2em;
+  font-variant-numeric: tabular-nums;
   color: var(--ink-2);
 }
 .contact__title {
@@ -56,7 +57,7 @@
 }
 .contact__title em {
   font-style: italic;
-  color: var(--accent);
+  color: var(--ink);
 }
 .contact__lead {
   max-width: 58ch;
@@ -86,6 +87,7 @@
 .contact__col dt {
   margin-bottom: 12px;
   font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: var(--ink-2);
@@ -120,5 +122,5 @@
 .contact .btn--outline {
   text-transform: none;
   letter-spacing: normal;
-  font-size: inherit;
+  font-size: 14px;
 }
