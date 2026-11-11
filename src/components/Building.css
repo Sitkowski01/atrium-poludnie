@@ -35,7 +35,7 @@
   height: 34px;
   margin: -17px 0 0 -17px;
   border: 2px solid var(--line-2);
-  border-top-color: var(--accent);
+  border-top-color: var(--ink-2);
   border-radius: 50%;
   animation: building-spin 0.8s linear infinite;
 }
@@ -211,6 +211,10 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: var(--ink-2);
+}
+/* złoto tylko dla wybranego mieszkania, nie dla najechania ani podświetlenia z rozdziału */
+.building__card.is-picked .building__card-eyebrow {
   color: var(--accent);
 }
 .building__card-title {
@@ -354,10 +358,20 @@
   .building__box {
     width: 100%;
   }
-  .building__card {
-    position: static;
+  /* pod bryłą, w toku strony: stała wysokość, żeby rozwinięcie karty nie przesuwało tekstu niżej
+     (podświetlenie z rozdziału albo najechanie zmieniają jej treść) */
+  .building__card,
+  .building__card:not(.is-on) {
+    position: relative;
     width: 100%;
+    max-width: none;
+    min-height: 112px;
     margin-top: 8px;
+    align-content: center;
+  }
+  .building__card.is-top {
+    top: auto;
+    bottom: auto;
   }
 }
 
@@ -399,12 +413,5 @@
   .building__card {
     gap: 2px;
     padding: 12px 16px 14px;
-  }
-  .building__card-title {
-    font-size: var(--fd-1);
-  }
-  .building__card-price {
-    margin-top: 4px;
-    font-size: var(--fd-2);
   }
 }

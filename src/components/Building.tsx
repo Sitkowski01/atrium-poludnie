@@ -73,12 +73,54 @@ function flatsLabel(n: number): string {
   return `${n} ${d >= 2 && d <= 4 && (t < 12 || t > 14) ? 'mieszkania' : 'mieszkań'}`
 }
 
-const cellLabel = (a: Apartment, dim: boolean) =>
-  `${dim ? 'Poza filtrami: ' : ''}Mieszkanie ${a.id}, ${roomsLabel(a.rooms)}, ${formatArea(a.area)}, ${floorLabel(a.floor)}, ${formatPrice(a.price)}, ${STATUS_LABEL[a.status]}`
+/* ---------- części zależne od godziny ----------
+   Godzina zmienia się co klatkę (przelot przy wejściu, odtwarzanie dnia). Tylko te małe komponenty
+   ją subskrybują, więc 35 komórek, legenda i karta nie przeliczają się 30 razy na sekundę. */
+
+function HourSky() {
+  return <SceneSky hour={useHour().hour} />
+}
+
+function HourOrbit({ layer }: { layer: 'back' | 'front' }) {
+  return <SunOrbit hour={useHour().hour} layer={layer} cx={315} horizon={290} rx={330} ry={345} />
+}
+
+/** dwa rendery, między którymi leży godzina; przenikają się wraz z nią */
+function HourRenders({ hiRes, ready }: { hiRes: boolean | null; ready: ReadonlySet<string> }) {
+  const { hour } = useHour()
+  /** najlepszy wczytany obraz danej godziny: pełna rozdzielczość, a do czasu jej wczytania połowa */
+  const best = (h: number): string | null => {
+    const hi = frameUrl(h, true)
+    const lo = frameUrl(h, false)
+    if (hiRes && ready.has(hi)) return hi
+    if (ready.has(lo)) return lo
+    if (ready.has(hi)) return hi
+    return null
+  }
+  const want = framesFor(hour)
+  // render jeszcze się nie wczytał: najbliższa godzina, która już jest
+  const nearest = (h: number) =>
+    best(h) ? h : [...FRAME_HOURS].filter((x) => best(x)).sort((x, y) => Math.abs(x - h) - Math.abs(y - h))[0]
+  const fa = nearest(want.a)
+  const fb = want.b
+  const urlA = fa === undefined ? null : best(fa)
+  const urlB = fb !== fa ? best(fb) : null
+  return (
+    <g aria-hidden="true" className="building__renders">
+      {urlA && <image key={fa} href={urlA} x={VB.x} y={VB.y} width={VB.w} height={VB.h} />}
+      {urlB && <image key={fb} href={urlB} x={VB.x} y={VB.y} width={VB.w} height={VB.h} opacity={want.t} />}
+    </g>
+  )
+}
+
+const cellLabel = (a: Apartment, dim: boolean) => {
+  const sun = sunWindow(a.facade, a.floor)
+  const light = sun ? `słońce w salonie ${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez bezpośredniego słońca'
+  return `${dim ? 'Poza filtrami: ' : ''}Mieszkanie ${a.id}, ${roomsLabel(a.rooms)}, ${formatArea(a.area)}, ${floorLabel(a.floor)}, okna na ${FACADE_LABEL[a.facade]}, ${light}, ${formatPrice(a.price)}, ${STATUS_LABEL[a.status]}`
+}
 
 export function Building() {
   const { apartments, visibleIds, state, dispatch } = useStore()
-  const { hour } = useHour()
   // jeden przystanek Tab na całą bryłę; między mieszkaniami chodzi się strzałkami
   const grid = useMemo<GridItem[]>(
     () => apartments.map((a) => ({ id: a.id, row: a.floor, col: a.slot })),
@@ -141,24 +183,6 @@ export function Building() {
     }
   }, [hiRes])
 
-  /** najlepszy wczytany obraz danej godziny: pełna rozdzielczość, a do czasu jej wczytania połowa */
-  const best = (h: number): string | null => {
-    const hi = frameUrl(h, true)
-    const lo = frameUrl(h, false)
-    if (hiRes && ready.has(hi)) return hi
-    if (ready.has(lo)) return lo
-    if (ready.has(hi)) return hi
-    return null
-  }
-  const want = framesFor(hour)
-  // render jeszcze się nie wczytał: najbliższa godzina, która już jest
-  const nearest = (h: number) =>
-    best(h) ? h : [...FRAME_HOURS].filter((x) => best(x)).sort((x, y) => Math.abs(x - h) - Math.abs(y - h))[0]
-  const fa = nearest(want.a)
-  const fb = want.b
-  const ft = want.t
-  const urlA = fa === undefined ? null : best(fa)
-  const urlB = fb !== fa ? best(fb) : null
 
   const hovered = apartments.find((a) => a.id === state.hoveredId) ?? null
   const selected = apartments.find((a) => a.id === state.selectedId) ?? null
@@ -173,13 +197,13 @@ export function Building() {
   const selectedId = state.selectedId
 
   // od góry do dołu — taka sama kolejność dla klawiatury
-  const ordered = [...apartments].sort((a, b) => b.floor - a.floor || a.slot - b.slot)
+  const ordered = useMemo(() => [...apartments].sort((a, b) => b.floor - a.floor || a.slot - b.slot), [apartments])
   const sun = focus ? sunWindow(focus.facade, focus.floor) : null
 
   return (
     <div className="building">
       <div className="building__frame">
-        <SceneSky hour={hour} />
+        <HourSky />
         <div ref={boxRef} className={`building__box${spotting ? ' is-spotting' : ''}`}>
           <svg
             className="building__svg"
@@ -198,16 +222,10 @@ export function Building() {
             </defs>
 
             {/* łuk słońca: część za budynkiem (wieczór) pod renderami, więc bryła ją zasłania */}
-            <SunOrbit hour={hour} layer="back" cx={315} horizon={290} rx={330} ry={345} />
+            <HourOrbit layer="back" />
 
             {/* rendery: bieżący i następny przenikają się wraz z godziną */}
-            <g aria-hidden="true" className="building__renders">
-              {urlA && <image key={fa} href={urlA} x={VB.x} y={VB.y} width={VB.w} height={VB.h} />}
-              {urlB && (
-                <image key={fb} href={urlB} x={VB.x} y={VB.y} width={VB.w} height={VB.h} opacity={ft} />
-              )}
-            </g>
-
+            <HourRenders hiRes={hiRes} ready={ready} />
 
             <g aria-hidden="true" className="building__labels">
               {Array.from({ length: FLOORS }, (_, f) => {
@@ -235,7 +253,7 @@ export function Building() {
             </g>
 
             {/* łuk słońca: część przed budynkiem (rano i w południe) nad renderami */}
-            <SunOrbit hour={hour} layer="front" cx={315} horizon={290} rx={330} ry={345} />
+            <HourOrbit layer="front" />
 
             {/* klikalne pola mieszkań: przezroczyste, pokazują się dopiero przy stanie */}
             {ordered.map((a) => {
@@ -316,12 +334,12 @@ export function Building() {
               })}
           </svg>
 
-          {!urlA && <span className="building__loading" aria-hidden="true" />}
+          {ready.size === 0 && <span className="building__loading" aria-hidden="true" />}
         </div>
 
         {/* szklana karta: co jest pod kursorem albo co jest wybrane */}
         <div
-          className={`building__card${focus || storeSpot ? ' is-on' : ''}${cardTop ? ' is-top' : ''}`}
+          className={`building__card${focus || storeSpot ? ' is-on' : ''}${cardTop ? ' is-top' : ''}${focus && !hovered ? ' is-picked' : ''}`}
           aria-hidden="true"
         >
           {focus ? (
@@ -363,7 +381,8 @@ export function Building() {
       <div className="building__legend" role="group" aria-label="Legenda: pokaż na bryle">
         {SPOTS.map(({ key, label }) => {
           const count = apartments.filter((a) => inSpot(a, key, !visibleIds.has(a.id))).length
-          const on = spot === key
+          // rozdział strony przejął bryłę: legenda nie pokazuje stanu, który teraz nic nie robi
+          const on = spot === key && !storeSpot
           return (
             <button
               key={key}
