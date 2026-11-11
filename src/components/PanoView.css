@@ -84,6 +84,7 @@
   outline: none;
 }
 .pano__spot:focus-visible .pano__spot-ring {
+  animation: none; /* animacja pulsu nadpisywałaby box-shadow pierścienia fokusu */
   box-shadow:
     0 0 0 4px #fff,
     0 0 0 8px var(--accent);

@@ -1040,7 +1040,7 @@ if TOP:
     raise SystemExit
 scene.render.resolution_x, scene.render.resolution_y = PANO_W, PANO_W // 2
 scene.render.image_settings.file_format = "JPEG"
-scene.render.image_settings.quality = 92
+scene.render.image_settings.quality = 98  # plik pośredni; właściwa kompresja dopiero w pano-web.mjs
 os.makedirs(os.path.join(OUT, SLOT), exist_ok=True)
 for i, r in enumerate(PLAN):
     if ONLY is not None and i != ONLY:

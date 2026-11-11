@@ -27,10 +27,22 @@ interface Props {
   onLook: (yaw: number, pitch: number) => void
 }
 
-const FOV = 100 // poziomy kąt widzenia w stopniach
+const FOV = 100 // poziomy kąt widzenia w stopniach na szerokim ekranie
+const VFOV = 90 // najwyżej tyle w pionie: na telefonie w pionie 100° w poziomie dawało ok. 140° i „rybie oko”
 const DROP = 0.85 // punkt przejścia wisi tyle metrów pod linią wzroku
 const PITCH_LIMIT = 60
 const RAD = Math.PI / 180
+/**
+ * Ogniskowa w pikselach: na szerokim ekranie z kąta poziomego, na wąskim i wysokim z pionowego,
+ * zawsze ta, która daje węższy kadr, więc obraz nigdy nie jest rozciągany na boki ani w pionie.
+ */
+const focalFor = (w: number, h: number) =>
+  Math.max(w / 2 / Math.tan((FOV * RAD) / 2), h / 2 / Math.tan((VFOV * RAD) / 2))
+/** podstawowa panorama ma 3072 px na 360°; ostrą doczytujemy, gdy ekran potrzebuje wyraźnie więcej */
+const SHARP_FROM = (3072 / 360) * 1.1 // pikseli urządzenia na stopień w środku kadru
+const sharpUrl = (src: string) => src.replace(/\.webp$/, '-hi.webp')
+/** adresy ostrych wersji, których nie ma na serwerze: nie pobieramy ich drugi raz */
+const missingSharp = new Set<string>()
 
 const VERTEX = `
 attribute vec2 a;
@@ -63,10 +75,11 @@ interface Scene {
   /** WebGL2 albo tekstura o wymiarach potęgi dwójki: wolno zawijać w poziomie */
   webgl2: boolean
   maxTexture: number
+  texture: WebGLTexture | null
 }
 
 function createScene(canvas: HTMLCanvasElement): Scene | null {
-  // WebGL2 pozwala zawijać tekstury o dowolnych wymiarach (panoramy mają 2560 × 1280)
+  // WebGL2 pozwala zawijać tekstury o dowolnych wymiarach (panoramy mają 3072 × 1536 i 6144 × 3072)
   const gl2 = canvas.getContext('webgl2', { antialias: false, alpha: false })
   const gl = gl2 ?? canvas.getContext('webgl', { antialias: false, alpha: false })
   if (!gl || gl.isContextLost()) return null
@@ -91,7 +104,8 @@ function createScene(canvas: HTMLCanvasElement): Scene | null {
   const a = gl.getAttribLocation(program, 'a')
   gl.enableVertexAttribArray(a)
   gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0)
-  gl.bindTexture(gl.TEXTURE_2D, gl.createTexture())
+  const texture = gl.createTexture()
+  gl.bindTexture(gl.TEXTURE_2D, texture)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
@@ -99,6 +113,7 @@ function createScene(canvas: HTMLCanvasElement): Scene | null {
     gl,
     webgl2: Boolean(gl2),
     maxTexture: gl.getParameter(gl.MAX_TEXTURE_SIZE) as number,
+    texture,
     uniforms: {
       res: gl.getUniformLocation(program, 'res'),
       yaw: gl.getUniformLocation(program, 'yaw'),
@@ -111,7 +126,7 @@ function createScene(canvas: HTMLCanvasElement): Scene | null {
 const isPow2 = (n: number) => (n & (n - 1)) === 0
 
 /** Wgrywa panoramę; za dużą zmniejsza przez canvas 2D, zawijanie tylko tam, gdzie wolno. */
-function upload(scene: Scene, image: HTMLImageElement) {
+function upload(scene: Scene, image: HTMLImageElement): boolean {
   const { gl } = scene
   let source: TexImageSource = image
   let w = image.naturalWidth
@@ -121,7 +136,9 @@ function upload(scene: Scene, image: HTMLImageElement) {
     const c = document.createElement('canvas')
     c.width = Math.floor(w * k)
     c.height = Math.floor(h * k)
-    c.getContext('2d')?.drawImage(image, 0, 0, c.width, c.height)
+    const ctx = c.getContext('2d')
+    if (!ctx) return false
+    ctx.drawImage(image, 0, 0, c.width, c.height)
     source = c
     w = c.width
     h = c.height
@@ -129,6 +146,7 @@ function upload(scene: Scene, image: HTMLImageElement) {
   const wrap = scene.webgl2 || (isPow2(w) && isPow2(h)) ? gl.REPEAT : gl.CLAMP_TO_EDGE
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap)
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, source)
+  return true
 }
 
 /**
@@ -141,6 +159,8 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
   const canvas = useRef<HTMLCanvasElement>(null)
   const scene = useRef<Scene | null>(null)
   const ready = useRef(false)
+  /** src, którego ostra wersja jest już w teksturze */
+  const sharp = useRef<string | null>(null)
   // to, co faktycznie jest na ekranie; przy obrocie przyciskiem dogania wartości docelowe
   const shown = useRef({ yaw, pitch })
   const target = useRef({ yaw, pitch, animate })
@@ -149,6 +169,8 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
   const drag = useRef<{ x: number; y: number; yaw: number; pitch: number; moved: boolean } | null>(null)
   const justDragged = useRef(false)
   const [status, setStatus] = useState<'loading' | 'ready' | 'failed' | 'nogl'>('loading')
+  // panorama, której podstawowa wersja jest w teksturze (status zostaje 'ready' między pokojami)
+  const [loaded, setLoaded] = useState<string | null>(null)
   const [focusedKey, setFocusedKey] = useState<string | null>(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [, setFrame] = useState(0) // odświeża pozycje punktów przejść w trakcie animacji
@@ -161,7 +183,7 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
     s.gl.uniform2f(s.uniforms.res, el.width, el.height)
     s.gl.uniform1f(s.uniforms.yaw, shown.current.yaw * RAD)
     s.gl.uniform1f(s.uniforms.pitch, shown.current.pitch * RAD)
-    s.gl.uniform1f(s.uniforms.focal, el.width / 2 / Math.tan((FOV * RAD) / 2))
+    s.gl.uniform1f(s.uniforms.focal, focalFor(el.width, el.height))
     s.gl.drawArrays(s.gl.TRIANGLE_STRIP, 0, 4)
   }
 
@@ -183,9 +205,15 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
     if (!setup()) return
     const onLoad = () => {
       if (cancelled || !scene.current || !image) return
-      upload(scene.current, image)
+      if (scene.current.gl.isContextLost()) return
+      if (!upload(scene.current, image)) {
+        setStatus('failed')
+        return
+      }
+      sharp.current = null // podstawowa w teksturze: ostra wersja wczyta się od nowa
       ready.current = true
       setStatus('ready')
+      setLoaded(src)
       draw()
     }
     image = new Image()
@@ -197,6 +225,7 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
       e.preventDefault()
       ready.current = false
       setStatus('loading')
+      setLoaded(null)
     }
     const restored = () => {
       if (cancelled || !setup()) return
@@ -212,10 +241,45 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
       el.removeEventListener('webglcontextrestored', restored)
       // bez loseContext(): StrictMode uruchamia efekt drugi raz na tym samym canvasie,
       // a utracony kontekst nie dałby się już użyć; canvas i tak znika razem z komponentem
+      const old = scene.current
+      if (old?.texture && !old.gl.isContextLost()) old.gl.deleteTexture(old.texture)
       scene.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src])
+
+  // ostra wersja (6144 px) dochodzi dopiero, gdy płótno jest na tyle szerokie, że podstawowa
+  // (3072 px, ok. 8,5 px na stopień) byłaby rozciągana: duże okno, pełny ekran, ekran retina
+  useEffect(() => {
+    const el = canvas.current
+    if (loaded !== src || !el || focalFor(el.width, el.height) * RAD < SHARP_FROM || sharp.current === src) return
+    const s = scene.current
+    if (!s || s.maxTexture < 6144) return
+    const url = sharpUrl(src)
+    if (missingSharp.has(url)) return
+    let cancelled = false
+    const hi = new Image()
+    hi.onload = () => {
+      ;(hi.decode ? hi.decode().catch(() => undefined) : Promise.resolve()).then(() => {
+        if (cancelled || !scene.current || !ready.current) return
+        if (scene.current.gl.isContextLost()) return
+        if (!upload(scene.current, hi)) return
+        sharp.current = src
+        draw()
+      })
+    }
+    hi.onerror = () => {
+      missingSharp.add(url)
+    }
+    hi.src = url
+    return () => {
+      cancelled = true
+      hi.onload = null
+      hi.onerror = null
+      hi.src = ''
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, src, size.w, size.h])
 
   // rozmiar płótna podąża za rozmiarem ramki
   useEffect(() => {
@@ -274,7 +338,8 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
       justDragged.current = true
       e.currentTarget.setPointerCapture(e.pointerId)
     }
-    const perPx = FOV / e.currentTarget.clientWidth
+    // stopnie na piksel w środku kadru: obraz pod palcem przesuwa się razem z nim
+    const perPx = 1 / (focalFor(e.currentTarget.clientWidth, e.currentTarget.clientHeight) * RAD)
     // obraz idzie za palcem: przeciągnięcie w prawo to spojrzenie w lewo
     onLook(d.yaw - dx * perPx, Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, d.pitch + dy * perPx)))
   }
@@ -296,7 +361,7 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
     const sp = Math.sin(-shown.current.pitch * RAD)
     ;[y, z] = [y * cp - z * sp, y * sp + z * cp]
     if (z > -0.05) return null
-    const focal = size.w / 2 / Math.tan((FOV * RAD) / 2)
+    const focal = focalFor(size.w, size.h)
     const px = size.w / 2 + (focal * x) / -z
     const py = size.h / 2 - (focal * y) / -z
     if (px < -40 || px > size.w + 40 || py < -40 || py > size.h + 40) return null
