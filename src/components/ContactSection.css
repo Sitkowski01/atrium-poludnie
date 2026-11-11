@@ -1,0 +1,124 @@
+.contact {
+  --p: 0.5;
+  padding: clamp(96px, 14vh, 160px) 0 40px;
+}
+.contact:focus:not(:focus-visible) {
+  outline: none;
+}
+.contact__inner {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 56px);
+}
+.contact__horizon {
+  margin-bottom: clamp(40px, 6vh, 72px);
+}
+.contact__track {
+  position: relative;
+  height: 2px;
+  background: linear-gradient(90deg, #232a3c, #c98f6a, #f0c27a, #fbe3b4, #f0c27a, #c98f6a, #232a3c);
+}
+.contact__sun {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--p) * 100%);
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: #ffd98a;
+  box-shadow: 0 0 12px 4px rgb(255 217 138 / 0.55);
+}
+.contact__hours {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+}
+.contact__label {
+  margin: 0 0 20px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ink-2);
+}
+.contact__title {
+  max-width: 14ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(44px, 6vw, 88px);
+  line-height: 1.02;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.contact__title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.contact__lead {
+  max-width: 58ch;
+  margin: 28px 0 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+.contact__actions .btn {
+  min-height: 44px;
+}
+.contact__info {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin: clamp(56px, 9vh, 96px) 0 0;
+}
+.contact__col {
+  min-width: 0;
+}
+.contact__col dt {
+  margin-bottom: 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--ink-2);
+}
+.contact__col dd {
+  margin: 0 0 4px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.contact__col dd.contact__note {
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.contact__foot {
+  margin: clamp(48px, 8vh, 80px) 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+@media (max-width: 760px) {
+  .contact__info {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+/* oba przyciski tym samym krojem: wersaliki z obrysu w nagłówku tu nie pasują */
+.contact .btn--outline {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: inherit;
+}
