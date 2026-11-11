@@ -30,6 +30,12 @@ export function sunAt(hour: number): SunState {
   return { hour, azimuth, elevation, daylight }
 }
 
+/** Kierunek, z którego pada światło, po polsku („z południa”, „ze wschodu”); azymut w stopniach od północy. */
+export function sunFrom(azimuth: number): string {
+  const names = ['z północy', 'z północnego wschodu', 'ze wschodu', 'z południowego wschodu', 'z południa', 'z południowego zachodu', 'z zachodu', 'z północnego zachodu']
+  return names[Math.round((((azimuth % 360) + 360) % 360) / 45) % 8]
+}
+
 /** Jak mocno elewacja jest oświetlona (0..1) — do cieniowania bryły. */
 export function facadeLight(facade: Facade, hour: number): number {
   const sun = sunAt(hour)

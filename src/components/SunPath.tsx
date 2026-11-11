@@ -1,4 +1,5 @@
-import { DAY_END, DAY_START, sunAt } from '../domain/sun'
+import { useLayoutEffect, useRef } from 'react'
+import { DAY_END, DAY_START, sunAt, sunFrom } from '../domain/sun'
 
 type P = [number, number]
 
@@ -17,12 +18,6 @@ interface Props {
   layer: 'sky' | 'label'
 }
 
-/** kierunek, z którego pada światło, po polsku */
-export function sunFrom(azimuth: number): string {
-  const names = ['z północy', 'z północnego wschodu', 'ze wschodu', 'z południowego wschodu', 'z południa', 'z południowego zachodu', 'z zachodu', 'z północnego zachodu']
-  return names[Math.round((((azimuth % 360) + 360) % 360) / 45) % 8]
-}
-
 const PEAK = 60 // najwyższe słońce w modelu sunAt()
 
 /**
@@ -31,6 +26,7 @@ const PEAK = 60 // najwyższe słońce w modelu sunAt()
  * ustawia światło na renderach. Rysowany pod renderami, więc budynek go zasłania.
  */
 export function SunPath({ hour, cx, horizon, rx, ry, minX, maxX, layer }: Props) {
+  const labelRef = useRef<SVGTextElement>(null)
   const at = (h: number): P => {
     const { azimuth, elevation } = sunAt(h)
     const t = (azimuth - 50) / 260 // 0 = wschód (rano), 1 = zachód (wieczór)
@@ -50,11 +46,18 @@ export function SunPath({ hour, cx, horizon, rx, ry, minX, maxX, layer }: Props)
   const sun = sunAt(hour)
   const [sx, sy] = at(hour)
   const up = Math.max(0, Math.min(1, sun.elevation / 10)) // przy horyzoncie tarcza gaśnie
-  const lx = Math.max(minX + 120, Math.min(maxX - 120, sx))
+
+  // podpis trzyma się tarczy, ale nie wychodzi poza kadr; szerokość zależy od kroju i ekranu, więc ją mierzymy
+  useLayoutEffect(() => {
+    const el = labelRef.current
+    if (!el || typeof el.getComputedTextLength !== 'function') return
+    const half = el.getComputedTextLength() / 2 + 10
+    el.setAttribute('x', String(Math.max(minX + half, Math.min(maxX - half, sx))))
+  })
 
   if (layer === 'label') {
     return (
-      <text className="sunpath__label" x={lx} y={sy + 34} textAnchor="middle" style={{ opacity: 0.3 + 0.7 * up }} aria-hidden="true">
+      <text ref={labelRef} className="sunpath__label" x={sx} y={sy + 34} textAnchor="middle" style={{ opacity: 0.3 + 0.7 * up }} aria-hidden="true">
         słońce {sunFrom(sun.azimuth)}
       </text>
     )
