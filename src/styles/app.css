@@ -304,7 +304,7 @@ input[type='range'] {
 }
 .topbar__nav {
   display: flex;
-  gap: 34px;
+  gap: 26px;
 }
 .topbar__nav a {
   color: var(--ink-2);
@@ -358,7 +358,7 @@ input[type='range'] {
   }
 }
 .stage__scene:focus:not(:focus-visible),
-#mieszkania:focus:not(:focus-visible) {
+.chapter:focus:not(:focus-visible) {
   outline: none;
 }
 @media (hover: hover) {
@@ -384,7 +384,7 @@ input[type='range'] {
   min-width: 0;
   padding-top: clamp(40px, 9vh, 110px);
 }
-#mieszkania,
+.chapter,
 #budynek {
   scroll-margin-top: calc(var(--header-h) + 16px);
 }
@@ -467,19 +467,57 @@ input[type='range'] {
   white-space: nowrap;
 }
 
-.section-title {
-  display: flex;
+/* ---------- rozdziały strony: numer, duży tytuł, lead ----------
+   Każda sekcja lewej kolumny opowiada jedną rzecz, a bryła po prawej na nią reaguje. */
+
+.chapter {
+  display: grid;
+  gap: 30px;
+  padding-top: clamp(56px, 8vh, 96px);
+}
+.chapter__head {
+  display: grid;
+  grid-template-columns: 3.2em minmax(0, 1fr);
+  column-gap: 14px;
+  row-gap: 14px;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding-top: 36px;
+  padding-top: 22px;
   border-top: 1px solid var(--line);
 }
-.section-title h2 {
+.chapter__num {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+.chapter__title {
   font-family: var(--font-display);
-  font-size: var(--fd-5);
+  font-size: clamp(40px, 4.2vw, 56px);
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.chapter__title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.chapter__lead {
+  grid-column: 2;
+  max-width: 46ch;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+@media (max-width: 520px) {
+  .chapter__head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .chapter__lead {
+    grid-column: 1;
+  }
 }
 
 .footer {

@@ -1,20 +1,29 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react'
 
-type Section = 'mieszkania' | 'budynek'
+type Section = 'budynek' | 'typy' | 'swiatlo' | 'mieszkania' | 'kontakt'
 
 const LINKS: { id: Section; label: string }[] = [
-  { id: 'mieszkania', label: 'Mieszkania' },
   { id: 'budynek', label: 'Budynek' },
+  { id: 'typy', label: 'Typy' },
+  { id: 'swiatlo', label: 'Światło' },
+  { id: 'mieszkania', label: 'Mieszkania' },
+  { id: 'kontakt', label: 'Kontakt' },
 ]
 
-/** Sekcja „Mieszkania” jest aktywna, gdy jej nagłówek dojechał pod pasek; wcześniej — bryła. */
+/** rozdziały w kolejności na stronie; przed pierwszym z nich aktywna jest bryła */
+const CHAPTERS: Section[] = ['typy', 'swiatlo', 'mieszkania', 'kontakt']
+
+/** Aktywny jest ostatni rozdział, którego nagłówek dojechał pod pasek; wcześniej — bryła. */
 function currentSection(): Section {
-  const list = document.getElementById('mieszkania')
   const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 76
-  if (!list) return 'budynek'
-  // koniec strony: przy krótkiej liście nagłówek nie dojedzie pod pasek
-  if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) return 'mieszkania'
-  return list.getBoundingClientRect().top <= header + 120 ? 'mieszkania' : 'budynek'
+  // koniec strony: ostatni rozdział może być za krótki, żeby jego nagłówek dojechał pod pasek
+  if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) return 'kontakt'
+  let active: Section = 'budynek'
+  for (const id of CHAPTERS) {
+    const el = document.getElementById(id)
+    if (el && el.getBoundingClientRect().top <= header + 120) active = id
+  }
+  return active
 }
 
 /**
