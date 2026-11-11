@@ -286,6 +286,7 @@
   }
 }
 
+
 /* ---------- ścieżka słońca ---------- */
 
 .sunpath,
@@ -324,4 +325,27 @@
   paint-order: stroke;
   stroke: rgb(15 18 26 / 0.85);
   stroke-width: 4px;
+}
+
+/* telefon: rysunek jest o połowę mniejszy, więc podpisy w SVG rosną, żeby wyjść na ok. 11 px;
+   karta pod bryłą niższa, żeby pora dnia mieściła się na pierwszym ekranie z budynkiem */
+@media (max-width: 560px) {
+  .building__floor,
+  .sunpath__label {
+    font-size: 23px;
+  }
+  .building__compass {
+    font-size: 19px;
+  }
+  .building__card {
+    gap: 2px;
+    padding: 12px 16px 14px;
+  }
+  .building__card-title {
+    font-size: 21px;
+  }
+  .building__card-price {
+    margin-top: 4px;
+    font-size: 20px;
+  }
 }

@@ -521,6 +521,7 @@ input[type='range'] {
   .stage__scene {
     order: 2;
     position: relative;
+    top: auto;
     height: auto;
     min-height: 0;
     max-height: none;
