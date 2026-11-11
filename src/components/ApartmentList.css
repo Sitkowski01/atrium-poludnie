@@ -153,32 +153,28 @@
 .apt-list__facts {
   display: flex;
   flex-wrap: wrap;
-  max-width: 100%;
+  /* kontener wysunięty w lewo o szerokość separatora i w tym miejscu przycięty: kropka elementu,
+     który zaczyna linię, wypada w przyciętym pasku, a kropki w środku linii zostają */
+  max-width: calc(100% + 14px);
   min-width: 0;
-  /* przycina separator, który wypadł na początku linii */
-  overflow: hidden;
+  margin-left: -14px;
+  clip-path: inset(0 0 0 14px);
   font-size: 14px;
   font-weight: 500;
   color: var(--ink-2);
 }
 
-/* dwie logiczne linie: „pokoje · metraż” i „piętro · ekspozycja”. Separator stoi z lewej
-   strony elementu; wiersz jest przesunięty o jego szerokość, więc separator elementu
-   zaczynającego linię ląduje poza krawędzią kontenera i jest przycięty */
+/* dwie logiczne linie: „pokoje · metraż” i „piętro · ekspozycja”; na szerokim ekranie stoją
+   w jednej linii z kropką między nimi, na wąskim druga schodzi niżej bez kropki na początku */
 .apt-list__facts-row {
   display: flex;
   flex-wrap: nowrap;
-  margin-left: -14px;
 }
 
 .apt-list__fact {
   position: relative;
   padding-left: 14px;
   white-space: nowrap;
-}
-
-.apt-list__facts-row:first-child .apt-list__fact:first-child::before {
-  display: none;
 }
 
 .apt-list__fact::before {
