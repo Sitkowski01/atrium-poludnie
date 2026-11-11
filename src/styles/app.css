@@ -369,20 +369,22 @@ input[type='range'] {
 
 /* ---------- scena: treść po lewej, budynek przyklejony po prawej ---------- */
 
+/* Kolejność w DOM = kolejność czytania: hero, bryła, rozdziały. Na szerokim ekranie bryła idzie
+   do prawej kolumny przez siatkę (cztery wiersze: hero i trzy rozdziały), a nie przez order,
+   więc Tab i czytnik ekranu idą tak samo jak oko. */
 .stage {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-  gap: clamp(24px, 3vw, 48px);
+  grid-template-rows: repeat(4, auto);
+  column-gap: clamp(24px, 3vw, 48px);
+  row-gap: 28px;
   max-width: 1480px;
   margin: 0 auto;
   padding: 0 clamp(16px, 4vw, 56px) 64px;
 }
-.stage__content {
-  display: grid;
-  align-content: start;
-  gap: 28px;
+.stage > * {
+  grid-column: 1;
   min-width: 0;
-  padding-top: clamp(40px, 9vh, 110px);
 }
 .chapter,
 #budynek {
@@ -402,6 +404,11 @@ input[type='range'] {
   left: 16px;
 }
 
+.stage > .stage__scene {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: start;
+}
 .stage__scene {
   position: sticky;
   top: var(--header-h);
@@ -417,6 +424,7 @@ input[type='range'] {
 .hero {
   display: grid;
   gap: 26px;
+  padding-top: clamp(40px, 9vh, 110px);
   padding-bottom: 12px;
 }
 .hero__title {
@@ -471,6 +479,9 @@ input[type='range'] {
    Każda sekcja lewej kolumny opowiada jedną rzecz, a bryła po prawej na nią reaguje. */
 
 .chapter {
+  /* komponenty rozdziału układają się według szerokości kolumny, nie okna (@container chapter) */
+  container-type: inline-size;
+  container-name: chapter;
   display: grid;
   gap: 30px;
   padding-top: clamp(56px, 8vh, 96px);
@@ -499,9 +510,10 @@ input[type='range'] {
   letter-spacing: -0.01em;
   text-wrap: balance;
 }
+/* kursywa w tytułach rozdziałów kremowa: złoto zostaje dla słońca (także w tytule hero) */
 .chapter__title em {
   font-style: italic;
-  color: var(--accent);
+  color: var(--ink);
 }
 .chapter__lead {
   grid-column: 2;
@@ -538,8 +550,14 @@ input[type='range'] {
   .topbar__cta {
     padding: 0 14px;
   }
+  /* ukryte wizualnie, ale zostaje w nazwie przycisku: „Wybierz mieszkanie” */
   .topbar__cta-long {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 
@@ -551,29 +569,25 @@ input[type='range'] {
     font-size: var(--fd-1);
   }
   .stage {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    row-gap: 8px;
   }
-  .stage__content {
-    display: contents;
+  .stage > .stage__scene {
+    grid-column: 1;
+    grid-row: auto;
   }
   .hero {
-    order: 1;
     padding-top: 28px;
     gap: 18px;
   }
   .stage__scene {
-    order: 2;
     position: relative;
     top: auto;
     height: auto;
     min-height: 0;
     max-height: none;
     padding: 0 0 8px;
-  }
-  .stage__content > :not(.hero) {
-    order: 3;
-    margin-top: 20px;
   }
   .hero__stats {
     gap: 8px 28px;

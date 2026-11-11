@@ -36,7 +36,7 @@ export default function App() {
       <a className="btn skip-link" href="#budynek">
         Przejdź do bryły budynku
       </a>
-      <div className="topbar">
+      <header className="topbar">
         <a className="topbar__logo" href="#top">
           Atrium <em>Południe</em>
         </a>
@@ -44,11 +44,14 @@ export default function App() {
         <a className="btn btn--outline topbar__cta" href="#mieszkania">
           Wybierz <span className="topbar__cta-long">mieszkanie</span>
         </a>
-      </div>
+      </header>
 
       <main className="stage" id="top">
-        <div className="stage__content">
-          <Hero />
+        <Hero />
+        <section className="stage__scene" id="budynek" tabIndex={-1} aria-label="Bryła budynku i pora dnia">
+          <Building />
+          <SunControl />
+        </section>
           <Chapter
             id="typy"
             num="02"
@@ -82,11 +85,6 @@ export default function App() {
             <FilterBar />
             <ApartmentList />
           </Chapter>
-        </div>
-        <section className="stage__scene" id="budynek" tabIndex={-1} aria-label="Bryła budynku i pora dnia">
-          <Building />
-          <SunControl />
-        </section>
       </main>
 
       <ContactSection />
