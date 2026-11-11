@@ -64,10 +64,6 @@
   .walk__btn:hover {
     background: rgb(15 18 26 / 0.9);
   }
-  .walk__go:hover {
-    background: var(--accent);
-    filter: brightness(0.88);
-  }
 }
 .walk__btn:active {
   transform: scale(0.95);
@@ -209,10 +205,6 @@
     fill: var(--paper-2);
   }
 }
-.walk__room-hit:focus-visible .walk__room {
-  stroke: var(--ink);
-  stroke-width: 3;
-}
 
 .walk__pos {
   pointer-events: none;
@@ -234,13 +226,13 @@
   grid-template-rows: minmax(0, 1fr) auto;
   gap: 0;
   padding: 12px;
-  background: var(--ink);
+  background: var(--paper);
 }
 .walk--expanded .walk__frame {
   aspect-ratio: auto;
   min-height: 0;
   border-radius: var(--radius);
-  background: var(--ink);
+  background: var(--paper);
   box-shadow: none;
 }
 .walk--expanded .walk__bar {

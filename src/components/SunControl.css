@@ -23,7 +23,6 @@
   width: 20px;
   height: 20px;
 }
-.sun-control__play[aria-pressed='true'],
 .sun-control__play:active {
   background: var(--accent);
   color: var(--accent-ink);
@@ -104,7 +103,8 @@
 .sun-control__slider input[type='range']:focus-visible {
   outline: none;
 }
-.sun-control__slider input[type='range']:focus-visible::-webkit-slider-thumb {
+.sun-control__slider input[type='range']:focus-visible::-webkit-slider-thumb,
+.sun-control__slider input[type='range']:focus-visible::-moz-range-thumb {
   box-shadow:
     0 0 0 3px var(--paper),
     0 0 0 5px var(--accent),

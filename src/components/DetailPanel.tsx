@@ -10,7 +10,7 @@ import {
 } from '../domain/format'
 import { DAY_END, DAY_START, sunWindow } from '../domain/sun'
 import type { Apartment } from '../domain/types'
-import { useStore } from '../state/store'
+import { useHour, useStore } from '../state/store'
 import './DetailPanel.css'
 import { FloorPlan } from './FloorPlan'
 import { InquiryForm } from './InquiryForm'
@@ -34,11 +34,22 @@ function Cover({ apartment }: { apartment: Apartment }) {
 
 function Plan({ apartment }: { apartment: Apartment }) {
   const [mode, setMode] = useState<'2d' | '3d'>('3d')
-  const [has3d, setHas3d] = useState(true)
-  const show3d = mode === '3d' && has3d
+  const [ready, setReady] = useState(false)
+  const src3d = asset('rzut3d', apartment)
+  // makietę wczytujemy w tle; do tego czasu (a przy braku pliku na stałe) widać rzut 2D bez przełącznika
+  useEffect(() => {
+    setReady(false)
+    const img = new Image()
+    img.onload = () => setReady(true)
+    img.src = src3d
+    return () => {
+      img.onload = null
+    }
+  }, [src3d])
+  const show3d = mode === '3d' && ready
   return (
     <>
-      {has3d && (
+      {ready && (
         <div className="detail__switch" role="group" aria-label="Widok rzutu">
           <button type="button" className="chip" aria-pressed={mode === '3d'} onClick={() => setMode('3d')}>
             Makieta 3D
@@ -51,9 +62,8 @@ function Plan({ apartment }: { apartment: Apartment }) {
       {show3d ? (
         <figure className="detail__plan3d">
           <img
-            src={asset('rzut3d', apartment)}
+            src={src3d}
             alt={`Makieta mieszkania ${apartment.id} z góry, z umeblowaniem`}
-            onError={() => setHas3d(false)}
           />
         </figure>
       ) : (
@@ -65,6 +75,7 @@ function Plan({ apartment }: { apartment: Apartment }) {
 
 export function DetailPanel() {
   const { selected, state, dispatch } = useStore()
+  const { hour } = useHour()
   const ref = useRef<HTMLDialogElement>(null)
   const pressedOnBackdrop = useRef(false)
 
@@ -176,19 +187,19 @@ export function DetailPanel() {
             <div className="detail__section-head">
               <h3 id="detail-sun">Słońce w salonie</h3>
             </div>
-            <SunChart facade={a.facade} floor={a.floor} hour={state.hour} />
+            <SunChart facade={a.facade} floor={a.floor} hour={hour} />
             <label className="detail__hour">
               <span>
-                Pora dnia <strong>{formatHour(state.hour)}</strong>
+                Pora dnia <strong>{formatHour(hour)}</strong>
               </span>
               <input
                 type="range"
                 min={DAY_START}
                 max={DAY_END}
                 step={0.05}
-                value={state.hour}
-                aria-valuetext={formatHour(state.hour)}
-                onChange={(e) => dispatch({ type: 'setHour', hour: Number(e.target.value) })}
+                value={hour}
+                aria-valuetext={formatHour(hour)}
+                onChange={(e) => dispatch({ type: 'setHour', hour: Number(e.target.value), byUser: true })}
               />
             </label>
           </section>
@@ -216,7 +227,13 @@ export function DetailPanel() {
               href="#detail-ask-section"
               onClick={(e) => {
                 e.preventDefault()
-                document.getElementById('detail-ask-section')?.scrollIntoView({ behavior: 'smooth' })
+                const section = document.getElementById('detail-ask-section')
+                if (!section) return
+                const reduce =
+                  typeof window.matchMedia === 'function' &&
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                section.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
+                section.querySelector<HTMLElement>('input')?.focus({ preventScroll: true })
               }}
             >
               Zapytaj o mieszkanie

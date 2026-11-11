@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
-const SRC = 'blender/render/pano'
+const SRC = process.argv[2] ?? 'blender/render/pano3'
 const OUT = 'public/pano'
 let made = 0
 let total = 0

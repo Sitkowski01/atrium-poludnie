@@ -60,6 +60,8 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
   const [animate, setAnimate] = useState(false)
   const [leaving, setLeaving] = useState(false)
   const pending = useRef<number | null>(null)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const frameRef = useRef<HTMLDivElement>(null)
 
   const dir = `s${apartment.slot}${apartment.balcony ? '' : 'n'}`
   const panoUrl = (room: number) => `${import.meta.env.BASE_URL}pano/${dir}/${room}.webp`
@@ -107,10 +109,32 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
     return () => document.removeEventListener('keydown', onKey, true)
   }, [expanded])
 
+  // powiększony spacer jest nakładką na cały ekran: reszta panelu nie może łapać fokusu spod spodu
+  useEffect(() => {
+    if (!expanded) return
+    const root = rootRef.current
+    const body = root?.closest('.detail__body')
+    if (!root || !body) return
+    const marked: Element[] = []
+    for (const child of Array.from(body.children)) {
+      if (child.contains(root) || child.hasAttribute('inert')) continue
+      child.setAttribute('inert', '')
+      marked.push(child)
+    }
+    return () => {
+      for (const child of marked) child.removeAttribute('inert')
+    }
+  }, [expanded])
+
   const moveTo = (next: View, remember: boolean) => {
     if (leaving) return
     const commit = () => {
       pending.current = null
+      // przyciski przejść zmieniają key po ruchu i giną razem z fokusem — przenieś go na kadr
+      const active = document.activeElement
+      if (rootRef.current && (active === document.body || rootRef.current.contains(active))) {
+        frameRef.current?.focus({ preventScroll: true })
+      }
       if (remember) setHistory((h) => [...h, view])
       setAnimate(false)
       setPitch(0)
@@ -128,7 +152,7 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
     if (room !== view.room) moveTo({ room, yaw: mod360(view.yaw) }, true)
   }
   const rotate = (degrees: number) => {
-    setAnimate(true)
+    setAnimate(!reducedMotion())
     setView((v) => ({ ...v, yaw: v.yaw + degrees }))
   }
   const back = () => {
@@ -138,6 +162,7 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
     moveTo(previous, false)
   }
   const restart = () => {
+    if (leaving) return
     setHistory([])
     moveTo(start, false)
   }
@@ -187,8 +212,8 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
   }))
 
   return (
-    <div className={`walk${expanded ? ' walk--expanded' : ''}`} onKeyDown={onKeyDown}>
-      <div className="walk__frame" tabIndex={0} role="group" aria-label={`Spacer po mieszkaniu ${apartment.id}`}>
+    <div ref={rootRef} className={`walk${expanded ? ' walk--expanded' : ''}`} onKeyDown={onKeyDown}>
+      <div ref={frameRef} className="walk__frame" tabIndex={0} role="group" aria-label={`Spacer po mieszkaniu ${apartment.id}`}>
         <PanoView
           key={`${dir}-${view.room}`}
           src={panoUrl(view.room)}
@@ -209,7 +234,12 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
           {here.label} · {sideName}
         </p>
 
-        <button type="button" className="walk__btn walk__expand" onClick={() => setExpanded((v) => !v)}>
+        <button
+          type="button"
+          className="walk__btn walk__expand"
+          aria-expanded={expanded}
+          onClick={() => setExpanded((v) => !v)}
+        >
           <ArrowIcon d={expanded ? ICON_SHRINK : ICON_EXPAND} />
           {expanded ? 'Zmniejsz' : 'Powiększ'}
         </button>

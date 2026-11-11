@@ -217,7 +217,8 @@ svg text,
 }
 .field input::placeholder,
 .field textarea::placeholder {
-  color: var(--ink-3);
+  color: var(--ink-2);
+  opacity: 0.85;
 }
 .field__error {
   color: #f0a58c;
@@ -332,6 +333,24 @@ input[type='range'] {
   min-width: 0;
   padding-top: clamp(40px, 9vh, 110px);
 }
+#mieszkania,
+#budynek {
+  scroll-margin-top: calc(var(--header-h) + 16px);
+}
+
+/* link pomijający listę: poza ekranem, widoczny dopiero z fokusem klawiatury */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+}
+.skip-link:focus-visible {
+  position: fixed;
+  z-index: 30;
+  top: calc(var(--header-h) + 8px);
+  left: 16px;
+}
+
 .stage__scene {
   position: sticky;
   top: var(--header-h);
@@ -483,5 +502,8 @@ input[type='range'] {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-delay: 0s !important;
   }
 }

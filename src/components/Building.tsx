@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { FLOORS } from '../domain/data'
 import { nextInGrid, type GridItem } from '../domain/gridNav'
 import { FACADE_LABEL, STATUS_LABEL, floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
 import { sunWindow } from '../domain/sun'
 import type { Apartment, Facade } from '../domain/types'
-import { useStore } from '../state/store'
+import { useHour, useStore } from '../state/store'
 import './Building.css'
 
 /* ---------- rzut izometryczny ----------
@@ -56,6 +56,7 @@ const cellLabel = (a: Apartment, dim: boolean) =>
 
 export function Building() {
   const { apartments, visibleIds, state, dispatch } = useStore()
+  const { hour } = useHour()
   // jeden przystanek Tab na całą bryłę; między mieszkaniami chodzi się strzałkami
   const grid = useMemo<GridItem[]>(
     () => apartments.map((a) => ({ id: a.id, row: a.floor, col: a.slot })),
@@ -64,14 +65,20 @@ export function Building() {
   const [activeId, setActiveId] = useState(() => `${FLOORS - 1}.01`)
   const cellRefs = useRef(new Map<string, SVGGElement>())
   const boxRef = useRef<HTMLDivElement>(null)
-  const [hiRes, setHiRes] = useState(true)
-  const [loaded, setLoaded] = useState<ReadonlySet<number>>(() => new Set())
+  // null do czasu pomiaru: nic nie pobieramy, zanim nie wiadomo, której rozdzielczości trzeba
+  const [hiRes, setHiRes] = useState<boolean | null>(null)
+  // adresy, które się naprawdę wczytały (błąd nie trafia tutaj)
+  const [ready, setReady] = useState<ReadonlySet<string>>(() => new Set())
 
-  // rozdzielczość renderu dobrana do faktycznego rozmiaru na ekranie
-  useEffect(() => {
+  // rozdzielczość dobrana do rozmiaru na ekranie; zmienia się tylko w górę,
+  // żeby obrót telefonu albo zwężenie okna nie pobierały wszystkiego od nowa
+  useLayoutEffect(() => {
     const el = boxRef.current
     if (!el) return
-    const measure = () => setHiRes(el.clientWidth * (window.devicePixelRatio || 1) > 820)
+    const measure = () => {
+      const hi = el.clientWidth * (window.devicePixelRatio || 1) > 820
+      setHiRes((prev) => (prev === true ? true : hi))
+    }
     measure()
     if (typeof ResizeObserver === 'undefined') return
     const observer = new ResizeObserver(measure)
@@ -79,38 +86,54 @@ export function Building() {
     return () => observer.disconnect()
   }, [])
 
-  // najpierw bieżąca pora dnia, reszta w tle — suwak ma potem płynne przenikanie
+  // kolejność: klatki przelotu przy wejściu (świt → 10:30), potem reszta dnia
   useEffect(() => {
+    if (hiRes === null) return
     let cancelled = false
-    const { a } = framesFor(state.hour)
-    const order = [a, ...FRAME_HOURS.filter((h) => h !== a)]
+    const intro = [6, 7.5, 9, 10.5]
+    const order = [...intro, ...FRAME_HOURS.filter((h) => !intro.includes(h))]
     const next = (i: number) => {
       if (cancelled || i >= order.length) return
+      const url = frameUrl(order[i], hiRes)
       const img = new Image()
-      img.onload = img.onerror = () => {
+      img.onload = () => {
         if (cancelled) return
-        setLoaded((s) => new Set(s).add(order[i]))
-        next(i + 1)
+        // dekodujemy przed pokazaniem, żeby zmiana href nie dała pustej klatki
+        ;(img.decode ? img.decode().catch(() => undefined) : Promise.resolve()).then(() => {
+          if (cancelled) return
+          setReady((s) => new Set(s).add(url))
+          next(i + 1)
+        })
       }
-      img.src = frameUrl(order[i], hiRes)
+      img.onerror = () => {
+        if (!cancelled) next(i + 1)
+      }
+      img.src = url
     }
     next(0)
     return () => {
       cancelled = true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hiRes])
 
-  const want = framesFor(state.hour)
-  // render jeszcze się nie wczytał: pokaż najbliższy gotowy zamiast pustego miejsca
+  /** najlepszy wczytany obraz danej godziny: pełna rozdzielczość, a do czasu jej wczytania połowa */
+  const best = (h: number): string | null => {
+    const hi = frameUrl(h, true)
+    const lo = frameUrl(h, false)
+    if (hiRes && ready.has(hi)) return hi
+    if (ready.has(lo)) return lo
+    if (ready.has(hi)) return hi
+    return null
+  }
+  const want = framesFor(hour)
+  // render jeszcze się nie wczytał: najbliższa godzina, która już jest
   const nearest = (h: number) =>
-    loaded.has(h) || loaded.size === 0
-      ? h
-      : [...loaded].sort((x, y) => Math.abs(x - h) - Math.abs(y - h))[0]
+    best(h) ? h : [...FRAME_HOURS].filter((x) => best(x)).sort((x, y) => Math.abs(x - h) - Math.abs(y - h))[0]
   const fa = nearest(want.a)
   const fb = want.b
   const ft = want.t
-  const showB = fb !== fa && loaded.has(fb)
+  const urlA = fa === undefined ? null : best(fa)
+  const urlB = fb !== fa ? best(fb) : null
 
   const hovered = apartments.find((a) => a.id === state.hoveredId) ?? null
   const selected = apartments.find((a) => a.id === state.selectedId) ?? null
@@ -143,11 +166,9 @@ export function Building() {
 
             {/* rendery: bieżący i następny przenikają się wraz z godziną */}
             <g aria-hidden="true" className="building__renders">
-              {loaded.has(fa) && (
-                <image href={frameUrl(fa, hiRes)} x={VB.x} y={VB.y} width={VB.w} height={VB.h} />
-              )}
-              {showB && (
-                <image href={frameUrl(fb, hiRes)} x={VB.x} y={VB.y} width={VB.w} height={VB.h} opacity={ft} />
+              {urlA && <image key={fa} href={urlA} x={VB.x} y={VB.y} width={VB.w} height={VB.h} />}
+              {urlB && (
+                <image key={fb} href={urlB} x={VB.x} y={VB.y} width={VB.w} height={VB.h} opacity={ft} />
               )}
             </g>
 
@@ -254,7 +275,7 @@ export function Building() {
               })}
           </svg>
 
-          {!loaded.has(fa) && <span className="building__loading" aria-hidden="true" />}
+          {!urlA && <span className="building__loading" aria-hidden="true" />}
         </div>
 
         {/* szklana karta: co jest pod kursorem albo co jest wybrane */}

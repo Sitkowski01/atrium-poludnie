@@ -11,21 +11,36 @@ import { APARTMENTS } from '../domain/data'
 import { applyFilters, defaultFilters, limitsOf, sortApartments } from '../domain/filter'
 import type { Apartment, Filters, Limits, SortKey } from '../domain/types'
 
-export interface State {
+interface FullState {
   filters: Filters
   sort: SortKey
   /** pora dnia dla symulacji słońca, 5..21 */
   hour: number
+  /** użytkownik sam ustawił godzinę albo otworzył mieszkanie: przelot przy wejściu ma się zatrzymać */
+  introCancelled: boolean
   hoveredId: string | null
   selectedId: string | null
   favourites: string[]
+}
+
+/**
+ * Stan bez godziny. Godzina zmienia się co klatkę (przelot słońca, odtwarzanie dnia),
+ * więc ma osobny kontekst — inaczej każdy krok przerysowywałby listę i filtry.
+ */
+export type State = Omit<FullState, 'hour' | 'introCancelled'>
+
+export interface Hour {
+  hour: number
+  introCancelled: boolean
 }
 
 export type Action =
   | { type: 'setFilters'; patch: Partial<Filters> }
   | { type: 'resetFilters' }
   | { type: 'setSort'; sort: SortKey }
-  | { type: 'setHour'; hour: number }
+  /** byUser: ruch suwaka, preset, odtwarzanie — przerywa przelot przy wejściu */
+  | { type: 'setHour'; hour: number; byUser?: boolean }
+  | { type: 'cancelIntro' }
   | { type: 'hover'; id: string | null }
   | { type: 'select'; id: string | null }
   | { type: 'toggleFavourite'; id: string }
@@ -46,7 +61,7 @@ function loadFavourites(): string[] {
   }
 }
 
-function reducer(state: State, action: Action): State {
+function reducer(state: FullState, action: Action): FullState {
   switch (action.type) {
     case 'setFilters':
       return { ...state, filters: { ...state.filters, ...action.patch } }
@@ -54,12 +69,22 @@ function reducer(state: State, action: Action): State {
       return { ...state, filters: defaultFilters(LIMITS) }
     case 'setSort':
       return { ...state, sort: action.sort }
-    case 'setHour':
-      return state.hour === action.hour ? state : { ...state, hour: action.hour }
+    case 'setHour': {
+      const introCancelled = state.introCancelled || Boolean(action.byUser)
+      return state.hour === action.hour && introCancelled === state.introCancelled
+        ? state
+        : { ...state, hour: action.hour, introCancelled }
+    }
+    case 'cancelIntro':
+      return state.introCancelled ? state : { ...state, introCancelled: true }
     case 'hover':
       return state.hoveredId === action.id ? state : { ...state, hoveredId: action.id }
     case 'select':
-      return state.selectedId === action.id ? state : { ...state, selectedId: action.id }
+      if (state.selectedId === action.id) return state
+      // otwarcie mieszkania kończy przelot; zamknięcie czyści najechanie (na dotyku nie przychodzi mouseleave)
+      return action.id
+        ? { ...state, selectedId: action.id, introCancelled: true }
+        : { ...state, selectedId: null, hoveredId: null }
     case 'toggleFavourite': {
       const has = state.favourites.includes(action.id)
       return {
@@ -85,16 +110,27 @@ export interface Store {
 }
 
 const Ctx = createContext<Store | null>(null)
+const HourCtx = createContext<Hour | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, undefined, () => ({
+  const [full, dispatch] = useReducer(reducer, undefined, () => ({
     filters: defaultFilters(LIMITS),
     sort: 'price-asc' as SortKey,
     hour: 10,
+    introCancelled: false,
     hoveredId: null,
     selectedId: null,
     favourites: loadFavourites(),
   }))
+  const { filters, sort, hoveredId, selectedId, favourites } = full
+  const state = useMemo<State>(
+    () => ({ filters, sort, hoveredId, selectedId, favourites }),
+    [filters, sort, hoveredId, selectedId, favourites],
+  )
+  const hour = useMemo<Hour>(
+    () => ({ hour: full.hour, introCancelled: full.introCancelled }),
+    [full.hour, full.introCancelled],
+  )
 
   useEffect(() => {
     try {
@@ -119,7 +155,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [state, visible, visibleIds, selected],
   )
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
+  return (
+    <Ctx.Provider value={value}>
+      <HourCtx.Provider value={hour}>{children}</HourCtx.Provider>
+    </Ctx.Provider>
+  )
+}
+
+/** pora dnia; używają jej tylko komponenty, które naprawdę ją pokazują */
+export function useHour(): Hour {
+  const h = useContext(HourCtx)
+  if (!h) throw new Error('useHour poza StoreProvider')
+  return h
 }
 
 export function useStore(): Store {

@@ -1,13 +1,13 @@
 // Z renderów wnętrz przygotowuje obrazy dla panelu mieszkania (wymaga ffmpeg):
 //   public/okladki/<id>.webp — płaskie ujęcie salonu w stronę okna (okładka panelu)
 //   public/rzut3d/<id>.webp  — makieta mieszkania z góry, przycięta do obrysu
-// Uruchomienie z katalogu projektu: node blender/okladki.mjs [katalog panoram, domyślnie blender/render/pano2]
+// Uruchomienie z katalogu projektu: node blender/okladki.mjs [panoramy, domyślnie blender/render/pano3] [makiety, domyślnie blender/render/gora3]
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
-const PANO = process.argv[2] ?? 'blender/render/pano2'
-const TOP = 'blender/render/gora'
+const PANO = process.argv[2] ?? 'blender/render/pano3'
+const TOP = process.argv[3] ?? 'blender/render/gora3'
 const plans = JSON.parse(readFileSync('blender/plany.json', 'utf8'))
 mkdirSync('public/okladki', { recursive: true })
 mkdirSync('public/rzut3d', { recursive: true })

@@ -351,6 +351,7 @@ for l in plan["links"]:
 
 # otwory zapamiętane per pomieszczenie i strona: listwy przypodłogowe je omijają
 GAPS = {}  # (indeks pomieszczenia, 'l'|'r'|'u'|'d') -> [(od, do)]
+PASSAGES = []  # (indeks pomieszczenia, strona, od, do): przed nimi meble nie mogą stać
 
 
 def gap(room, side, a, b):
@@ -411,6 +412,8 @@ for i, a in enumerate(ROOMS):
         if opening:
             gap(a, side_of(a, kind, c), opening[0], opening[1])
             gap(b, side_of(b, kind, c), opening[0], opening[1])
+            PASSAGES.append((INDEX[id(a)], side_of(a, kind, c), opening[0], opening[1]))
+            PASSAGES.append((INDEX[id(b)], side_of(b, kind, c), opening[0], opening[1]))
         (wall_v if kind == "v" else wall_h)(c, t0, t1, T_IN, M["wall"], opening)
 
 # ściany zewnętrzne i wejście
@@ -420,6 +423,7 @@ hol = next(r for r in ROOMS if r["kind"] == "hol")
 entry = hol["x"] + hol["w"] / 2
 wall_h(0, 0, W, T_OUT, M["wall_out"], (entry - DOOR_W / 2, entry + DOOR_W / 2, 0, DOOR_H))
 gap(hol, "u", entry - DOOR_W / 2, entry + DOOR_W / 2)
+PASSAGES.append((INDEX[id(hol)], "u", entry - DOOR_W / 2, entry + DOOR_W / 2))
 pbox("drzwi wejsciowe", entry - DOOR_W / 2, -0.06, DOOR_W, 0.07, 0, DOOR_H, M["front"], 0.005)
 pbox("klamka", entry + DOOR_W / 2 - 0.18, 0.01, 0.14, 0.03, 1.02, 0.025, M["brass"], 0.008)
 
@@ -614,8 +618,9 @@ def dining_chair(x, y, facing):
 
 def furnish_salon(r):
     x, y, w, h = r["x"], r["y"], r["w"], r["h"]
-    sy = y + h * 0.5
     length = min(2.4, h - 1.6)
+    # sofa nie może wchodzić w strefę przed przejściem przy górnej ścianie
+    sy = max(y + h * 0.5, inner(r)[1] + 0.95 + length / 2)
     sofa(inner(r)[0] + 0.02, sy - length / 2, length)
     pbox("dywan", x + 0.75, sy - 1.25, min(2.4, w - 1.3), 2.5, 0.0, 0.012, M["rug"], 0.004)
     model("coffee_table_round_01", x + 1.75, sy, 0, height=0.4)
@@ -655,15 +660,16 @@ def furnish_bedroom(r):
         artwork(l + 0.002, t + 1.3, "y", "l", 1.3, 0.9, 0.6, "art1")
         return
     if r["label"] == "Gabinet" or min(w, h) < 2.3:
-        dw = min(1.4, w - 0.4)
-        pbox("biurko", x + 0.2, y + h - 0.85, dw, 0.65, 0.72, 0.035, M["oak"], 0.008)
-        for dx in (0.03, dw - 0.07):
-            pbox("noga biurka", x + 0.2 + dx, y + h - 0.82, 0.04, 0.59, 0, 0.72, M["black"])
-        dining_chair(x + 0.2 + dw / 2, y + h - 1.25, "u")
-        model("desk_lamp_arm_01", x + 0.4, y + h - 0.55, 30, height=0.5, z=0.755)
-        model("wooden_display_shelves_01", x + w - 0.3, y + 0.75, -90, height=1.4)
-        books(x + 0.6, y + h - 0.82, 0.4, 0.755, 0.18)
-        model("potted_plant_01", x + w - 0.35, y + h - 0.4, 0, height=0.8)
+        # biurko przy ścianie zewnętrznej, z dala od drzwi; regał przy przeciwległej
+        l, t, rr, b = inner(r)
+        dd = min(1.3, b - t - 0.3)
+        pbox("biurko", rr - 0.65, t + 0.15, 0.65, dd, 0.72, 0.035, M["oak"], 0.008)
+        for dy in (0.03, dd - 0.07):
+            pbox("noga biurka", rr - 0.62, t + 0.15 + dy, 0.59, 0.04, 0, 0.72, M["black"])
+        dining_chair(rr - 0.95, t + 0.15 + dd / 2, "u")
+        model("desk_lamp_arm_01", rr - 0.3, t + 0.35, 120, height=0.5, z=0.755)
+        books(rr - 0.6, t + 0.15 + dd - 0.45, 0.4, 0.755, 0.18)
+        model("wooden_display_shelves_01", l + 0.25, t + 0.7, 90, height=1.4)
         return
     bw = 1.6 if w >= 2.6 else 1.4
     by = y + h * 0.58 - bw / 2
@@ -716,9 +722,9 @@ def furnish_kitchen(r):
     pbox("uchwyt", x + w - 0.73, top + 0.63, 0.012, 0.012, 0.9, 0.9, M["black"])
     pbox("pas swiatla", x + 0.14, top + 0.25, run - 0.04, 0.02, 1.53, 0.01, M["lampwarm"])
     # stół z krzesłami i lampy nad nim
-    if h >= 2.2 and w >= 2.0:
+    if h >= 2.2 and w >= 3.0:  # w wąskiej kuchni stół zastawiłby drzwi; je się w salonie
         tw = min(1.6, w - 1.0)
-        tx, ty = x + (w - tw) / 2 - 0.2, y + h - 1.0
+        tx, ty = x + (w - tw) / 2 + 0.05, y + h - 1.0
         pbox("stol blat", tx, ty, tw, 0.85, 0.72, 0.04, M["oak"], 0.01)
         for dx in (0.08, tw - 0.14):
             pbox("stol noga", tx + dx, ty + 0.1, 0.06, 0.65, 0, 0.72, M["oak"], 0.006)
@@ -731,8 +737,17 @@ def furnish_kitchen(r):
 
 
 def furnish_bath(r):
+    """łazienka układana względem drzwi: drzwi zawsze w bocznej ścianie (z holu),
+    kabina i grzejnik w kącie dalekim od wejścia; dla drzwi po lewej układ jest lustrzany"""
     x, y, w, h = r["x"], r["y"], r["w"], r["h"]
     inner = T_IN / 2
+    index = INDEX[id(r)]
+    mirror_x = any(p[0] == index and p[1] == "l" for p in PASSAGES)
+
+    def X(lx, width=0.0):
+        """lokalne x (drzwi po prawej) -> x rzutu, z odbiciem gdy drzwi są po lewej"""
+        return x + lx if not mirror_x else x + w - lx - width
+
     # płytki na ścianach do 2,1 m
     for (bx, by, bw, bd) in (
         (x + inner, y + inner, w - 2 * inner, 0.01),
@@ -741,18 +756,24 @@ def furnish_bath(r):
         (x + w - inner - 0.01, y + inner, 0.01, h - 2 * inner),
     ):
         pbox("plytki", bx, by, bw, bd, 0, 2.1, M["bath_wall"])
-    # kabina prysznicowa w rogu, szklana ścianka
-    sw = min(0.95, w * 0.45)
-    pbox("brodzik", x + w - inner - sw, y + inner, sw, 0.95, 0, 0.03, M["bath_floor"], 0.004)
-    glass = pbox("scianka", x + w - inner - sw - 0.01, y + inner, 0.01, 0.95, 0.03, 1.95, M["glass"])
-    glass.visible_shadow = False
-    pbox("profil", x + w - inner - sw - 0.015, y + inner + 0.95, 0.02, 0.02, 0.03, 1.95, M["black"])
-    cx, cy = P(x + w - inner - sw / 2, y + inner + 0.05)
-    cylinder("deszczownica", cx, cy - 0.22, 2.12, 0.14, 0.01, M["black"])
-    pbox("ramie", x + w - inner - sw / 2 - 0.01, y + inner, 0.02, 0.25, 2.12, 0.02, M["black"])
-    # szafka podwieszana z umywalką nablatową i okrągłe lustro z podświetleniem
-    vw = min(0.9, w - sw - 0.4)
-    vx = x + inner + 0.1
+    # kabina w dolnym rogu po stronie przeciwnej do drzwi, szklana ścianka od strony pokoju
+    sw = min(0.9, w * 0.42)
+    sd = min(0.95, h * 0.42)
+    sy = y + h - inner - sd
+    shower = w >= 1.9  # w łazience węższej niż 1,9 m kabina zablokowałaby wejście
+    if not shower:
+        sw = 0.0
+    if shower:
+      pbox("kabina brodzik", X(inner, sw), sy, sw, sd, 0, 0.03, M["bath_floor"], 0.004)
+      glass = pbox("kabina scianka", X(inner + sw, 0.01), sy, 0.01, sd, 0.03, 1.95, M["glass"])
+      glass.visible_shadow = False
+      pbox("kabina profil", X(inner + sw - 0.005, 0.02), sy - 0.02, 0.02, 0.02, 0.03, 1.95, M["black"])
+      cx, cy = P(X(inner + sw / 2), y + h - inner - 0.3)
+      cylinder("kabina deszczownica", cx, cy, 2.12, 0.14, 0.01, M["black"])
+      pbox("kabina ramie", X(inner + sw / 2 - 0.01, 0.02), y + h - inner - 0.3, 0.02, 0.3, 2.12, 0.02, M["black"])
+    # szafka podwieszana z umywalką i okrągłym lustrem przy górnej ścianie, od strony kabiny
+    vw = min(0.9, w - 1.2)
+    vx = X(inner + 0.1, vw)
     pbox("szafka", vx, y + inner, vw, 0.46, 0.45, 0.4, M["oak"], 0.006)
     pbox("blat umywalki", vx, y + inner, vw, 0.48, 0.85, 0.03, M["marble"], 0.004)
     cx, cy = P(vx + vw / 2, y + inner + 0.25)
@@ -761,16 +782,28 @@ def furnish_bath(r):
     cx2, cy2 = P(vx + vw / 2, y + inner + 0.012)
     bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=0.32, depth=0.02, location=(cx2, cy2 - 0.01, 1.55))
     mirror = bpy.context.active_object
+    mirror.name = "lustro lazienka"
     mirror.rotation_euler = (math.radians(90), 0, 0)
     mirror.data.materials.append(M["mirror"])
     bpy.ops.mesh.primitive_torus_add(major_radius=0.325, minor_radius=0.008, location=(cx2, cy2 - 0.005, 1.55), rotation=(math.radians(90), 0, 0))
+    bpy.context.active_object.name = "lustro led"
     bpy.context.active_object.data.materials.append(M["lampwarm"])
-    # WC podwieszane i dodatki
-    pbox("wc", x + inner + 0.1, y + h - inner - 0.55, 0.38, 0.55, 0.38, 0.12, M["ceramic"], 0.05)
-    pbox("wc", x + inner + 0.12, y + h - inner - 0.2, 0.34, 0.2, 0.38, 0.4, M["ceramic"], 0.03)
-    model("wicker_basket_01", x + w * 0.55, y + h - inner - 0.3, 0, height=0.3)
-    pbox("grzejnik", x + w - inner - 0.04, y + h - inner - 0.9, 0.03, 0.55, 0.6, 1.1, M["black"], 0.006)
-    pbox("recznik", x + w - inner - 0.08, y + h - inner - 0.82, 0.04, 0.4, 0.95, 0.6, M["linen"], 0.01)
+    # WC podwieszane przy górnej ścianie, po stronie drzwi (drzwi są niżej, w ścianie bocznej)
+    if shower:
+        wx = X(w - inner - 0.5, 0.38)
+        pbox("wc", wx, y + inner + 0.14, 0.38, 0.44, 0.38, 0.12, M["ceramic"], 0.05)
+        pbox("wc", wx + 0.02, y + inner, 0.34, 0.2, 0.38, 0.4, M["ceramic"], 0.03)
+    else:
+        # mała łazienka: WC pod ścianą naprzeciw drzwi, w dolnym rogu
+        wx = X(inner, 0.2)
+        pbox("wc", X(inner + 0.2, 0.44), y + h - inner - 0.7, 0.44, 0.38, 0.38, 0.12, M["ceramic"], 0.05)
+        pbox("wc", wx, y + h - inner - 0.68, 0.2, 0.34, 0.38, 0.4, M["ceramic"], 0.03)
+    # grzejnik z ręcznikiem na ścianie przeciwnej do drzwi, między szafką a kabiną
+    gy = y + inner + 0.6
+    if sy - gy > 0.6:
+        pbox("grzejnik", X(inner, 0.03), gy, 0.03, 0.55, 0.6, 1.1, M["black"], 0.006)
+        pbox("recznik", X(inner + 0.03, 0.04), gy + 0.08, 0.04, 0.4, 0.95, 0.6, M["linen"], 0.01)
+    model("wicker_basket_01", X(w - inner - 0.3), y + h - inner - 0.3, 0, height=0.3)
 
 
 def furnish_hall(r):
@@ -780,12 +813,17 @@ def furnish_hall(r):
         for k in range(2):
             artwork(x + 0.6 + k * 1.3, y + T_IN / 2 + 0.002, "x", "u", 1.25, 0.8, 0.6, "art1" if k else "art2")
         return
-    # szafa wnękowa przy wejściu, ławka, lustro
-    ww = min(1.2, h - 0.5)
-    pbox("szafa", x + T_IN / 2, y + 0.3, 0.6, ww, 0, 2.4, M["white"], 0.004)
-    pbox("uchwyt", x + T_IN / 2 + 0.6, y + 0.3 + ww / 2 - 0.03, 0.012, 0.012, 0.9, 0.5, M["brass"])
-    pbox("lawka", x + w - 0.45, y + h * 0.4, 0.38, min(1.0, h * 0.4), 0.0, 0.45, M["oak"], 0.01)
-    pbox("lustro", x + w - T_IN / 2 - 0.02, y + h * 0.4 + 0.05, 0.015, 0.5, 0.6, 1.4, M["mirror"])
+    # szafa i ławka tylko na ścianach bez drzwi; gdy takich nie ma, hol zostaje pusty
+    index = INDEX[id(r)]
+    l, t, rr, b = inner(r)
+    free = [side for side in ("l", "r") if not GAPS.get((index, side))]
+    ww = min(1.2, h - 0.6)
+    if "l" in free:
+        pbox("szafa", l, t + 0.3, 0.6, ww, 0, 2.4, M["white"], 0.004)
+        pbox("uchwyt", l + 0.6, t + 0.3 + ww / 2 - 0.03, 0.012, 0.012, 0.9, 0.5, M["brass"])
+    if "r" in free:
+        pbox("lawka", rr - 0.4, t + h * 0.35, 0.38, min(1.0, h * 0.4), 0.0, 0.45, M["oak"], 0.01)
+        pbox("lustro", rr - 0.02, t + h * 0.35 + 0.05, 0.015, 0.5, 0.6, 1.4, M["mirror"])
     pbox("wycieraczka", entry - 0.45, y + 0.12, 0.9, 0.5, 0, 0.012, M["boucle_dark"], 0.004)
 
 
@@ -794,6 +832,70 @@ for r in ROOMS:
     FURNISH[r["kind"]](r)
 for (r, o0, o1, zb, zt) in WINDOWS:
     curtains(r, o0, o1, zt)
+
+# ---------- kontrola kolizji: przejścia i kamery muszą być wolne ----------
+STRUCTURE = ("sciana", "nadproze", "parapet", "podloga", "sufit", "listwa", "oscieznica", "skrzydlo", "klamka",
+             "drzwi wejsciowe", "szyba", "rama", "zaslona", "karnisz", "plytki", "oczko", "balkon", "deski",
+             "balustrada", "porecz", "ziemia", "obraz", "wycieraczka", "dywan", "chodnik", "pas swiatla")
+CLEAR = 0.9  # tyle wolnego miejsca przed drzwiami, w obu pomieszczeniach
+
+
+def keepouts():
+    zones = []
+    for index, side, a, b in PASSAGES:
+        r = PLAN[index]
+        l, t, rr, bb = inner(r)
+        # w małych pokojach strefa przed drzwiami jest płytsza, ale zawsze co najmniej 60 cm
+        CLEAR = max(0.6, min(0.9, 0.42 * ((rr - l) if side in ("l", "r") else (bb - t))))
+        if side == "u":
+            zones.append((a, t, b, t + CLEAR, 0.0, 2.1))
+        elif side == "d":
+            zones.append((a, bb - CLEAR, b, bb, 0.0, 2.1))
+        elif side == "l":
+            zones.append((l, a, l + CLEAR, b, 0.0, 2.1))
+        else:
+            zones.append((rr - CLEAR, a, rr, b, 0.0, 2.1))
+    for i, v in enumerate(plan["views"]):
+        if PLAN[i]["kind"] == "balkon":
+            continue
+        # walec wokół oka kamery: nic wyższego niż 1,2 m nie może tu stać
+        zones.append((v["x"] - 0.25, v["y"] - 0.25, v["x"] + 0.25, v["y"] + 0.25, 1.3, 1.9))
+    return zones
+
+
+def plan_bounds(objs):
+    pts = [o.matrix_world @ Vector(c) for o in objs if o.type == "MESH" for c in o.bound_box]
+    if not pts:
+        return None
+    xs = [p.x for p in pts]
+    ys = [-p.y for p in pts]  # świat -> rzut
+    zs = [p.z for p in pts]
+    return min(xs), min(ys), max(xs), max(ys), min(zs), max(zs)
+
+
+def overlaps(bb, zone):
+    x0, y0, x1, y1, z0, z1 = bb
+    a0, b0, a1, b1, c0, c1 = zone
+    m = 0.06  # dotknięcie krawędzią to jeszcze nie kolizja
+    return x0 < a1 - m and x1 > a0 + m and y0 < b1 - m and y1 > b0 + m and z0 < c1 and z1 > c0
+
+
+bpy.context.view_layer.update()
+ZONES = keepouts()
+removed = []
+groups = []
+for o in list(scene.objects):
+    if o.parent is None and o.type == "EMPTY" and o.name.startswith("model "):
+        groups.append((o.name, [o] + list(o.children_recursive)))
+    elif o.parent is None and o.type == "MESH" and not o.name.startswith(STRUCTURE):
+        groups.append((o.name, [o]))
+for name, objs in groups:
+    bb = plan_bounds(objs)
+    if bb and any(overlaps(bb, z) for z in ZONES):
+        removed.append(name)
+        for o in objs:
+            bpy.data.objects.remove(o, do_unlink=True)
+print("usuniete z przejsc i miejsc kamery:", ", ".join(removed) if removed else "nic")
 
 if BALCONY:
     b = BALCONY
@@ -936,8 +1038,12 @@ for i, r in enumerate(PLAN):
     px, py = P(v["x"], v["y"])
     cam.location = (px, py, 1.55 if r["kind"] != "balkon" else 1.5)
     path = os.path.join(OUT, SLOT, f"{i}.jpg")
-    if os.path.exists(path) and ONLY is None:
-        continue  # wznowienie przerwanego renderu
+    stamp = os.path.join(OUT, SLOT, f"{i}.json")
+    here = json.dumps({"x": round(v["x"], 4), "y": round(v["y"], 4), "w": PANO_W})
+    if ONLY is None and os.path.exists(path) and os.path.exists(stamp) and open(stamp, encoding="utf-8").read() == here:
+        continue  # ta sama panorama z tego samego miejsca już jest
     scene.render.filepath = path
     bpy.ops.render.render(write_still=True)
+    with open(stamp, "w", encoding="utf-8") as fh:
+        fh.write(here)
 print("gotowe")

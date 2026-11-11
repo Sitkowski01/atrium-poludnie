@@ -9,14 +9,17 @@ import { StoreProvider } from './state/store'
 export default function App() {
   return (
     <StoreProvider>
+      {/* pierwszy przystanek Tab: bez niego do bryły dochodzi się przez całą listę */}
+      <a className="btn skip-link" href="#budynek">
+        Przejdź do bryły budynku
+      </a>
       <div className="topbar">
         <a className="topbar__logo" href="#top">
           Atrium <em>Południe</em>
         </a>
         <nav className="topbar__nav" aria-label="Sekcje strony">
           <a href="#mieszkania">Mieszkania</a>
-          <a href="#mieszkania">Spacer 360°</a>
-          <a href="#mieszkania">Światło</a>
+          <a href="#budynek">Budynek</a>
         </nav>
         <a className="btn btn--outline topbar__cta" href="#mieszkania">
           Wybierz <span className="topbar__cta-long">mieszkanie</span>
@@ -33,7 +36,7 @@ export default function App() {
           <FilterBar />
           <ApartmentList />
         </div>
-        <section className="stage__scene" aria-label="Bryła budynku i pora dnia">
+        <section className="stage__scene" id="budynek" tabIndex={-1} aria-label="Bryła budynku i pora dnia">
           <Building />
           <SunControl />
         </section>

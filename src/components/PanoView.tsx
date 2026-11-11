@@ -58,22 +58,31 @@ void main() {
 }`
 
 interface Scene {
-  gl: WebGLRenderingContext
+  gl: WebGLRenderingContext | WebGL2RenderingContext
   uniforms: Record<'res' | 'yaw' | 'pitch' | 'focal', WebGLUniformLocation | null>
+  /** WebGL2 albo tekstura o wymiarach potęgi dwójki: wolno zawijać w poziomie */
+  webgl2: boolean
+  maxTexture: number
 }
 
 function createScene(canvas: HTMLCanvasElement): Scene | null {
-  const gl = canvas.getContext('webgl', { antialias: false, alpha: false })
-  if (!gl) return null
+  // WebGL2 pozwala zawijać tekstury o dowolnych wymiarach (panoramy mają 2560 × 1280)
+  const gl2 = canvas.getContext('webgl2', { antialias: false, alpha: false })
+  const gl = gl2 ?? canvas.getContext('webgl', { antialias: false, alpha: false })
+  if (!gl || gl.isContextLost()) return null
   const compile = (type: number, source: string) => {
-    const shader = gl.createShader(type)!
+    const shader = gl.createShader(type)
+    if (!shader) return null
     gl.shaderSource(shader, source)
     gl.compileShader(shader)
-    return shader
+    return gl.getShaderParameter(shader, gl.COMPILE_STATUS) ? shader : null
   }
-  const program = gl.createProgram()!
-  gl.attachShader(program, compile(gl.VERTEX_SHADER, VERTEX))
-  gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FRAGMENT))
+  const vs = compile(gl.VERTEX_SHADER, VERTEX)
+  const fs = compile(gl.FRAGMENT_SHADER, FRAGMENT)
+  const program = gl.createProgram()
+  if (!vs || !fs || !program) return null
+  gl.attachShader(program, vs)
+  gl.attachShader(program, fs)
   gl.linkProgram(program)
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return null
   gl.useProgram(program)
@@ -83,13 +92,13 @@ function createScene(canvas: HTMLCanvasElement): Scene | null {
   gl.enableVertexAttribArray(a)
   gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0)
   gl.bindTexture(gl.TEXTURE_2D, gl.createTexture())
-  // panorama ma wymiary będące potęgą dwójki, więc może się zawijać w poziomie
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
   return {
     gl,
+    webgl2: Boolean(gl2),
+    maxTexture: gl.getParameter(gl.MAX_TEXTURE_SIZE) as number,
     uniforms: {
       res: gl.getUniformLocation(program, 'res'),
       yaw: gl.getUniformLocation(program, 'yaw'),
@@ -97,6 +106,29 @@ function createScene(canvas: HTMLCanvasElement): Scene | null {
       focal: gl.getUniformLocation(program, 'focal'),
     },
   }
+}
+
+const isPow2 = (n: number) => (n & (n - 1)) === 0
+
+/** Wgrywa panoramę; za dużą zmniejsza przez canvas 2D, zawijanie tylko tam, gdzie wolno. */
+function upload(scene: Scene, image: HTMLImageElement) {
+  const { gl } = scene
+  let source: TexImageSource = image
+  let w = image.naturalWidth
+  let h = image.naturalHeight
+  if (w > scene.maxTexture) {
+    const k = scene.maxTexture / w
+    const c = document.createElement('canvas')
+    c.width = Math.floor(w * k)
+    c.height = Math.floor(h * k)
+    c.getContext('2d')?.drawImage(image, 0, 0, c.width, c.height)
+    source = c
+    w = c.width
+    h = c.height
+  }
+  const wrap = scene.webgl2 || (isPow2(w) && isPow2(h)) ? gl.REPEAT : gl.CLAMP_TO_EDGE
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap)
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, source)
 }
 
 /**
@@ -116,7 +148,8 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
   const raf = useRef(0)
   const drag = useRef<{ x: number; y: number; yaw: number; pitch: number; moved: boolean } | null>(null)
   const justDragged = useRef(false)
-  const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading')
+  const [status, setStatus] = useState<'loading' | 'ready' | 'failed' | 'nogl'>('loading')
+  const [focusedKey, setFocusedKey] = useState<string | null>(null)
   const [size, setSize] = useState({ w: 0, h: 0 })
   const [, setFrame] = useState(0) // odświeża pozycje punktów przejść w trakcie animacji
 
@@ -136,29 +169,49 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
   useEffect(() => {
     const el = canvas.current
     if (!el) return
-    const created = createScene(el)
-    scene.current = created
-    if (!created) {
-      setStatus('failed')
-      return
-    }
     let cancelled = false
-    const image = new Image()
-    image.onload = () => {
-      if (cancelled) return
-      const { gl } = created
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image)
+    let image: HTMLImageElement | null = null
+    const setup = () => {
+      const created = createScene(el)
+      scene.current = created
+      if (!created) {
+        setStatus('nogl')
+        return false
+      }
+      return true
+    }
+    if (!setup()) return
+    const onLoad = () => {
+      if (cancelled || !scene.current || !image) return
+      upload(scene.current, image)
       ready.current = true
       setStatus('ready')
       draw()
     }
+    image = new Image()
+    image.onload = onLoad
     image.onerror = () => !cancelled && setStatus('failed')
     image.src = src
+    // telefon może odebrać kontekst (np. po powrocie z innej aplikacji): odtwarzamy scenę i teksturę
+    const lost = (e: Event) => {
+      e.preventDefault()
+      ready.current = false
+      setStatus('loading')
+    }
+    const restored = () => {
+      if (cancelled || !setup()) return
+      if (image?.complete && image.naturalWidth) onLoad()
+    }
+    el.addEventListener('webglcontextlost', lost)
+    el.addEventListener('webglcontextrestored', restored)
     return () => {
       cancelled = true
       ready.current = false
       cancelAnimationFrame(raf.current)
-      created.gl.getExtension('WEBGL_lose_context')?.loseContext()
+      el.removeEventListener('webglcontextlost', lost)
+      el.removeEventListener('webglcontextrestored', restored)
+      // bez loseContext(): StrictMode uruchamia efekt drugi raz na tym samym canvasie,
+      // a utracony kontekst nie dałby się już użyć; canvas i tak znika razem z komponentem
       scene.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -259,10 +312,16 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
     >
-      <canvas ref={canvas} className="pano__canvas" role="img" aria-label={alt} />
+      <canvas
+        ref={canvas}
+        className="pano__canvas"
+        role={status === 'ready' ? 'img' : undefined}
+        aria-label={status === 'ready' ? alt : undefined}
+        aria-hidden={status === 'ready' ? undefined : true}
+      />
       {status === 'ready' &&
         hotspots.map((h) => {
-          const at = project(h.angle, h.distance)
+          const at = project(h.angle, h.distance) ?? (h.key === focusedKey ? { left: 24, top: size.h - 46 } : null)
           if (!at) return null
           return (
             <button
@@ -271,8 +330,11 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
               className="pano__spot"
               style={at}
               aria-label={`Przejdź do: ${h.label}`}
-              onClick={() => {
-                if (!justDragged.current) h.onGo()
+              onFocus={() => setFocusedKey(h.key)}
+              onBlur={() => setFocusedKey((k) => (k === h.key ? null : k))}
+              onClick={(e) => {
+                // e.detail === 0: Enter albo Spacja — wtedy wcześniejsze przeciąganie nie ma znaczenia
+                if (e.detail === 0 || !justDragged.current) h.onGo()
               }}
             >
               <span className="pano__spot-ring" aria-hidden="true">
@@ -292,6 +354,9 @@ export function PanoView({ src, yaw, pitch, animate, leaving, alt, hotspots, onL
           )
         })}
       {status === 'failed' && <p className="pano__missing">Tego widoku jeszcze nie ma</p>}
+      {status === 'nogl' && (
+        <p className="pano__missing">Ta przeglądarka nie wyświetla panoram 360°. Przejścia działają z listy pod spodem.</p>
+      )}
       {status === 'loading' && <span className="pano__loading" aria-hidden="true" />}
     </div>
   )

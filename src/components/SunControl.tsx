@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatHour } from '../domain/format'
 import { DAY_END, DAY_START } from '../domain/sun'
-import { useStore } from '../state/store'
+import { useHour, useStore } from '../state/store'
 import './SunControl.css'
 
 const PRESETS = [
@@ -15,32 +15,31 @@ const SPEED = 1.6
 
 export function SunControl() {
   const { state, dispatch } = useStore()
+  const { hour, introCancelled } = useHour()
   const [playing, setPlaying] = useState(false)
-  const hourRef = useRef(state.hour)
-  hourRef.current = state.hour
+  const hourRef = useRef(hour)
+  hourRef.current = hour
+  const cancelledRef = useRef(introCancelled)
+  cancelledRef.current = introCancelled
 
   useEffect(() => {
     if (!playing) return
     let raf = 0
     let last = performance.now()
     let h = hourRef.current
-    let sent = h
     const tick = (now: number) => {
-      // ktoś przesunął suwak w trakcie odtwarzania — jedziemy dalej od jego wartości
-      if (hourRef.current !== sent) h = hourRef.current
       h += ((now - last) / 1000) * SPEED
       last = now
       if (h > DAY_END) h = DAY_START
-      sent = Math.round(h * 20) / 20
-      dispatch({ type: 'setHour', hour: sent })
+      dispatch({ type: 'setHour', hour: Math.round(h * 20) / 20, byUser: true })
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [playing, dispatch])
 
-  // moment podpisu: przy wejściu słońce wschodzi i dochodzi do 10:00; każdy ruch użytkownika przerywa
-  const intro = useRef(0)
+  // moment podpisu: przy wejściu słońce wschodzi i dochodzi do 10:00; ruch użytkownika albo otwarcie
+  // mieszkania (introCancelled) przerywa. Kroki przelotu idą bez byUser, więc same siebie nie anulują.
   useEffect(() => {
     const reduce =
       typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -50,25 +49,22 @@ export function SunControl() {
     let raf = 0
     let t0 = 0
     const tick = (now: number) => {
+      if (cancelledRef.current) return
       if (!t0) t0 = now
       const p = Math.min(1, (now - t0) / 2600)
       const eased = 1 - (1 - p) ** 3
       dispatch({ type: 'setHour', hour: Math.round((from + (to - from) * eased) * 20) / 20 })
-      if (p < 1) intro.current = raf = requestAnimationFrame(tick)
-      else intro.current = 0
+      if (p < 1) raf = requestAnimationFrame(tick)
     }
     const start = window.setTimeout(() => {
-      intro.current = raf = requestAnimationFrame(tick)
+      if (cancelledRef.current) return
+      raf = requestAnimationFrame(tick)
     }, 700)
     return () => {
       window.clearTimeout(start)
       cancelAnimationFrame(raf)
     }
   }, [dispatch])
-  const stopIntro = () => {
-    if (intro.current) cancelAnimationFrame(intro.current)
-    intro.current = 0
-  }
 
   // otwarty panel zasłania przycisk zatrzymania, więc odtwarzanie kończy się samo
   const panelOpen = state.selectedId !== null
@@ -76,10 +72,9 @@ export function SunControl() {
     if (panelOpen) setPlaying(false)
   }, [panelOpen])
 
-  const setHour = (hour: number) => {
-    stopIntro()
+  const setHour = (next: number) => {
     setPlaying(false)
-    dispatch({ type: 'setHour', hour })
+    dispatch({ type: 'setHour', hour: next, byUser: true })
   }
 
   return (
@@ -88,7 +83,7 @@ export function SunControl() {
         type="button"
         className="btn sun-control__play"
         onClick={() => {
-          stopIntro()
+          dispatch({ type: 'cancelIntro' })
           setPlaying((p) => !p)
         }}
       >
@@ -105,15 +100,15 @@ export function SunControl() {
       <label className="sun-control__slider">
         <span className="sun-control__label">
           <span className="sun-control__caption">Pora dnia</span>
-          <strong>{formatHour(state.hour)}</strong>
+          <strong>{formatHour(hour)}</strong>
         </span>
         <input
           type="range"
           min={DAY_START}
           max={DAY_END}
           step={0.05}
-          value={state.hour}
-          aria-valuetext={formatHour(state.hour)}
+          value={hour}
+          aria-valuetext={formatHour(hour)}
           onChange={(e) => setHour(Number(e.target.value))}
         />
       </label>
@@ -124,7 +119,7 @@ export function SunControl() {
             key={p.label}
             type="button"
             className="chip"
-            aria-pressed={state.hour === p.hour}
+            aria-pressed={hour === p.hour}
             onClick={() => setHour(p.hour)}
           >
             {p.label}
