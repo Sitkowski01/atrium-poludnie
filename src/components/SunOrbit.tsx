@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { DAY_END, DAY_START, sunAt } from '../domain/sun'
 
 type P = [number, number]
@@ -40,31 +41,52 @@ function place(hour: number, cx: number, horizon: number, rx: number, ry: number
   }
 }
 
+const STEP = 0.2
+
+interface Sample {
+  h: number
+  p: P
+  behind: boolean
+}
+
+/** odcinki próbek po jednej stronie budynku; każdy domknięty pierwszą próbką z drugiej strony (bez przerwy na styku) */
+function runsOf(samples: readonly Sample[], want: boolean): P[][] {
+  const runs: P[][] = []
+  let run: P[] = []
+  samples.forEach((s, i) => {
+    if (s.behind === want) run.push(s.p)
+    else if (run.length) {
+      runs.push([...run, s.p])
+      run = []
+    }
+    if (i === samples.length - 1 && run.length) runs.push(run)
+  })
+  return runs
+}
+
 export function SunOrbit({ hour, layer, cx, horizon, rx, ry }: Props) {
   const want = layer === 'back'
-  const step = 0.2
-  // odcinki łuku po tej samej stronie budynku; „przebyte” do bieżącej godziny osobno
-  const track: P[][] = []
-  const passed: P[][] = []
-  let run: P[] = []
-  let done: P[] = []
-  for (let h = DAY_START; h <= DAY_END + 1e-6; h += step) {
-    const { p, behind } = place(h, cx, horizon, rx, ry)
-    if (behind === want) {
-      run.push(p)
-      if (h <= hour) done.push(p)
-    } else {
-      if (run.length) track.push([...run, p])
-      if (done.length) passed.push(done.length === run.length ? [...done, p] : done)
-      run = []
-      done = []
+  // próbki dnia i stały tor liczone raz, nie co klatkę (godzina zmienia się co klatkę przy odtwarzaniu)
+  const samples = useMemo<Sample[]>(() => {
+    const out: Sample[] = []
+    for (let i = 0; DAY_START + i * STEP <= DAY_END + 1e-9; i++) {
+      const h = DAY_START + i * STEP
+      const { p, behind } = place(h, cx, horizon, rx, ry)
+      out.push({ h, p, behind })
     }
-  }
-  if (run.length) track.push(run)
-  if (done.length) passed.push(done)
+    return out
+  }, [cx, horizon, rx, ry])
+  const track = useMemo(() => runsOf(samples, want), [samples, want])
   const d = (ps: P[]) => ps.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ')
 
-  const sun = place(hour, cx, horizon, rx, ry)
+  // przebyta część: próbki do bieżącej godziny, a na końcu dokładnie pozycja tarczy
+  const sunNow = place(hour, cx, horizon, rx, ry)
+  const before = samples.filter((s) => s.h <= hour + 1e-9)
+  const passed = runsOf(before, want)
+  const open = before.length > 0 && before[before.length - 1].behind === want && sunNow.behind === want
+  if (open && passed.length) passed[passed.length - 1].push(sunNow.p)
+
+  const sun = sunNow
   const showDisc = sun.behind === want && sun.elevation > -1
   const [sx, sy] = sun.p
   const glow = Math.max(0.35, Math.min(1, sun.elevation / 10))

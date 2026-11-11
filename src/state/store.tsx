@@ -22,7 +22,11 @@ interface FullState {
   selectedId: string | null
   favourites: string[]
   /** mieszkania podświetlone na bryle przez sekcję strony (typ, „kiedy jesteś w domu”); null = brak */
-  spotlight: Spotlight | null
+  /**
+   * Podświetlenia z rozdziałów jako stos: na bryle widać ostatnie dodane. Rozdział gasi tylko
+   * swoje, więc karta typu, która na chwilę nadpisze „Światło”, nie zostawi bryły pustej.
+   */
+  spotlights: readonly Spotlight[]
 }
 
 export interface Spotlight {
@@ -35,7 +39,10 @@ export interface Spotlight {
  * Stan bez godziny. Godzina zmienia się co klatkę (przelot słońca, odtwarzanie dnia),
  * więc ma osobny kontekst — inaczej każdy krok przerysowywałby listę i filtry.
  */
-export type State = Omit<FullState, 'hour' | 'introCancelled'>
+export type State = Omit<FullState, 'hour' | 'introCancelled' | 'spotlights'> & {
+  /** to, co widać na bryle: ostatnie podświetlenie ze stosu */
+  spotlight: Spotlight | null
+}
 
 export interface Hour {
   hour: number
@@ -95,11 +102,19 @@ function reducer(state: FullState, action: Action): FullState {
       return action.id
         ? { ...state, selectedId: action.id, introCancelled: true }
         : { ...state, selectedId: null, hoveredId: null }
-    case 'spotlight':
-      // dwa rozdziały mogą podświetlać naraz (zjechanie z karty typu po przewinięciu do „Światła”):
-      // gaszenie z właścicielem działa tylko na własne podświetlenie
-      if (action.spot === null && action.owner !== undefined && state.spotlight !== action.owner) return state
-      return state.spotlight === action.spot ? state : { ...state, spotlight: action.spot }
+    case 'spotlight': {
+      if (action.spot) {
+        // ustawienie: na wierzch stosu (bez duplikatu tego samego podświetlenia)
+        if (state.spotlights[state.spotlights.length - 1] === action.spot) return state
+        return { ...state, spotlights: [...state.spotlights.filter((s) => s !== action.spot), action.spot] }
+      }
+      // zgaszenie z właścicielem: tylko jego wpis; bez właściciela: wszystko
+      if (action.owner === undefined || action.owner === null) {
+        return state.spotlights.length ? { ...state, spotlights: [] } : state
+      }
+      const owner = action.owner
+      return state.spotlights.includes(owner) ? { ...state, spotlights: state.spotlights.filter((s) => s !== owner) } : state
+    }
     case 'toggleFavourite': {
       const has = state.favourites.includes(action.id)
       return {
@@ -136,9 +151,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     hoveredId: null,
     selectedId: null,
     favourites: loadFavourites(),
-    spotlight: null,
+    spotlights: [],
   }))
-  const { filters, sort, hoveredId, selectedId, favourites, spotlight } = full
+  const { filters, sort, hoveredId, selectedId, favourites, spotlights } = full
+  const spotlight = spotlights.length ? spotlights[spotlights.length - 1] : null
   const state = useMemo<State>(
     () => ({ filters, sort, hoveredId, selectedId, favourites, spotlight }),
     [filters, sort, hoveredId, selectedId, favourites, spotlight],

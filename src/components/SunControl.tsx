@@ -27,11 +27,21 @@ export function SunControl() {
     let raf = 0
     let last = performance.now()
     let h = hourRef.current
+    // dwie ostatnio wysłane wartości: render z poprzedniej klatki mógł jeszcze nie dojść
+    let sent: number | null = null
+    let prev: number | null = null
     const tick = (now: number) => {
+      // ktoś inny przestawił godzinę (np. pora dnia w „Kiedy jesteś w domu?”): oddajemy mu ją i stajemy
+      if (sent !== null && hourRef.current !== sent && hourRef.current !== prev) {
+        setPlaying(false)
+        return
+      }
       h += ((now - last) / 1000) * SPEED
       last = now
       if (h > DAY_END) h = DAY_START
-      dispatch({ type: 'setHour', hour: Math.round(h * 20) / 20, byUser: true })
+      prev = sent
+      sent = Math.round(h * 20) / 20
+      dispatch({ type: 'setHour', hour: sent, byUser: true })
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)

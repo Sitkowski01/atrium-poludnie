@@ -39,7 +39,8 @@ export function sunFrom(azimuth: number): string {
 /** Podpis pod suwakiem pory dnia, np. „słońce z południa · 55° nad horyzontem”. */
 export function sunCaption(hour: number): string {
   const sun = sunAt(hour)
-  if (sun.elevation <= 0) return hour < 12 ? 'słońce jeszcze nie wzeszło' : 'słońce już zaszło'
+  // zaokrąglone, bo sin(π) daje ok. 7e-15 zamiast 0 i o 21:00 wychodziło „0° nad horyzontem”
+  if (Math.round(sun.elevation) <= 0) return hour < 12 ? 'słońce jeszcze nie wzeszło' : 'słońce już zaszło'
   return `słońce ${sunFrom(sun.azimuth)} · ${Math.round(sun.elevation)}° nad horyzontem`
 }
 
