@@ -32,15 +32,26 @@ export interface Match {
  * Mieszkania, w których słońce wpada do salonu przez większość czasu, gdy użytkownik jest w domu.
  * Sprzedane pomijamy. Kolejność: najlepszy udział, potem cena. Brak pór = brak wyników.
  */
-export function matchMoments(apartments: readonly Apartment[], moments: readonly Moment[]): Match[] {
+export function matchMoments(
+  apartments: readonly Apartment[],
+  moments: readonly Moment[],
+  opts: { includeSold?: boolean } = {},
+): Match[] {
   const total = moments.reduce((s, m) => s + (m.to - m.from), 0)
   if (total <= 0) return []
   return apartments
-    .filter((a) => a.status !== 'sprzedane')
+    .filter((a) => opts.includeSold || a.status !== 'sprzedane')
     .map((a) => ({
       apartment: a,
       share: moments.reduce((s, m) => s + sunShare(a.facade, a.floor, m.from, m.to) * (m.to - m.from), 0) / total,
     }))
     .filter((m) => m.share >= MATCH_FROM)
     .sort((x, y) => y.share - x.share || x.apartment.price - y.apartment.price)
+}
+
+/** Brak wolnych dopasowań, ale takie mieszkania istnieją wśród sprzedanych. */
+export function onlySoldMatch(apartments: readonly Apartment[], moments: readonly Moment[]): boolean {
+  return (
+    matchMoments(apartments, moments).length === 0 && matchMoments(apartments, moments, { includeSold: true }).length > 0
+  )
 }
