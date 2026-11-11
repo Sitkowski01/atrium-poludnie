@@ -161,9 +161,10 @@ function TypeButton({
 
   const base = import.meta.env.BASE_URL
   const priceText = priceFrom == null ? 'wyprzedane' : `od ${formatPrice(priceFrom)}`
-  const label = `${info.name}, ${formatArea(area)}, ${priceText}${
+  const sunText = sun ? `słońce w salonie ${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez bezpośredniego słońca'
+  const label = `${info.name}, ${info.note}, ${formatArea(area)}, ${priceText}${
     priceFrom == null ? '' : `, ${freeLabel(free)}`
-  } — pokaż w wyszukiwarce`
+  }, ${sunText}${sun ? ' na 3. piętrze' : ''} — pokaż w wyszukiwarce`
 
   return (
     <button
@@ -203,14 +204,14 @@ function TypeButton({
         <img
           className="typecard__img typecard__img--base"
           src={`${base}rzut3d/s${slot}.webp`}
-          alt={info.alt3d}
+          alt=""
           loading="lazy"
           decoding="async"
         />
         <img
           className="typecard__img typecard__img--reveal"
           src={`${base}okladki/s${slot}.webp`}
-          alt={info.alt}
+          alt=""
           loading="lazy"
           decoding="async"
         />
@@ -232,9 +233,7 @@ function TypeButton({
         <span className="typecard__sun">
           <SunBar sun={sun} />
           <span className="typecard__sun-label">
-            {sun
-              ? `słońce w salonie ${formatHour(sun.from)}–${formatHour(sun.to)}`
-              : 'bez bezpośredniego słońca'}
+            {sun ? `${sunText} · 3. piętro` : sunText}
           </span>
         </span>
       </span>
