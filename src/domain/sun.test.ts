@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { sunAt, sunFrom } from './sun'
+import { sunAt, sunCaption, sunFrom } from './sun'
 
 describe('sunFrom — kierunek padania światła', () => {
   it('osiem kierunków głównych', () => {
@@ -45,5 +45,15 @@ describe('sunFrom — kierunek padania światła', () => {
     expect(sunFrom(sunAt(5).azimuth)).toBe('z północnego wschodu')
     expect(sunFrom(sunAt(13).azimuth)).toBe('z południa')
     expect(sunFrom(sunAt(21).azimuth)).toBe('z północnego zachodu')
+  })
+})
+
+describe('sunCaption — podpis pod suwakiem pory dnia', () => {
+  it('w dzień podaje kierunek i wysokość słońca', () => {
+    expect(sunCaption(13)).toBe('słońce z południa · 60° nad horyzontem')
+  })
+  it('przed wschodem i po zachodzie mówi to wprost', () => {
+    expect(sunCaption(4.5)).toBe('słońce jeszcze nie wzeszło')
+    expect(sunCaption(21.5)).toBe('słońce już zaszło')
   })
 })

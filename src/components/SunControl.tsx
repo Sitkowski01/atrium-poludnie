@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatHour } from '../domain/format'
-import { DAY_END, DAY_START } from '../domain/sun'
+import { DAY_END, DAY_START, sunCaption } from '../domain/sun'
 import { useHour, useStore } from '../state/store'
 import './SunControl.css'
 
@@ -108,9 +108,13 @@ export function SunControl() {
           max={DAY_END}
           step={0.05}
           value={hour}
-          aria-valuetext={formatHour(hour)}
+          aria-valuetext={`${formatHour(hour)}, ${sunCaption(hour)}`}
           onChange={(e) => setHour(Number(e.target.value))}
         />
+        {/* skąd pada światło o tej godzinie; czytnik dostaje to w aria-valuetext suwaka */}
+        <span className="sun-control__sun" aria-hidden="true">
+          {sunCaption(hour)}
+        </span>
       </label>
 
       <div className="sun-control__presets" role="group" aria-label="Szybki wybór pory dnia">

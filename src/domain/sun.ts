@@ -36,6 +36,13 @@ export function sunFrom(azimuth: number): string {
   return names[Math.round((((azimuth % 360) + 360) % 360) / 45) % 8]
 }
 
+/** Podpis pod suwakiem pory dnia, np. „słońce z południa · 55° nad horyzontem”. */
+export function sunCaption(hour: number): string {
+  const sun = sunAt(hour)
+  if (sun.elevation <= 0) return hour < 12 ? 'słońce jeszcze nie wzeszło' : 'słońce już zaszło'
+  return `słońce ${sunFrom(sun.azimuth)} · ${Math.round(sun.elevation)}° nad horyzontem`
+}
+
 /** Jak mocno elewacja jest oświetlona (0..1) — do cieniowania bryły. */
 export function facadeLight(facade: Facade, hour: number): number {
   const sun = sunAt(hour)
