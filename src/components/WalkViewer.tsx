@@ -147,7 +147,20 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
   }
 
   /** przejście przez drzwi: patrzysz dalej w kierunku, w którym szedłeś */
-  const through = (l: Link) => moveTo({ room: l.to, yaw: ANGLE[l.side] }, true)
+  /**
+   * Przez drzwi patrzysz dalej w stronę ruchu. W łazience od razu na umywalkę z lustrem:
+   * stoi przy górnej ścianie, w rogu przeciwnym do drzwi (tak układa ją blender/wnetrze.py).
+   */
+  const through = (l: Link) => {
+    const room = plan[l.to]
+    if (room.kind !== 'lazienka') return moveTo({ room: l.to, yaw: ANGLE[l.side] }, true)
+    const cam = viewpoint(plan, l.to, all)
+    // l.side to strona pomieszczenia, z którego wychodzisz: 'left' = drzwi w prawej ścianie łazienki
+    const tx = l.side === 'left' ? room.x + 0.65 : room.x + room.w - 0.65
+    const ty = room.y + 0.3
+    const yaw = (Math.atan2(tx - cam.x, -(ty - cam.y)) * 180) / Math.PI
+    return moveTo({ room: l.to, yaw }, true)
+  }
   const jump = (room: number) => {
     if (room !== view.room) moveTo({ room, yaw: mod360(view.yaw) }, true)
   }

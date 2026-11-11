@@ -156,7 +156,7 @@ M = {
     "brass": material("Mosiadz", (0.80, 0.60, 0.32), 0.25, 1.0),
     "steel": material("Stal", (0.62, 0.62, 0.64), 0.22, 1.0),
     "glass": glass_material("Szklo"),
-    "mirror": material("Lustro", (0.92, 0.92, 0.93), 0.01, 1.0),
+    "mirror": material("Lustro", (0.86, 0.87, 0.88), 0.03, 1.0),
     "screen": material("Ekran", (0.01, 0.012, 0.015), 0.08, 0.0, **{"Coat Weight": 1.0}),
     "ceramic": material("Ceramika", (0.93, 0.92, 0.89), 0.12),
     "frame": material("Rama okna", (0.12, 0.12, 0.13), 0.4, 0.4),
@@ -696,7 +696,7 @@ def furnish_bedroom(r):
 
 def furnish_kitchen(r):
     x, y, w, h = r["x"], r["y"], r["w"], r["h"]
-    top = y + T_IN / 2
+    top = inner(r)[1]  # górna ściana bywa zewnętrzna (grubsza)
     run = w - 0.24 - 0.65
     # zabudowa dolna: fronty z wąskimi szczelinami i czarnymi uchwytami krawędziowymi
     pbox("korpus", x + 0.12, top, run, 0.58, 0.1, 0.76, M["front"])
@@ -740,9 +740,12 @@ def furnish_bath(r):
     """łazienka układana względem drzwi: drzwi zawsze w bocznej ścianie (z holu),
     kabina i grzejnik w kącie dalekim od wejścia; dla drzwi po lewej układ jest lustrzany"""
     x, y, w, h = r["x"], r["y"], r["w"], r["h"]
-    inner = T_IN / 2
+    # prawdziwe lica ścian: zewnętrzne są grubsze niż działowe
+    L, T, R, B = inner(r)
     index = INDEX[id(r)]
     mirror_x = any(p[0] == index and p[1] == "l" for p in PASSAGES)
+    ins_l = (L - x) if not mirror_x else (x + w - R)  # odsunięcie od lokalnej lewej ściany
+    ins_r = (x + w - R) if not mirror_x else (L - x)  # od lokalnej prawej
 
     def X(lx, width=0.0):
         """lokalne x (drzwi po prawej) -> x rzutu, z odbiciem gdy drzwi są po lewej"""
@@ -750,60 +753,68 @@ def furnish_bath(r):
 
     # płytki na ścianach do 2,1 m
     for (bx, by, bw, bd) in (
-        (x + inner, y + inner, w - 2 * inner, 0.01),
-        (x + inner, y + h - inner - 0.01, w - 2 * inner, 0.01),
-        (x + inner, y + inner, 0.01, h - 2 * inner),
-        (x + w - inner - 0.01, y + inner, 0.01, h - 2 * inner),
+        (L, T, R - L, 0.01),
+        (L,B - 0.01, R - L, 0.01),
+        (L, T, 0.01,B - T),
+        (R - 0.01, T, 0.01,B - T),
     ):
         pbox("plytki", bx, by, bw, bd, 0, 2.1, M["bath_wall"])
     # kabina w dolnym rogu po stronie przeciwnej do drzwi, szklana ścianka od strony pokoju
     sw = min(0.9, w * 0.42)
     sd = min(0.95, h * 0.42)
-    sy = y + h - inner - sd
+    sy = B - sd
     shower = w >= 1.9  # w łazience węższej niż 1,9 m kabina zablokowałaby wejście
     if not shower:
         sw = 0.0
     if shower:
-      pbox("kabina brodzik", X(inner, sw), sy, sw, sd, 0, 0.03, M["bath_floor"], 0.004)
-      glass = pbox("kabina scianka", X(inner + sw, 0.01), sy, 0.01, sd, 0.03, 1.95, M["glass"])
+      pbox("kabina brodzik", X(ins_l, sw), sy, sw, sd, 0, 0.03, M["bath_floor"], 0.004)
+      glass = pbox("kabina scianka", X(ins_l + sw, 0.01), sy, 0.01, sd, 0.03, 1.95, M["glass"])
       glass.visible_shadow = False
-      pbox("kabina profil", X(inner + sw - 0.005, 0.02), sy - 0.02, 0.02, 0.02, 0.03, 1.95, M["black"])
-      cx, cy = P(X(inner + sw / 2), y + h - inner - 0.3)
+      pbox("kabina profil", X(ins_l + sw - 0.005, 0.02), sy - 0.02, 0.02, 0.02, 0.03, 1.95, M["black"])
+      cx, cy = P(X(ins_l + sw / 2), B - 0.3)
       cylinder("kabina deszczownica", cx, cy, 2.12, 0.14, 0.01, M["black"])
-      pbox("kabina ramie", X(inner + sw / 2 - 0.01, 0.02), y + h - inner - 0.3, 0.02, 0.3, 2.12, 0.02, M["black"])
+      pbox("kabina ramie", X(ins_l + sw / 2 - 0.01, 0.02), B - 0.3, 0.02, 0.3, 2.12, 0.02, M["black"])
     # szafka podwieszana z umywalką i okrągłym lustrem przy górnej ścianie, od strony kabiny
     vw = min(0.9, w - 1.2)
-    vx = X(inner + 0.1, vw)
-    pbox("szafka", vx, y + inner, vw, 0.46, 0.45, 0.4, M["oak"], 0.006)
-    pbox("blat umywalki", vx, y + inner, vw, 0.48, 0.85, 0.03, M["marble"], 0.004)
-    cx, cy = P(vx + vw / 2, y + inner + 0.25)
+    vx = X(ins_l + 0.1, vw)
+    pbox("szafka", vx, T, vw, 0.46, 0.45, 0.4, M["oak"], 0.006)
+    pbox("blat umywalki", vx, T, vw, 0.48, 0.85, 0.03, M["marble"], 0.004)
+    cx, cy = P(vx + vw / 2, T + 0.25)
     bowl = cylinder("umywalka", cx, cy, 0.94, 0.2, 0.14, M["ceramic"], 48)
     bowl.modifiers.new("faza", "BEVEL").width = 0.02
-    cx2, cy2 = P(vx + vw / 2, y + inner + 0.012)
+    cx2, cy2 = P(vx + vw / 2, T + 0.012)
     bpy.ops.mesh.primitive_cylinder_add(vertices=64, radius=0.32, depth=0.02, location=(cx2, cy2 - 0.01, 1.55))
     mirror = bpy.context.active_object
     mirror.name = "lustro lazienka"
     mirror.rotation_euler = (math.radians(90), 0, 0)
     mirror.data.materials.append(M["mirror"])
-    bpy.ops.mesh.primitive_torus_add(major_radius=0.325, minor_radius=0.008, location=(cx2, cy2 - 0.005, 1.55), rotation=(math.radians(90), 0, 0))
+    # czarna rama i ciepła poświata za lustrem: samo lustro odbija ścianę i znika z kadru
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.33, minor_radius=0.014, location=(cx2, cy2 - 0.02, 1.55), rotation=(math.radians(90), 0, 0))
+    bpy.context.active_object.name = "lustro rama"
+    bpy.context.active_object.data.materials.append(M["black"])
+    bpy.ops.mesh.primitive_torus_add(major_radius=0.36, minor_radius=0.01, location=(cx2, cy2 - 0.004, 1.55), rotation=(math.radians(90), 0, 0))
     bpy.context.active_object.name = "lustro led"
     bpy.context.active_object.data.materials.append(M["lampwarm"])
+    # bateria nad umywalką
+    tx, ty = P(vx + vw / 2, T + 0.06)
+    cylinder("bateria", tx, ty, 1.08, 0.014, 0.22, M["black"], 16)
+    pbox("wylewka", vx + vw / 2 - 0.012, T + 0.06, 0.024, 0.16, 1.17, 0.02, M["black"], 0.006)
     # WC podwieszane przy górnej ścianie, po stronie drzwi (drzwi są niżej, w ścianie bocznej)
     if shower:
-        wx = X(w - inner - 0.5, 0.38)
-        pbox("wc", wx, y + inner + 0.14, 0.38, 0.44, 0.38, 0.12, M["ceramic"], 0.05)
-        pbox("wc", wx + 0.02, y + inner, 0.34, 0.2, 0.38, 0.4, M["ceramic"], 0.03)
+        wx = X(w - ins_r - 0.5, 0.38)
+        pbox("wc", wx, T + 0.14, 0.38, 0.44, 0.38, 0.12, M["ceramic"], 0.05)
+        pbox("wc", wx + 0.02, T, 0.34, 0.2, 0.38, 0.4, M["ceramic"], 0.03)
     else:
         # mała łazienka: WC pod ścianą naprzeciw drzwi, w dolnym rogu
-        wx = X(inner, 0.2)
-        pbox("wc", X(inner + 0.2, 0.44), y + h - inner - 0.7, 0.44, 0.38, 0.38, 0.12, M["ceramic"], 0.05)
-        pbox("wc", wx, y + h - inner - 0.68, 0.2, 0.34, 0.38, 0.4, M["ceramic"], 0.03)
+        wx = X(ins_l, 0.2)
+        pbox("wc", X(ins_l + 0.2, 0.44), B - 0.7, 0.44, 0.38, 0.38, 0.12, M["ceramic"], 0.05)
+        pbox("wc", wx, B - 0.68, 0.2, 0.34, 0.38, 0.4, M["ceramic"], 0.03)
     # grzejnik z ręcznikiem na ścianie przeciwnej do drzwi, między szafką a kabiną
-    gy = y + inner + 0.6
+    gy = T + 0.6
     if sy - gy > 0.6:
-        pbox("grzejnik", X(inner, 0.03), gy, 0.03, 0.55, 0.6, 1.1, M["black"], 0.006)
-        pbox("recznik", X(inner + 0.03, 0.04), gy + 0.08, 0.04, 0.4, 0.95, 0.6, M["linen"], 0.01)
-    model("wicker_basket_01", X(w - inner - 0.3), y + h - inner - 0.3, 0, height=0.3)
+        pbox("grzejnik", X(ins_l, 0.03), gy, 0.03, 0.55, 0.6, 1.1, M["black"], 0.006)
+        pbox("recznik", X(ins_l + 0.03, 0.04), gy + 0.08, 0.04, 0.4, 0.95, 0.6, M["linen"], 0.01)
+    model("wicker_basket_01", X(w - ins_r - 0.3), B - 0.3, 0, height=0.3)
 
 
 def furnish_hall(r):
