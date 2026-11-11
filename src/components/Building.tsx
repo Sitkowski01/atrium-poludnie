@@ -5,6 +5,7 @@ import { FACADE_LABEL, STATUS_LABEL, floorLabel, formatArea, formatHour, formatP
 import { sunWindow } from '../domain/sun'
 import type { Apartment, Facade } from '../domain/types'
 import { useHour, useStore } from '../state/store'
+import { SceneSky } from './SceneSky'
 import { SunOrbit } from './SunOrbit'
 import './Building.css'
 
@@ -162,6 +163,7 @@ export function Building() {
   return (
     <div className="building">
       <div className="building__frame">
+        <SceneSky hour={hour} />
         <div ref={boxRef} className={`building__box${spot ? ' is-spotting' : ''}`}>
           <svg
             className="building__svg"
