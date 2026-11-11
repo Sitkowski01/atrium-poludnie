@@ -181,37 +181,95 @@
 .building__legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 20px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  color: var(--ink-2);
+  gap: 6px;
 }
-.building__legend li {
+.building__legend-item {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  min-height: 34px;
+  padding: 0 12px 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.02);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 0.18s var(--ease), border-color 0.18s var(--ease), background 0.18s var(--ease);
+}
+.building__legend-count {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+@media (hover: hover) {
+  .building__legend-item:hover:not(:disabled) {
+    color: var(--ink);
+    border-color: var(--line-2);
+  }
+}
+.building__legend-item.is-on {
+  color: var(--ink);
+  border-color: rgb(217 163 91 / 0.6);
+  background: var(--accent-soft);
+}
+.building__legend-item.is-on .building__legend-count {
+  color: var(--accent-2);
+}
+.building__legend-item:disabled {
+  cursor: default;
+  opacity: 0.45;
 }
 .building__swatch {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 3px;
   border: 1px solid var(--line-2);
 }
-.building__swatch--hold {
+.building__swatch--wolne {
+  background: #b8b2a6;
+}
+.building__swatch--rezerwacja {
   width: 10px;
   height: 10px;
   border: 0;
   border-radius: 50%;
   background: var(--hold);
 }
-.building__swatch--sold {
+.building__swatch--sprzedane {
   background: linear-gradient(rgb(10 12 18 / 0.42), rgb(10 12 18 / 0.42)), #b8b2a6;
 }
-.building__swatch--dim {
+.building__swatch--poza {
   background: linear-gradient(rgb(10 12 18 / 0.66), rgb(10 12 18 / 0.66)), #b8b2a6;
+}
+
+/* podświetlenie z legendy: wybrana grupa w złotej ramce, reszta wyraźnie przygaszona */
+.building__box.is-spotting .building__cell:not(.is-spot) .building__hit {
+  fill: rgb(10 12 18 / 0.74);
+}
+.building__box.is-spotting .building__cell.is-spot .building__hit {
+  fill: rgb(217 163 91 / 0.16);
+  stroke: var(--accent-2);
+  stroke-width: 1.6;
+  animation: building-spot 0.5s var(--ease) backwards;
+  animation-delay: calc((6 - var(--f, 0)) * 40ms);
+}
+@keyframes building-spot {
+  from {
+    fill: rgb(217 163 91 / 0.5);
+    stroke-opacity: 0;
+  }
+}
+@media (pointer: coarse), (max-width: 980px) {
+  .building__legend-item {
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .building__box.is-spotting .building__cell.is-spot .building__hit {
+    animation: none;
+  }
 }
 
 @media (max-width: 980px) {
@@ -226,4 +284,44 @@
     width: 100%;
     margin-top: 8px;
   }
+}
+
+/* ---------- ścieżka słońca ---------- */
+
+.sunpath,
+.sunpath__label {
+  pointer-events: none;
+}
+.sunpath__track,
+.sunpath__passed {
+  fill: none;
+  stroke-linecap: round;
+}
+.sunpath__track {
+  stroke: rgb(240 178 58 / 0.22);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 7;
+}
+.sunpath__passed {
+  stroke: rgb(240 178 58 / 0.5);
+  stroke-width: 1.4;
+}
+.sunpath__ray {
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.sunpath__disc {
+  fill: #ffd98a;
+  stroke: #fff1cf;
+  stroke-width: 1.5;
+}
+.sunpath__label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  fill: var(--sun);
+  paint-order: stroke;
+  stroke: rgb(15 18 26 / 0.85);
+  stroke-width: 4px;
 }

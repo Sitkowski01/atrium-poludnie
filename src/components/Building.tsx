@@ -5,6 +5,7 @@ import { FACADE_LABEL, STATUS_LABEL, floorLabel, formatArea, formatHour, formatP
 import { sunWindow } from '../domain/sun'
 import type { Apartment, Facade } from '../domain/types'
 import { useHour, useStore } from '../state/store'
+import { SunPath } from './SunPath'
 import './Building.css'
 
 /* ---------- rzut izometryczny ----------
@@ -51,6 +52,16 @@ function framesFor(hour: number): { a: number; b: number; t: number } {
   return { a: last, b: last, t: 0 }
 }
 
+/** podświetlenie z legendy: jedna grupa mieszkań na bryle, reszta przygaszona */
+type Spot = 'wolne' | 'rezerwacja' | 'sprzedane' | 'poza'
+const SPOTS: { key: Spot; label: string }[] = [
+  { key: 'wolne', label: 'wolne' },
+  { key: 'rezerwacja', label: 'rezerwacja' },
+  { key: 'sprzedane', label: 'sprzedane' },
+  { key: 'poza', label: 'poza filtrami' },
+]
+const inSpot = (a: Apartment, spot: Spot, dim: boolean) => (spot === 'poza' ? dim : a.status === spot)
+
 const cellLabel = (a: Apartment, dim: boolean) =>
   `${dim ? 'Poza filtrami: ' : ''}Mieszkanie ${a.id}, ${roomsLabel(a.rooms)}, ${formatArea(a.area)}, ${floorLabel(a.floor)}, ${formatPrice(a.price)}, ${STATUS_LABEL[a.status]}`
 
@@ -65,6 +76,7 @@ export function Building() {
   const [activeId, setActiveId] = useState(() => `${FLOORS - 1}.01`)
   const cellRefs = useRef(new Map<string, SVGGElement>())
   const boxRef = useRef<HTMLDivElement>(null)
+  const [spot, setSpot] = useState<Spot | null>(null)
   // null do czasu pomiaru: nic nie pobieramy, zanim nie wiadomo, której rozdzielczości trzeba
   const [hiRes, setHiRes] = useState<boolean | null>(null)
   // adresy, które się naprawdę wczytały (błąd nie trafia tutaj)
@@ -147,7 +159,7 @@ export function Building() {
   return (
     <div className="building">
       <div className="building__frame">
-        <div ref={boxRef} className="building__box">
+        <div ref={boxRef} className={`building__box${spot ? ' is-spotting' : ''}`}>
           <svg
             className="building__svg"
             viewBox={`${VB.x} ${VB.y} ${VB.w} ${VB.h}`}
@@ -164,6 +176,9 @@ export function Building() {
               </filter>
             </defs>
 
+            {/* skąd pada światło: łuk słońca na niebie, za budynkiem */}
+            <SunPath hour={hour} cx={330} horizon={330} rx={370} ry={385} minX={VB.x} maxX={VB.x + VB.w} layer="sky" />
+
             {/* rendery: bieżący i następny przenikają się wraz z godziną */}
             <g aria-hidden="true" className="building__renders">
               {urlA && <image key={fa} href={urlA} x={VB.x} y={VB.y} width={VB.w} height={VB.h} />}
@@ -171,6 +186,7 @@ export function Building() {
                 <image key={fb} href={urlB} x={VB.x} y={VB.y} width={VB.w} height={VB.h} opacity={ft} />
               )}
             </g>
+
 
             <g aria-hidden="true" className="building__labels">
               {Array.from({ length: FLOORS }, (_, f) => {
@@ -197,6 +213,8 @@ export function Building() {
               </text>
             </g>
 
+            <SunPath hour={hour} cx={330} horizon={330} rx={370} ry={385} minX={VB.x} maxX={VB.x + VB.w} layer="label" />
+
             {/* klikalne pola mieszkań: przezroczyste, pokazują się dopiero przy stanie */}
             {ordered.map((a) => {
               const [d0, d1] = span(a)
@@ -211,6 +229,7 @@ export function Building() {
                 a.status === 'rezerwacja' && 'is-hold',
                 isHover && 'is-hover',
                 isSelected && 'is-selected',
+                spot && inSpot(a, spot, dim) && 'is-spot',
               ]
                 .filter(Boolean)
                 .join(' ')
@@ -308,17 +327,27 @@ export function Building() {
         </div>
       </div>
 
-      <ul className="building__legend" aria-label="Legenda">
-        <li>
-          <span className="building__swatch building__swatch--hold" /> rezerwacja
-        </li>
-        <li>
-          <span className="building__swatch building__swatch--sold" /> sprzedane
-        </li>
-        <li>
-          <span className="building__swatch building__swatch--dim" /> poza filtrami
-        </li>
-      </ul>
+      {/* legenda jest też przełącznikiem: pokazuje na bryle, gdzie leży dana grupa */}
+      <div className="building__legend" role="group" aria-label="Legenda: pokaż na bryle">
+        {SPOTS.map(({ key, label }) => {
+          const count = apartments.filter((a) => inSpot(a, key, !visibleIds.has(a.id))).length
+          const on = spot === key
+          return (
+            <button
+              key={key}
+              type="button"
+              className={`building__legend-item${on ? ' is-on' : ''}`}
+              aria-pressed={on}
+              disabled={count === 0 && !on}
+              onClick={() => setSpot(on ? null : key)}
+            >
+              <span className={`building__swatch building__swatch--${key}`} aria-hidden="true" />
+              {label}
+              <span className="building__legend-count">{count}</span>
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }
