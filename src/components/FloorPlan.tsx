@@ -89,13 +89,18 @@ export function FloorPlan({ apartment }: { apartment: Apartment }) {
         const x = (room.x + room.w / 2) * SCALE
         const y = (room.y + room.h / 2) * SCALE
         const compact = room.h * SCALE < fontSize * 3.2 || room.w * SCALE < fontSize * 5
+        // nazwa nigdy nie wychodzi poza pomieszczenie: w wąskich pomieszczeniach zmniejszamy czcionkę
+        const nameSize = Math.min(
+          compact ? 11.5 * unit : fontSize,
+          (room.w * SCALE - 14) / (room.label.length * 0.62),
+        )
         return (
           <g key={index} clipPath={`url(#${id}-room-${index})`}>
             <text
               className="floor-plan__name"
               x={x}
               y={compact ? y : y - fontSize * 0.65}
-              fontSize={compact ? 11.5 * unit : fontSize}
+              fontSize={nameSize}
             >
               {room.label}
             </text>

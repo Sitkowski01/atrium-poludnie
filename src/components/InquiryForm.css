@@ -29,9 +29,16 @@
   outline: 2px solid transparent;
 }
 
+/* kolor błędu jak we wspólnym .field__error (ciepły koral) */
 .inquiry .field [aria-invalid='true'] {
+  border-color: #f0a58c;
+  background: rgb(240 165 140 / 0.06);
+}
+
+/* fokus ma pierwszeństwo także na polu z błędem */
+.inquiry .field [aria-invalid='true']:focus-visible {
   border-color: var(--accent);
-  background: var(--accent-soft);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .inquiry__error {
@@ -55,13 +62,11 @@
 
 .inquiry__notice--sold {
   background: var(--sold-soft);
-  border-color: var(--sold);
   color: var(--sold-ink);
 }
 
 .inquiry__notice--hold {
   background: var(--hold-soft);
-  border-color: var(--hold);
   color: var(--hold-ink);
 }
 
@@ -102,6 +107,7 @@
   padding-top: 10px;
   padding-bottom: 10px;
   text-align: center;
+  white-space: normal;
 }
 
 .inquiry__done {
@@ -142,12 +148,14 @@
 
 .inquiry__done-title {
   font-family: var(--font-display);
-  font-size: 24px;
-  line-height: 1.2;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--ink);
   overflow-wrap: anywhere;
 }
 
 .inquiry__done-demo {
-  color: var(--ink);
-  font-weight: 600;
+  color: var(--ink-2);
+  font-weight: 500;
 }

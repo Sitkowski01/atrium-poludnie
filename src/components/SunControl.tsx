@@ -7,7 +7,7 @@ import './SunControl.css'
 const PRESETS = [
   { label: 'Rano', hour: 8 },
   { label: 'Południe', hour: 13 },
-  { label: 'Wieczór', hour: 19 },
+  { label: 'Wieczór', hour: 20.25 },
 ]
 
 /** Godzin symulacji na sekundę podczas odtwarzania. */
@@ -57,13 +57,20 @@ export function SunControl() {
         className="btn sun-control__play"
         onClick={() => setPlaying((p) => !p)}
       >
-        <span aria-hidden="true">{playing ? '❚❚' : '▶'}</span>
-        {playing ? 'Zatrzymaj' : 'Odtwórz dzień'}
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          {playing ? (
+            <path d="M8 5v14M16 5v14" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+          ) : (
+            <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
+          )}
+        </svg>
+        <span className="sun-control__play-label">{playing ? 'Zatrzymaj' : 'Odtwórz dzień'}</span>
       </button>
 
       <label className="sun-control__slider">
         <span className="sun-control__label">
-          Pora dnia <strong>{formatHour(state.hour)}</strong>
+          <span className="sun-control__caption">Pora dnia</span>
+          <strong>{formatHour(state.hour)}</strong>
         </span>
         <input
           type="range"

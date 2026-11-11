@@ -34,6 +34,28 @@ function Heart({ filled }: { filled: boolean }) {
   )
 }
 
+function SunIcon() {
+  return (
+    <svg
+      className="apt-list__sun-icon"
+      viewBox="0 0 16 16"
+      width="14"
+      height="14"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <circle cx="8" cy="8" r="3" fill="currentColor" />
+      <path
+        d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 function EmptyArt() {
   const windows = [0, 1, 2].flatMap((row) => [0, 1].map((col) => ({ row, col })))
   return (
@@ -45,7 +67,7 @@ function EmptyArt() {
       aria-hidden="true"
       focusable="false"
     >
-      <path d="M8 86h80" fill="none" stroke="var(--line)" strokeWidth="2" strokeLinecap="round" />
+      <path d="M8 86h80" fill="none" stroke="var(--line-2)"strokeWidth="2" strokeLinecap="round" />
       <rect
         x="24"
         y="14"
@@ -53,7 +75,7 @@ function EmptyArt() {
         height="72"
         rx="3"
         fill="none"
-        stroke="var(--ink-3)"
+        stroke="var(--line-2)"
         strokeWidth="2"
       />
       {windows.map(({ row, col }) => (
@@ -65,7 +87,7 @@ function EmptyArt() {
           height="10"
           rx="1.5"
           fill="none"
-          stroke="var(--line)"
+          stroke="var(--line-2)"
           strokeWidth="2"
         />
       ))}
@@ -110,6 +132,11 @@ export function ApartmentList() {
   const moreRef = useRef<HTMLButtonElement>(null)
   const listId = useId()
   const narrow = useNarrow()
+  // kaskada wejścia tylko przy pierwszym renderze listy, nie przy zmianie filtrów
+  const intro = useRef(true)
+  useEffect(() => {
+    intro.current = false
+  }, [])
   const [expanded, setExpanded] = useState(false)
   const justCollapsed = useRef(false)
   // wiersz, którego serce miało fokus w chwili usuwania z listy „Tylko ulubione”
@@ -200,7 +227,7 @@ export function ApartmentList() {
         <ul
           ref={listRef}
           id={listId}
-          className="apt-list__items"
+          className={`apt-list__items${intro.current ? ' apt-list__items--intro' : ''}`}
           onMouseEnter={() => {
             pointerInside.current = true
           }}
@@ -257,6 +284,7 @@ export function ApartmentList() {
                       </span>
                     </span>
                     <span className="apt-list__sun">
+                      {sun && <SunIcon />}
                       {sun
                         ? `słońce ${formatHour(sun.from)}–${formatHour(sun.to)}`
                         : 'bez bezpośredniego słońca'}
@@ -307,7 +335,7 @@ export function ApartmentList() {
           <button
             type="button"
             ref={moreRef}
-            className="btn apt-list__more"
+            className="btn btn--ghost apt-list__more"
             aria-expanded={expanded}
             aria-controls={listId}
             onClick={() => {

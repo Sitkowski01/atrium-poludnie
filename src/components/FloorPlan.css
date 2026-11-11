@@ -1,41 +1,52 @@
+/* Rzut jak rysunek architektoniczny na ciemnym papierze. */
 .floor-plan {
+  /* przygaszone odcienie pomieszczeń: granat, grafit, ciepły grafit, morski */
+  --fp-salon: #222a3a;
+  --fp-sypialnia: #1e2535;
+  --fp-hol: #1a202c;
+  --fp-kuchnia: #2a2a2f;
+  --fp-lazienka: #1b2b33;
+
   display: block;
   width: 100%;
   height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-2);
   font-family: var(--font-body);
   font-variant-numeric: tabular-nums;
 }
 
 .floor-plan__room {
-  fill: var(--paper);
-  stroke: var(--ink);
-  stroke-width: 1.5;
+  fill: var(--fp-hol);
+  stroke: var(--ink-2);
+  stroke-width: 1.2;
 }
 
 .floor-plan__room--salon {
-  fill: var(--paper-2);
+  fill: var(--fp-salon);
 }
 
 .floor-plan__room--sypialnia {
-  fill: var(--paper);
+  fill: var(--fp-sypialnia);
 }
 
 .floor-plan__room--hol {
-  fill: var(--card);
+  fill: var(--fp-hol);
 }
 
 .floor-plan__room--kuchnia {
-  fill: color-mix(in srgb, var(--hold-soft) 65%, var(--paper));
+  fill: var(--fp-kuchnia);
 }
 
 .floor-plan__room--lazienka {
-  fill: color-mix(in srgb, var(--ok-soft) 60%, var(--paper));
+  fill: var(--fp-lazienka);
 }
 
 .floor-plan__room--balkon {
-  fill: var(--card);
-  stroke: var(--ink-2);
-  stroke-width: 1;
+  fill: var(--paper-2);
+  stroke: var(--line-2);
+  stroke-width: 1.2;
   stroke-dasharray: 5 4;
 }
 
@@ -46,13 +57,19 @@
   stroke-linejoin: miter;
 }
 
+/* przerwa w ścianie pod oknem i drzwiami: kolor papieru rysunku */
 .floor-plan__window-gap,
 .floor-plan__door-gap {
-  stroke: var(--card);
+  stroke: var(--paper-2);
   stroke-width: 6;
 }
 
-.floor-plan__window,
+.floor-plan__window {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+}
+
 .floor-plan__door,
 .floor-plan__direction {
   fill: none;
@@ -80,7 +97,9 @@
 
 .floor-plan__area {
   fill: var(--ink-2);
-  font-size: 0.92em;
+  font-family: var(--font-display);
+  font-size: 1.1em;
+  font-weight: 500;
 }
 
 .floor-plan__dimensions {

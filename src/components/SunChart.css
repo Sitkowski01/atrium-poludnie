@@ -11,6 +11,7 @@
   height: auto;
   margin-bottom: 12px;
   overflow: hidden;
+  background: transparent;
 }
 
 .sun-chart__gradient-start,
@@ -19,7 +20,7 @@
 }
 
 .sun-chart__gradient-start {
-  stop-opacity: 0.5;
+  stop-opacity: 0.45;
 }
 
 .sun-chart__gradient-end {
@@ -36,12 +37,11 @@
 .sun-chart__baseline,
 .sun-chart__tick {
   fill: none;
-  stroke: var(--line);
+  stroke: var(--line-2);
   stroke-width: 1;
 }
 
-.sun-chart__hour,
-.sun-chart__label {
+.sun-chart__hour {
   fill: var(--ink-2);
   font-family: var(--font-body);
   font-size: 12px;
@@ -50,39 +50,52 @@
 
 .sun-chart__marker {
   fill: none;
-  stroke: var(--ink-2);
+  stroke: var(--sun);
   stroke-width: 1;
   stroke-dasharray: 3 3;
+  opacity: 0.7;
 }
 
+/* złoty znacznik z poświatą */
 .sun-chart__point {
   fill: var(--sun);
-  stroke: var(--ink);
+  stroke: var(--accent-2);
   stroke-width: 1.5;
+  filter: drop-shadow(0 0 5px rgb(240 178 58 / 0.85)) drop-shadow(0 0 12px rgb(240 178 58 / 0.45));
 }
 
+/* etykieta godziny: ciemna pigułka */
 .sun-chart__label-background {
-  fill: var(--paper-2);
+  fill: var(--card-2);
+  stroke: var(--line-2);
+  stroke-width: 1;
 }
 
 .sun-chart__label {
   fill: var(--ink);
+  font-family: var(--font-body);
+  font-size: 12px;
   font-weight: 600;
+  text-anchor: middle;
 }
 
 .sun-chart__summary,
 .sun-chart__current {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
 .sun-chart__summary {
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--ink);
 }
 
 .sun-chart__current {
   margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.6;
   color: var(--ink-2);
 }

@@ -1,41 +1,52 @@
+/*
+ * Kierunek „Wieczór”: granat, ciepła biel, złoto. Ciemny motyw jest jedynym motywem.
+ * Kontrast (na --paper): --ink 15,6:1, --ink-2 7,5:1, --accent 8,3:1, --ink-3 tylko do ozdobników.
+ */
 :root {
-  /* tła */
-  --paper: #f3efe6;
-  --paper-2: #ebe5d8;
-  --card: #fbf9f4;
+  color-scheme: dark;
+
+  /* tła: strona, wnęka, karta, karta uniesiona */
+  --paper: #0f121a;
+  --paper-2: #161a24;
+  --card: #181d28;
+  --card-2: #1f2532;
 
   /* tekst: --ink i --ink-2 do treści; --ink-3 tylko do ozdobników i ikon */
-  --ink: #1d1b18;
-  --ink-2: #5a554c;
-  --ink-3: #8b857a;
-  --line: #d9d2c3;
+  --ink: #f2ede3;
+  --ink-2: #aca79e;
+  --ink-3: #6e6b66;
+  --line: #2a303d;
+  --line-2: #3a4152;
 
-  /* akcent i słońce */
-  --accent: #b5462a;
-  --accent-ink: #ffffff;
-  --accent-soft: #f4dfd6;
+  /* złoto: akcent, tekst na złocie, złoto przygaszone na tło */
+  --accent: #d9a35b;
+  --accent-2: #e8bb7c;
+  --accent-ink: #17120a;
+  --accent-soft: #2b2519;
   --sun: #f0b23a;
 
-  /* statusy: kolor znaku + ciemny tekst + jasne tło plakietki */
-  --ok: #2f7a55;
-  --ok-ink: #1f5a3d;
-  --ok-soft: #dcebe1;
-  --hold: #b97a12;
-  --hold-ink: #7a4f08;
-  --hold-soft: #f5e6c8;
-  --sold: #8d887d;
-  --sold-ink: #57534b;
-  --sold-soft: #e6e2d8;
+  /* statusy na ciemnym tle: znak, tekst, tło plakietki */
+  --ok: #6fbf8e;
+  --ok-ink: #9fdcb6;
+  --ok-soft: #17291f;
+  --hold: #e0a84a;
+  --hold-ink: #f0c788;
+  --hold-soft: #2c2416;
+  --sold: #77736b;
+  --sold-ink: #b9b3a8;
+  --sold-soft: #23262e;
 
-  --radius: 14px;
-  --radius-s: 8px;
-  /* trzy poziomy: karta w spoczynku, karta uniesiona, scena i panel */
-  --shadow-s: 0 1px 1px rgb(29 27 24 / 0.04), 0 2px 6px rgb(29 27 24 / 0.05);
-  --shadow-m: 0 2px 4px rgb(29 27 24 / 0.06), 0 10px 22px rgb(29 27 24 / 0.1);
-  --shadow: 0 1px 2px rgb(29 27 24 / 0.06), 0 8px 24px rgb(29 27 24 / 0.08), 0 28px 60px rgb(29 27 24 / 0.08);
+  --radius: 10px;
+  --radius-s: 6px;
+  /* na ciemnym cień musi być głęboki; jasna krawędź u góry robi „szkło” */
+  --shadow-s: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 2px 8px rgb(0 0 0 / 0.35);
+  --shadow-m: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 10px 28px rgb(0 0 0 / 0.45);
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 24px 60px rgb(0 0 0 / 0.55);
+  --glow: 0 0 0 1px rgb(217 163 91 / 0.55), 0 0 24px rgb(217 163 91 / 0.35);
 
-  --font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
-  --font-body: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
 
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --header-h: 76px;
 }
