@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 import {
   FACADE_LABEL,
   STATUS_LABEL,
@@ -11,6 +11,8 @@ import {
 import { sunWindow } from '../domain/sun'
 import type { SortKey } from '../domain/types'
 import { useStore } from '../state/store'
+import { ActiveFilters } from './ActiveFilters'
+import { SunBar } from './SunBar'
 import './ApartmentList.css'
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
@@ -29,28 +31,6 @@ function Heart({ filled }: { filled: boolean }) {
         stroke="currentColor"
         strokeWidth="1.8"
         strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function SunIcon() {
-  return (
-    <svg
-      className="apt-list__sun-icon"
-      viewBox="0 0 16 16"
-      width="14"
-      height="14"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <circle cx="8" cy="8" r="3" fill="currentColor" />
-      <path
-        d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.4"
-        strokeLinecap="round"
       />
     </svg>
   )
@@ -178,6 +158,8 @@ export function ApartmentList() {
     else if (r.bottom > l.bottom) list.scrollTop += r.bottom - l.bottom + 8
   }, [hoveredId])
 
+  const focusCount = useCallback(() => countRef.current?.focus(), [])
+
   const isEmpty = visible.length === 0
   useEffect(() => {
     // lista znika z kursorem w środku i nie dostaje mouseleave
@@ -204,6 +186,8 @@ export function ApartmentList() {
           </select>
         </label>
       </div>
+
+      <ActiveFilters onEmptyFocus={focusCount} />
 
       {visible.length === 0 ? (
         <div className="apt-list__empty">
@@ -285,10 +269,10 @@ export function ApartmentList() {
                       ))}
                     </span>
                     <span className="apt-list__sun">
-                      {sun && <SunIcon />}
-                      {sun
-                        ? `słońce ${formatHour(sun.from)}–${formatHour(sun.to)}`
-                        : 'bez bezpośredniego słońca'}
+                      <SunBar sun={sun} className="apt-list__sunbar" />
+                      <span className="apt-list__sun-hours" aria-hidden="true">
+                        {sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez słońca'}
+                      </span>
                     </span>
                     <span className={`badge badge--${a.status}`}>{STATUS_LABEL[a.status]}</span>
                   </span>
