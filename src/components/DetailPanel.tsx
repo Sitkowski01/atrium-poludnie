@@ -86,6 +86,27 @@ export function DetailPanel() {
     if (!selected && dialog.open) dialog.close()
   }, [selected])
 
+  const [askVisible, setAskVisible] = useState(false)
+  const selectedId = selected?.id ?? null
+
+  // pasek z przyciskiem chowamy, gdy sekcja formularza zajmuje dół panelu
+  useEffect(() => {
+    setAskVisible(false)
+    const root = ref.current
+    if (!selectedId || !root || typeof IntersectionObserver === 'undefined') return
+    const section = root.querySelector('#detail-ask-section')
+    if (!section) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const last = entries[entries.length - 1]
+        if (last) setAskVisible(last.isIntersecting)
+      },
+      { root, rootMargin: '0px 0px -15% 0px', threshold: 0 },
+    )
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [selectedId])
+
   const close = () => dispatch({ type: 'select', id: null })
   const a = selected
   const isFavourite = a ? state.favourites.includes(a.id) : false
@@ -218,7 +239,7 @@ export function DetailPanel() {
             <InquiryForm key={a.id} apartment={a} />
           </section>
 
-          <div className="detail__dock">
+          <div className={`detail__dock${askVisible ? ' detail__dock--hidden' : ''}`} inert={askVisible}>
             <span>
               <strong>{formatPrice(a.price)}</strong> · {roomsLabel(a.rooms)}
             </span>
