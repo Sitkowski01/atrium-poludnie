@@ -120,6 +120,11 @@
   /* podpowiedź znika po chwili — potem zasłaniałaby podłogę */
   animation: walk-hint 5s ease-in forwards;
 }
+/* podpowiedź jest już w nagłówku sekcji „Spacer 360°”; w kadrze zostaje tylko na pełnym ekranie,
+   gdzie nagłówka nie widać */
+.walk:not(.walk--expanded) .walk__hint {
+  display: none;
+}
 @keyframes walk-hint {
   0%,
   70% {
@@ -279,10 +284,6 @@
   /* w panelu kadr kwadratowy: szeroki pasek 16:10 na wąskim ekranie pokazywał mało pokoju */
   .walk:not(.walk--expanded) .walk__frame {
     aspect-ratio: 1;
-  }
-  /* podpowiedź jest już w nagłówku sekcji; w kadrze zostaje tylko na pełnym ekranie */
-  .walk:not(.walk--expanded) .walk__hint {
-    display: none;
   }
 }
 
