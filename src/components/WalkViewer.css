@@ -247,6 +247,45 @@
   background: var(--card);
 }
 
+/* telefon: „Wstecz” i „Od początku” obok siebie przy mini-mapie, przejścia pod spodem na całą szerokość */
+@media (max-width: 560px) {
+  .walk__bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'actions map'
+      'doors doors';
+    gap: 10px 12px;
+    align-items: start;
+  }
+  .walk__side {
+    display: contents;
+  }
+  .walk__actions {
+    grid-area: actions;
+    flex-wrap: wrap; /* przy 320 px albo powiększonej czcionce „Od początku” schodzi niżej, zamiast wejść na mapę */
+  }
+  .walk__actions .btn {
+    padding: 0 14px;
+    white-space: nowrap;
+  }
+  .walk__doors {
+    grid-area: doors;
+  }
+  .walk__map {
+    grid-area: map;
+    width: 104px;
+  }
+  /* w panelu kadr kwadratowy: szeroki pasek 16:10 na wąskim ekranie pokazywał mało pokoju */
+  .walk:not(.walk--expanded) .walk__frame {
+    aspect-ratio: 1;
+  }
+  /* podpowiedź jest już w nagłówku sekcji; w kadrze zostaje tylko na pełnym ekranie */
+  .walk:not(.walk--expanded) .walk__hint {
+    display: none;
+  }
+}
+
 @media (max-width: 400px) {
   .walk__btn {
     padding: 0 10px;
@@ -254,5 +293,14 @@
   .walk__badge {
     max-width: calc(100% - 140px);
     font-size: 13px;
+  }
+}
+
+/* ograniczony ruch: podpowiedź bez wygaszania, po prostu znika po 5 s (globalna reguła skraca
+   animacje do zera, a wtedy nie pojawiałaby się wcale) */
+@media (prefers-reduced-motion: reduce) {
+  .walk__hint {
+    animation-duration: 5s !important;
+    animation-timing-function: steps(1, end) !important;
   }
 }

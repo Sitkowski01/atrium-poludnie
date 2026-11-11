@@ -99,7 +99,13 @@ export function DetailPanel() {
     const observer = new IntersectionObserver(
       (entries) => {
         const last = entries[entries.length - 1]
-        if (last) setAskVisible(last.isIntersecting)
+        if (!last) return
+        // pasek zaraz będzie inert: fokus z niego przechodzi do pierwszego pola formularza, nie na body
+        const dock = root.querySelector('.detail__dock')
+        if (last.isIntersecting && dock?.contains(document.activeElement)) {
+          section.querySelector<HTMLElement>('input')?.focus({ preventScroll: true })
+        }
+        setAskVisible(last.isIntersecting)
       },
       { root, rootMargin: '0px 0px -15% 0px', threshold: 0 },
     )
@@ -239,7 +245,10 @@ export function DetailPanel() {
             <InquiryForm key={a.id} apartment={a} />
           </section>
 
-          <div className={`detail__dock${askVisible ? ' detail__dock--hidden' : ''}`} inert={askVisible}>
+          {/* opakowanie bez pudełka: inert z powiększonego spaceru trafia tutaj, a inert samego paska
+              ustawia React, więc dwa źródła nie nadpisują sobie nawzajem atrybutu */}
+          <div className="detail__dock-slot">
+            <div className={`detail__dock${askVisible ? ' detail__dock--hidden' : ''}`} inert={askVisible}>
             <span>
               <strong>{formatPrice(a.price)}</strong> · {roomsLabel(a.rooms)}
             </span>
@@ -259,6 +268,7 @@ export function DetailPanel() {
             >
               Zapytaj o mieszkanie
             </a>
+            </div>
           </div>
         </div>
       )}
