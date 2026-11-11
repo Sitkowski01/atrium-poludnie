@@ -2,7 +2,7 @@
 // Uruchomienie z katalogu projektu: node blender/eksport.mjs   (Node 24 czyta .ts bez kompilacji)
 import { writeFileSync } from 'node:fs'
 import { APARTMENTS } from '../src/domain/data.ts'
-import { links } from '../src/domain/walk.ts'
+import { links, viewpoint } from '../src/domain/walk.ts'
 
 // piętro 2: każdy typ ma tam balkon; kawalerka na piętrze 1 jest bez balkonu (wariant s4n)
 const variants = [0, 1, 2, 3, 4].map((slot) => ({ id: `s${slot}`, floor: 2, slot }))
@@ -19,6 +19,8 @@ const out = variants.map(({ id, floor, slot }) => {
     plan: a.plan,
     // każde przejście raz (from < to); Blender wycina z tego otwory
     links: links(a.plan).filter((l) => l.from < l.to),
+    // miejsca kamer panoram: ta sama funkcja, której używa przeglądarka spaceru
+    views: a.plan.map((_, i) => viewpoint(a.plan, i, links(a.plan))),
   }
 })
 writeFileSync(new URL('./plany.json', import.meta.url), JSON.stringify(out, null, 1))

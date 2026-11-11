@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   FACADE_LABEL,
   STATUS_LABEL,
@@ -8,7 +8,8 @@ import {
   formatPrice,
   roomsLabel,
 } from '../domain/format'
-import { DAY_END, DAY_START } from '../domain/sun'
+import { DAY_END, DAY_START, sunWindow } from '../domain/sun'
+import type { Apartment } from '../domain/types'
 import { useStore } from '../state/store'
 import './DetailPanel.css'
 import { FloorPlan } from './FloorPlan'
@@ -16,6 +17,51 @@ import { InquiryForm } from './InquiryForm'
 import { MortgageCalculator } from './MortgageCalculator'
 import { SunChart } from './SunChart'
 import { WalkViewer } from './WalkViewer'
+
+/** katalog renderów danego układu mieszkania (ten sam podział co panoramy) */
+const variant = (a: Apartment) => `s${a.slot}${a.balcony ? '' : 'n'}`
+const asset = (dir: string, a: Apartment) => `${import.meta.env.BASE_URL}${dir}/${variant(a)}.webp`
+
+function Cover({ apartment }: { apartment: Apartment }) {
+  const [ok, setOk] = useState(true)
+  if (!ok) return <div className="detail__cover detail__cover--empty" aria-hidden="true" />
+  return (
+    <div className="detail__cover">
+      <img src={asset('okladki', apartment)} alt="" onError={() => setOk(false)} />
+    </div>
+  )
+}
+
+function Plan({ apartment }: { apartment: Apartment }) {
+  const [mode, setMode] = useState<'2d' | '3d'>('3d')
+  const [has3d, setHas3d] = useState(true)
+  const show3d = mode === '3d' && has3d
+  return (
+    <>
+      {has3d && (
+        <div className="detail__switch" role="group" aria-label="Widok rzutu">
+          <button type="button" className="chip" aria-pressed={mode === '3d'} onClick={() => setMode('3d')}>
+            Makieta 3D
+          </button>
+          <button type="button" className="chip" aria-pressed={mode === '2d'} onClick={() => setMode('2d')}>
+            Rzut z wymiarami
+          </button>
+        </div>
+      )}
+      {show3d ? (
+        <figure className="detail__plan3d">
+          <img
+            src={asset('rzut3d', apartment)}
+            alt={`Makieta mieszkania ${apartment.id} z góry, z umeblowaniem`}
+            onError={() => setHas3d(false)}
+          />
+        </figure>
+      ) : (
+        <FloorPlan apartment={apartment} />
+      )}
+    </>
+  )
+}
 
 export function DetailPanel() {
   const { selected, state, dispatch } = useStore()
@@ -32,6 +78,7 @@ export function DetailPanel() {
   const close = () => dispatch({ type: 'select', id: null })
   const a = selected
   const isFavourite = a ? state.favourites.includes(a.id) : false
+  const sun = a ? sunWindow(a.facade, a.floor) : null
 
   return (
     <dialog
@@ -49,21 +96,18 @@ export function DetailPanel() {
       }}
     >
       {a && (
-        <div className="detail__body">
+        <div className="detail__body" key={a.id}>
           <header className="detail__head">
-            <div>
-              <p className="eyebrow">Mieszkanie</p>
-              <h2 className="detail__title">
-                {a.id}
-              </h2>
-            </div>
-            <div className="detail__actions">
+            <Cover apartment={a} />
+            <div className="detail__head-top">
               <button
                 type="button"
-                className={`btn detail__fav${isFavourite ? ' is-on' : ''}`}
+                className={`detail__icon detail__fav${isFavourite ? ' is-on' : ''}`}
+                aria-pressed={isFavourite}
+                aria-label={isFavourite ? `Usuń mieszkanie ${a.id} z ulubionych` : `Dodaj mieszkanie ${a.id} do ulubionych`}
                 onClick={() => dispatch({ type: 'toggleFavourite', id: a.id })}
               >
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                   <path
                     d="M12 20.5s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.6a4.3 4.3 0 0 1 7.5 2.7c0 5.6-7.5 10.2-7.5 10.2z"
                     fill={isFavourite ? 'currentColor' : 'none'}
@@ -72,13 +116,18 @@ export function DetailPanel() {
                     strokeLinejoin="round"
                   />
                 </svg>
-                {isFavourite ? 'W ulubionych' : 'Do ulubionych'}
               </button>
-              <button type="button" className="btn detail__close" aria-label="Zamknij szczegóły" onClick={close}>
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <button type="button" className="detail__icon" aria-label="Zamknij szczegóły" onClick={close}>
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                   <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
               </button>
+            </div>
+            <div className="detail__head-copy">
+              <p className="eyebrow">
+                {floorLabel(a.floor)} · okna na {FACADE_LABEL[a.facade]}
+              </p>
+              <h2 className="detail__title">Mieszkanie {a.id}</h2>
             </div>
           </header>
 
@@ -91,38 +140,42 @@ export function DetailPanel() {
           <dl className="detail__facts">
             <div>
               <dt>Pokoje</dt>
-              <dd>{roomsLabel(a.rooms)}</dd>
+              <dd>{a.rooms}</dd>
             </div>
             <div>
               <dt>Powierzchnia</dt>
               <dd>{formatArea(a.area)}</dd>
             </div>
             <div>
-              <dt>Kondygnacja</dt>
-              <dd>{floorLabel(a.floor)}</dd>
-            </div>
-            <div>
-              <dt>Okna salonu</dt>
-              <dd>{FACADE_LABEL[a.facade]}</dd>
+              <dt>Słońce</dt>
+              <dd>{sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'brak'}</dd>
             </div>
             <div>
               <dt>Balkon</dt>
               <dd>{a.balcony ? 'tak' : 'nie'}</dd>
             </div>
           </dl>
-
-          <section className="detail__section" aria-labelledby="detail-plan">
-            <h3 id="detail-plan">Rzut</h3>
-            <FloorPlan apartment={a} />
-          </section>
+          <p className="visually-hidden">{roomsLabel(a.rooms)}</p>
 
           <section className="detail__section" aria-labelledby="detail-walk">
-            <h3 id="detail-walk">Spacer po mieszkaniu</h3>
+            <div className="detail__section-head">
+              <h3 id="detail-walk">Spacer 360°</h3>
+              <span className="detail__hint">przeciągnij, żeby się rozejrzeć</span>
+            </div>
             <WalkViewer key={a.id} apartment={a} />
           </section>
 
+          <section className="detail__section" aria-labelledby="detail-plan">
+            <div className="detail__section-head">
+              <h3 id="detail-plan">Rzut</h3>
+            </div>
+            <Plan apartment={a} />
+          </section>
+
           <section className="detail__section" aria-labelledby="detail-sun">
-            <h3 id="detail-sun">Słońce w salonie</h3>
+            <div className="detail__section-head">
+              <h3 id="detail-sun">Słońce w salonie</h3>
+            </div>
             <SunChart facade={a.facade} floor={a.floor} hour={state.hour} />
             <label className="detail__hour">
               <span>
@@ -141,14 +194,34 @@ export function DetailPanel() {
           </section>
 
           <section className="detail__section" aria-labelledby="detail-loan">
-            <h3 id="detail-loan">Rata kredytu</h3>
+            <div className="detail__section-head">
+              <h3 id="detail-loan">Rata kredytu</h3>
+            </div>
             <MortgageCalculator key={a.id} price={a.price} />
           </section>
 
-          <section className="detail__section" aria-labelledby="detail-ask">
-            <h3 id="detail-ask">Zapytaj o to mieszkanie</h3>
+          <section className="detail__section" id="detail-ask-section" aria-labelledby="detail-ask">
+            <div className="detail__section-head">
+              <h3 id="detail-ask">Zapytaj o to mieszkanie</h3>
+            </div>
             <InquiryForm key={a.id} apartment={a} />
           </section>
+
+          <div className="detail__dock">
+            <span>
+              <strong>{formatPrice(a.price)}</strong> · {roomsLabel(a.rooms)}
+            </span>
+            <a
+              className="btn btn--primary"
+              href="#detail-ask-section"
+              onClick={(e) => {
+                e.preventDefault()
+                document.getElementById('detail-ask-section')?.scrollIntoView({ behavior: 'smooth' })
+              }}
+            >
+              Zapytaj o mieszkanie
+            </a>
+          </div>
         </div>
       )}
     </dialog>

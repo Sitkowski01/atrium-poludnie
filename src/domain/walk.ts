@@ -142,6 +142,48 @@ export function links(plan: readonly Room[]): Link[] {
   return out
 }
 
+/** Odległość od ścian, poniżej której kamera nie staje. */
+const WALL_CLEARANCE = 0.45
+
+/**
+ * Miejsce, z którego robimy panoramę pomieszczenia: tuż za wejściem, jak fotograf
+ * nieruchomości, a nie na środku pokoju (tam stoi łóżko albo stół i widać gołe ściany).
+ * Korzysta z tego przeglądarka spaceru i skrypt Blendera, więc punkty przejść
+ * zawsze wskazują drzwi widziane z miejsca kamery.
+ */
+export function viewpoint(plan: readonly Room[], index: number, all: readonly Link[]): { x: number; y: number } {
+  const r = plan[index]
+  const clampX = (x: number) => Math.min(r.x + r.w - WALL_CLEARANCE, Math.max(r.x + WALL_CLEARANCE, x))
+  const clampY = (y: number) => Math.min(r.y + r.h - WALL_CLEARANCE, Math.max(r.y + WALL_CLEARANCE, y))
+  const center = { x: r.x + r.w / 2, y: r.y + r.h / 2 }
+  if (r.kind === 'balkon') return center
+
+  // hol z wejściem do mieszkania (górna ściana obrysu): stajemy za drzwiami wejściowymi
+  const isEntrance = r.kind === 'hol' && Math.abs(r.y) < EPS && plan.findIndex((p) => p.kind === 'hol') === index
+  if (isEntrance) {
+    return { x: clampX(center.x), y: clampY(r.y + Math.min(0.85, r.h * 0.4)) }
+  }
+
+  const entries = all.filter((l) => l.to === index)
+  if (entries.length === 0) return center
+  const fromKind = (l: Link) => plan[l.from].kind
+  const rank = (l: Link) => (fromKind(l) === 'hol' ? 0 : l.type === 'balkon' ? 2 : 1)
+  const entry = [...entries].sort((a, b) => rank(a) - rank(b) || b.end - b.start - (a.end - a.start))[0]
+
+  const mid = (entry.start + entry.end) / 2
+  // entry.side to strona pomieszczenia źródłowego; do tego pokoju wchodzimy w tę samą stronę
+  switch (entry.side) {
+    case 'down':
+      return { x: clampX(mid), y: clampY(entry.at + Math.min(0.85, r.h * 0.4)) }
+    case 'up':
+      return { x: clampX(mid), y: clampY(entry.at - Math.min(0.85, r.h * 0.4)) }
+    case 'right':
+      return { x: clampX(entry.at + Math.min(0.85, r.w * 0.4)), y: clampY(mid) }
+    case 'left':
+      return { x: clampX(entry.at - Math.min(0.85, r.w * 0.4)), y: clampY(mid) }
+  }
+}
+
 /** Obrót o 90°: w prawo (zgodnie z ruchem wskazówek zegara, patrząc na rzut) albo w lewo. */
 export function turn(side: Side, direction: 'left' | 'right'): Side {
   const i = SIDES.indexOf(side)

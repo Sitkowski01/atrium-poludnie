@@ -11,7 +11,7 @@
   aspect-ratio: 16 / 10;
   overflow: hidden;
   border-radius: var(--radius);
-  background: #23211e;
+  background: var(--paper-2);
   box-shadow: var(--shadow-m);
   user-select: none;
   -webkit-user-select: none;
@@ -28,7 +28,7 @@
   margin: 0;
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgb(29 27 24 / 0.72);
+  background: rgb(15 18 26 / 0.66);
   color: var(--accent-ink);
   font-size: 14px;
   font-weight: 600;
@@ -49,7 +49,7 @@
   padding: 0 12px;
   border: 0;
   border-radius: 999px;
-  background: rgb(29 27 24 / 0.72);
+  background: rgb(15 18 26 / 0.66);
   color: var(--accent-ink);
   font-size: 14px;
   font-weight: 600;
@@ -62,7 +62,7 @@
 }
 @media (hover: hover) {
   .walk__btn:hover {
-    background: rgb(29 27 24 / 0.9);
+    background: rgb(15 18 26 / 0.9);
   }
   .walk__go:hover {
     background: var(--accent);
@@ -115,7 +115,7 @@
   margin: 0;
   padding: 5px 12px;
   border-radius: 999px;
-  background: rgb(29 27 24 / 0.72);
+  background: rgb(15 18 26 / 0.66);
   color: var(--accent-ink);
   font-size: 13px;
   font-weight: 600;

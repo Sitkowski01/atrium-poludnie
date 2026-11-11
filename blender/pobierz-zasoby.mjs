@@ -38,6 +38,10 @@ export const MODELS = [
   'hanging_picture_frame_01',
   'wicker_basket_01',
   'wooden_display_shelves_01',
+  // za oknami: prawdziwe drzewa zamiast brył
+  'island_tree_02',
+  'tree_small_02',
+  'shrub_02',
 ]
 
 async function json(url) {

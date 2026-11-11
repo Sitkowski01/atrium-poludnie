@@ -2,7 +2,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #23211e;
+  background: var(--paper-2);
   cursor: grab;
   /* palec w pionie przewija stronę, w poziomie obraca panoramę */
   touch-action: pan-y;
@@ -56,7 +56,8 @@
   height: 54px;
   border: 3px solid #fff;
   border-radius: 50%;
-  background: rgb(181 70 42 / 0.92);
+  background: rgb(217 163 91 / 0.94);
+  color: var(--accent-ink);
   box-shadow:
     0 0 0 6px rgb(255 255 255 / 0.22),
     0 8px 18px rgb(0 0 0 / 0.35);
@@ -66,7 +67,7 @@
 .pano__spot-label {
   padding: 3px 11px;
   border-radius: 999px;
-  background: rgb(29 27 24 / 0.82);
+  background: rgb(15 18 26 / 0.82);
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;

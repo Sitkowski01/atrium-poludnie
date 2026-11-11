@@ -10,6 +10,7 @@ html {
 }
 
 body {
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
   margin: 0;
   background:
     radial-gradient(1200px 700px at 78% 18%, #242a3d 0%, transparent 62%),
@@ -59,7 +60,15 @@ textarea {
 
 /* ---------- wspólne klocki (używaj ich w komponentach) ---------- */
 
+/* Cormorant ma domyślnie cyfry nautyczne; w danych zawsze proste i równej szerokości */
+svg text,
+.display {
+  font-variant-numeric: lining-nums tabular-nums;
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
+}
+
 .btn {
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
 import type { Apartment } from '../domain/types'
-import { SIDES, links } from '../domain/walk'
+import { SIDES, links, viewpoint } from '../domain/walk'
 import type { Link, Side } from '../domain/walk'
 import { PanoView, type Hotspot } from './PanoView'
 import './WalkViewer.css'
@@ -65,7 +65,8 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
   const panoUrl = (room: number) => `${import.meta.env.BASE_URL}pano/${dir}/${room}.webp`
 
   const here = plan[view.room]
-  const center = { x: here.x + here.w / 2, y: here.y + here.h / 2 }
+  // panorama jest zrobiona z punktu widzenia przy wejściu, nie ze środka pokoju
+  const center = viewpoint(plan, view.room, all)
   const doors = all.filter((l) => l.from === view.room)
 
   /** kierunek i odległość środka przejścia, widziane ze środka pomieszczenia */
@@ -259,7 +260,7 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
             ))}
           </ul>
         </div>
-        <MiniMap apartment={apartment} room={view.room} yaw={view.yaw} onPick={jump} />
+        <MiniMap apartment={apartment} room={view.room} at={center} yaw={view.yaw} onPick={jump} />
       </div>
     </div>
   )
@@ -268,11 +269,13 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
 function MiniMap({
   apartment,
   room: current,
+  at,
   yaw,
   onPick,
 }: {
   apartment: Apartment
   room: number
+  at: { x: number; y: number }
   yaw: number
   onPick: (room: number) => void
 }) {
@@ -320,7 +323,7 @@ function MiniMap({
       ))}
       <g
         className="walk__pos"
-        transform={`translate(${room.x + room.w / 2} ${room.y + room.h / 2}) rotate(${yaw})`}
+        transform={`translate(${at.x} ${at.y}) rotate(${yaw})`}
         aria-hidden="true"
       >
         <path className="walk__cone" d={`M0 0 L${-unit * 1.3} ${-unit * 2.2} L${unit * 1.3} ${-unit * 2.2} Z`} />
