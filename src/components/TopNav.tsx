@@ -1,4 +1,4 @@
-import { useEffect, useState, type MouseEvent } from 'react'
+import { useEffect, useRef, useState, type MouseEvent } from 'react'
 
 type Section = 'mieszkania' | 'budynek'
 
@@ -12,6 +12,8 @@ function currentSection(): Section {
   const list = document.getElementById('mieszkania')
   const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 76
   if (!list) return 'budynek'
+  // koniec strony: przy krótkiej liście nagłówek nie dojedzie pod pasek
+  if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) return 'mieszkania'
   return list.getBoundingClientRect().top <= header + 120 ? 'mieszkania' : 'budynek'
 }
 
@@ -23,26 +25,57 @@ function currentSection(): Section {
 export function TopNav() {
   const [active, setActive] = useState<Section>('budynek')
 
+  const flashTimer = useRef(0)
+  // po kliknięciu linku nasłuch przewijania nie zmienia podświetlenia, dopóki ruch się nie skończy
+  const locked = useRef(false)
+  const lockTimer = useRef(0)
+  const unlockRef = useRef<() => void>(() => {})
+  const armLock = () => {
+    locked.current = true
+    window.clearTimeout(lockTimer.current)
+    lockTimer.current = window.setTimeout(() => unlockRef.current(), 900)
+  }
+
   useEffect(() => {
     let frame = 0
     const update = () => {
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => setActive(currentSection()))
     }
+    const unlock = () => {
+      window.clearTimeout(lockTimer.current)
+      locked.current = false
+      update()
+    }
+    unlockRef.current = unlock
+    const onScroll = () => {
+      if (locked.current) armLock()
+      else update()
+    }
+    const onScrollEnd = () => {
+      if (locked.current) unlock()
+    }
     update()
-    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('scrollend', onScrollEnd)
     window.addEventListener('resize', update)
     return () => {
       cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', update)
+      window.clearTimeout(lockTimer.current)
+      window.clearTimeout(flashTimer.current)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('scrollend', onScrollEnd)
       window.removeEventListener('resize', update)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const go = (id: Section) => (e: MouseEvent<HTMLAnchorElement>) => {
+    if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) return
     const el = document.getElementById(id)
     if (!el) return
     e.preventDefault()
+    armLock()
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const behavior: ScrollBehavior = reduce ? 'auto' : 'smooth'
     if (id === 'budynek' && getComputedStyle(el).position === 'sticky') {
@@ -50,7 +83,8 @@ export function TopNav() {
       el.classList.remove('is-flash')
       void el.offsetWidth // restart animacji przy kolejnym kliknięciu
       el.classList.add('is-flash')
-      window.setTimeout(() => el.classList.remove('is-flash'), 1200)
+      window.clearTimeout(flashTimer.current)
+      flashTimer.current = window.setTimeout(() => el.classList.remove('is-flash'), 1200)
     } else {
       el.scrollIntoView({ behavior, block: 'start' })
     }

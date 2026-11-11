@@ -27,7 +27,7 @@ export default function App() {
       <main className="stage" id="top">
         <div className="stage__content">
           <Hero />
-          <div className="section-title" id="mieszkania">
+          <div className="section-title" id="mieszkania" tabIndex={-1}>
             <h2>Mieszkania</h2>
             <p className="eyebrow">wyszukiwarka</p>
           </div>
