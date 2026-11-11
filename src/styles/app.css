@@ -92,8 +92,8 @@ svg text,
 }
 @media (hover: hover) {
   .btn:hover {
-    border-color: var(--accent);
-    color: var(--accent-2);
+    border-color: var(--pick-line);
+    color: var(--ink);
   }
 }
 .btn:active {
@@ -111,6 +111,11 @@ svg text,
   box-shadow: 0 1px 0 rgb(255 255 255 / 0.35) inset, 0 8px 22px rgb(217 163 91 / 0.22);
 }
 @media (hover: hover) {
+  .btn--outline:hover {
+    background: var(--pick-soft);
+  }
+}
+@media (hover: hover) {
   .btn--primary:hover {
     background: var(--accent-2);
     border-color: var(--accent-2);
@@ -120,11 +125,11 @@ svg text,
 .btn--ghost {
   background: transparent;
 }
-/* obrys złotem, wersaliki: główne wezwanie w nagłówku */
+/* obrys kremem, wersaliki: wezwanie w nagłówku */
 .btn--outline {
   background: transparent;
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--pick-line);
+  color: var(--ink);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -156,9 +161,9 @@ svg text,
   }
 }
 .chip[aria-pressed='true'] {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--accent-ink);
+  background: var(--pick);
+  border-color: var(--pick);
+  color: var(--pick-ink);
   font-weight: 600;
 }
 
@@ -234,7 +239,7 @@ select {
 input[type='range'] {
   width: 100%;
   min-height: 28px;
-  accent-color: var(--accent);
+  accent-color: var(--pick);
   cursor: pointer;
 }
 
@@ -255,7 +260,7 @@ input[type='range'] {
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--ink-2);
 }
 
 .display {
@@ -286,7 +291,7 @@ input[type='range'] {
   gap: 0.26em; /* flex zjada spację między słowami */
   min-height: 44px;
   font-family: var(--font-display);
-  font-size: 27px;
+  font-size: var(--fd-2);
   font-weight: 500;
   letter-spacing: 0.01em;
   color: var(--ink);
@@ -310,7 +315,7 @@ input[type='range'] {
   text-decoration: none;
   transition: color 0.18s var(--ease);
 }
-/* aktywna sekcja: złota kreska pod spodem, wjeżdża od środka */
+/* aktywna sekcja: kremowa kreska pod spodem, wjeżdża od środka */
 .topbar__nav a {
   position: relative;
   display: inline-flex;
@@ -324,7 +329,7 @@ input[type='range'] {
   right: 0;
   bottom: 8px;
   height: 1px;
-  background: var(--accent);
+  background: var(--ink);
   transform: scaleX(0);
   transition: transform 0.3s var(--ease);
 }
@@ -456,7 +461,7 @@ input[type='range'] {
 .hero__stats dd {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 38px;
+  font-size: var(--fd-4);
   font-weight: 500;
   line-height: 1.05;
   white-space: nowrap;
@@ -472,7 +477,7 @@ input[type='range'] {
 }
 .section-title h2 {
   font-family: var(--font-display);
-  font-size: 40px;
+  font-size: var(--fd-5);
   font-weight: 500;
   line-height: 1;
 }
@@ -505,7 +510,7 @@ input[type='range'] {
     --header-h: 64px;
   }
   .topbar__logo {
-    font-size: 23px;
+    font-size: var(--fd-1);
   }
   .stage {
     grid-template-columns: 1fr;
@@ -536,7 +541,7 @@ input[type='range'] {
     gap: 8px 28px;
   }
   .hero__stats dd {
-    font-size: 30px;
+    font-size: var(--fd-3);
   }
 }
 

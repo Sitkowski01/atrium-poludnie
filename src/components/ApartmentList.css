@@ -20,7 +20,7 @@
 
 .apt-list__count strong {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: var(--fd-3);
   font-weight: 500;
   line-height: 1;
   color: var(--ink);
@@ -136,7 +136,7 @@
 .apt-list__id {
   min-width: 3ch;
   font-family: var(--font-display);
-  font-size: 34px;
+  font-size: var(--fd-3);
   font-weight: 500;
   line-height: 1;
   color: var(--ink);
@@ -215,7 +215,7 @@
 
 .apt-list__price strong {
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: var(--fd-2);
   font-weight: 500;
   line-height: 1.1;
   color: var(--ink);
@@ -266,12 +266,12 @@
 @media (hover: hover) {
   .apt-list__fav:hover {
     background-color: var(--card-2);
-    color: var(--accent);
+    color: var(--pick);
   }
 }
 
 .apt-list__fav--on {
-  color: var(--accent);
+  color: var(--pick);
 }
 
 .apt-list__more {
@@ -296,7 +296,7 @@
 
 .apt-list__empty-title {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: var(--fd-3);
   font-weight: 500;
   line-height: 1.2;
   color: var(--ink);

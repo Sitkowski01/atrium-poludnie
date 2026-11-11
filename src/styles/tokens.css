@@ -25,6 +25,12 @@
   --accent-soft: #2b2519;
   --sun: #f0b23a;
 
+  /* stan wybrany/aktywny: krem zamiast złota (złoto zostaje dla słońca, głównej akcji, marki) */
+  --pick: var(--ink);
+  --pick-ink: var(--paper);
+  --pick-soft: rgb(242 237 227 / 0.08);
+  --pick-line: rgb(242 237 227 / 0.5);
+
   /* statusy na ciemnym tle: znak, tekst, tło plakietki */
   --ok: #6fbf8e;
   --ok-ink: #9fdcb6;
@@ -45,6 +51,12 @@
   --glow: 0 0 0 1px rgb(217 163 91 / 0.55), 0 0 24px rgb(217 163 91 / 0.35);
 
   --font-display: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  /* skala kroju wyświetlanego: wszystkie rozmiary Cormorant poza clamp tytułów */
+  --fd-1: 20px;
+  --fd-2: 24px;
+  --fd-3: 30px;
+  --fd-4: 36px;
+  --fd-5: 40px;
   --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
 
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);

@@ -50,7 +50,7 @@
 
 .mortgage__monthly-value {
   font-family: var(--font-display);
-  font-size: 44px;
+  font-size: var(--fd-3);
   font-weight: 500;
   line-height: 1.1;
   color: var(--ink);

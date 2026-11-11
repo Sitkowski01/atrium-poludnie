@@ -201,8 +201,8 @@
   stroke-dasharray: 4 3;
 }
 .walk__room--current {
-  fill: var(--accent-soft);
-  stroke: var(--accent);
+  fill: var(--pick-soft);
+  stroke: var(--pick);
   stroke-width: 2;
 }
 @media (hover: hover) {
@@ -215,11 +215,11 @@
   pointer-events: none;
 }
 .walk__cone {
-  fill: var(--accent);
+  fill: var(--pick);
   fill-opacity: 0.45;
 }
 .walk__dot {
-  fill: var(--accent);
+  fill: var(--pick);
 }
 
 /* ---------- tryb powiększony ---------- */
