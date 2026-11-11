@@ -179,8 +179,8 @@ export function Building() {
               </filter>
             </defs>
 
-            {/* słońce za budynkiem: pod renderami, więc bryła je zasłania */}
-            <SunOrbit hour={hour} layer="back" cx={305} cy={270} rx={360} ry={330} />
+            {/* łuk słońca: część za budynkiem (wieczór) pod renderami, więc bryła ją zasłania */}
+            <SunOrbit hour={hour} layer="back" cx={315} horizon={290} rx={330} ry={345} />
 
             {/* rendery: bieżący i następny przenikają się wraz z godziną */}
             <g aria-hidden="true" className="building__renders">
@@ -216,8 +216,8 @@ export function Building() {
               </text>
             </g>
 
-            {/* słońce przed budynkiem: nad renderami, z promieniem na oświetloną ścianę */}
-            <SunOrbit hour={hour} layer="front" cx={305} cy={270} rx={360} ry={330} />
+            {/* łuk słońca: część przed budynkiem (rano i w południe) nad renderami */}
+            <SunOrbit hour={hour} layer="front" cx={315} horizon={290} rx={330} ry={345} />
 
             {/* klikalne pola mieszkań: przezroczyste, pokazują się dopiero przy stanie */}
             {ordered.map((a) => {

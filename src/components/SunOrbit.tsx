@@ -4,95 +4,90 @@ type P = [number, number]
 
 interface Props {
   hour: number
-  /** 'back' — część drogi za budynkiem (pod renderami), 'front' — przed nim (nad renderami) */
+  /** 'back' — część łuku za budynkiem (pod renderami), 'front' — przed nim (nad renderami) */
   layer: 'back' | 'front'
-  /** środek bryły na rysunku */
+  /** środek łuku w poziomie, linia horyzontu i półosie (jednostki rysunku) */
   cx: number
-  cy: number
-  /** półosie orbity na rysunku */
+  horizon: number
   rx: number
   ry: number
 }
 
-const C = 0.866
-const S = 0.5
 const RAD = Math.PI / 180
-/** po tej stronie budynku orbita jest o tyle ciaśniejsza, żeby wieczorne słońce chowało się za bryłą */
-const BEHIND_SHRINK = 0.1
+const C = 0.866
+/** największe przesunięcie w bok: słońce na południowym zachodzie (225°) albo północnym wschodzie (45°) */
+const SIDE_MAX = Math.SQRT2 * C
 
 /**
- * Gdzie stoi słońce względem bryły. Kierunek na rysunku to prawdziwy kierunek słońca (sunAt(),
- * ten sam, z którego Blender oświetla rendery) w rzucie kamery, która patrzy z południowego
- * wschodu: rano i w południe słońce jest przed budynkiem, od strony patrzącego, i świeci
- * na widoczne ściany; po ok. 15:30 przechodzi za budynek i chowa się za nim przy zachodzie.
+ * Łuk słońca nad bryłą. W poziomie: prawdziwa składowa kierunku słońca w tym kadrze (kamera patrzy
+ * z południowego wschodu, więc rano słońce jest po prawej, przy ścianie wschodniej, a po południu
+ * po lewej, przy południowej). W pionie: wysokość nad horyzontem z sunAt(), tego samego modelu,
+ * którym Blender oświetla rendery. Od ok. 15:30 słońce jest po drugiej stronie budynku niż
+ * patrzący, więc ta część łuku leży pod renderami i zachód chowa się za bryłą — tak jak na
+ * renderach widoczne ściany są wtedy w cieniu.
  */
-function place(hour: number, cx: number, cy: number, rx: number, ry: number) {
+function place(hour: number, cx: number, horizon: number, rx: number, ry: number) {
   const { azimuth, elevation } = sunAt(hour)
   const az = azimuth * RAD
-  const el = Math.max(elevation, 0) * RAD
-  // kierunek do słońca: e = na wschód, n = na północ, z = w górę; rzut jak w Building.tsx
-  const e = Math.sin(az) * Math.cos(el)
-  const n = Math.cos(az) * Math.cos(el)
-  const z = Math.sin(el)
-  const angle = Math.atan2((e - n) * S - z, (e + n) * C)
-  // >0: słońce po drugiej stronie budynku niż patrzący (kamera patrzy na północny zachód)
-  const depth = (n - e) / Math.SQRT2
-  const k = 1 - BEHIND_SHRINK * Math.max(0, depth / Math.max(Math.cos(el), 0.01))
+  const side = (Math.sin(az) + Math.cos(az)) * C // >0 w prawo (wschód), <0 w lewo (południe/zachód)
+  // łagodny szczyt: wysokie słońce trochę ściśnięte, żeby łuk zmieścił się w kadrze bez płaskiej „półki”
+  const lift = Math.pow(Math.max(0, elevation) / 60, 0.7)
   return {
-    p: [cx + Math.cos(angle) * rx * k, cy + Math.sin(angle) * ry * k] as P,
-    behind: depth > 0,
+    p: [cx + (side / SIDE_MAX) * rx, horizon - lift * ry] as P,
+    // patrzący stoi na południowym wschodzie: słońce od północnego zachodu jest za budynkiem
+    behind: Math.cos(az) - Math.sin(az) > 0,
     elevation,
   }
 }
 
-export function SunOrbit({ hour, layer, cx, cy, rx, ry }: Props) {
+export function SunOrbit({ hour, layer, cx, horizon, rx, ry }: Props) {
   const want = layer === 'back'
-  // droga dnia podzielona na odcinki po tej samej stronie budynku
-  const runs: P[][] = []
+  const step = 0.2
+  // odcinki łuku po tej samej stronie budynku; „przebyte” do bieżącej godziny osobno
+  const track: P[][] = []
+  const passed: P[][] = []
   let run: P[] = []
-  for (let h = DAY_START; h <= DAY_END + 1e-6; h += 0.2) {
-    const { p, behind } = place(h, cx, cy, rx, ry)
-    if (behind === want) run.push(p)
-    else if (run.length) {
-      run.push(p) // domyka odcinek na granicy, żeby nie było przerwy
-      runs.push(run)
+  let done: P[] = []
+  for (let h = DAY_START; h <= DAY_END + 1e-6; h += step) {
+    const { p, behind } = place(h, cx, horizon, rx, ry)
+    if (behind === want) {
+      run.push(p)
+      if (h <= hour) done.push(p)
+    } else {
+      if (run.length) track.push([...run, p])
+      if (done.length) passed.push(done.length === run.length ? [...done, p] : done)
       run = []
+      done = []
     }
   }
-  if (run.length) runs.push(run)
+  if (run.length) track.push(run)
+  if (done.length) passed.push(done)
   const d = (ps: P[]) => ps.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ')
 
-  const sun = place(hour, cx, cy, rx, ry)
-  const showDisc = sun.behind === want && sun.elevation > -2
+  const sun = place(hour, cx, horizon, rx, ry)
+  const showDisc = sun.behind === want && sun.elevation > -1
   const [sx, sy] = sun.p
-  const glow = Math.max(0.45, Math.min(1, sun.elevation / 12))
-  // promień tylko wtedy, gdy słońce świeci na widoczne ściany; kończy się przed budynkiem
-  const k = 0.3
-  const ray = !sun.behind && sun.elevation > 0
+  const glow = Math.max(0.35, Math.min(1, sun.elevation / 10))
 
   return (
-    <g className={`sunorbit sunorbit--${layer}`} aria-hidden="true">
+    <g className={`sunpath sunpath--${layer}`} aria-hidden="true">
       {layer === 'front' && (
         <defs>
-          <radialGradient id="sunorbit-halo">
+          <radialGradient id="sun-halo">
             <stop offset="0" stopColor="#ffd98a" stopOpacity="0.6" />
             <stop offset="0.4" stopColor="#f0b23a" stopOpacity="0.18" />
             <stop offset="1" stopColor="#f0b23a" stopOpacity="0" />
           </radialGradient>
-          <linearGradient id="sunorbit-ray" gradientUnits="userSpaceOnUse" x1={sx} y1={sy} x2={sx + (cx - sx) * k} y2={sy + (cy - sy) * k}>
-            <stop offset="0" stopColor="#ffd98a" stopOpacity="0.75" />
-            <stop offset="1" stopColor="#ffd98a" stopOpacity="0" />
-          </linearGradient>
         </defs>
       )}
-      {runs.map((r, i) => (
-        <path key={i} className="sunorbit__track" d={d(r)} />
+      {track.map((t, i) => (
+        <path key={`t${i}`} className="sunpath__track" d={d(t)} />
       ))}
+      {passed.map((t, i) => t.length > 1 && <path key={`p${i}`} className="sunpath__passed" d={d(t)} />)}
       {showDisc && (
         <g style={{ opacity: glow }}>
-          {ray && <line className="sunorbit__ray" x1={sx} y1={sy} x2={sx + (cx - sx) * k} y2={sy + (cy - sy) * k} stroke="url(#sunorbit-ray)" />}
-          <circle cx={sx} cy={sy} r="40" fill="url(#sunorbit-halo)" />
-          <circle className="sunorbit__disc" cx={sx} cy={sy} r="11" />
+          <circle cx={sx} cy={sy} r="54" fill="url(#sun-halo)" />
+          <circle className="sunpath__disc" cx={sx} cy={sy} r="11" />
         </g>
       )}
     </g>

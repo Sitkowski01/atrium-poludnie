@@ -291,27 +291,33 @@
 }
 
 
-/* ---------- słońce wokół bryły ---------- */
+/* ---------- łuk słońca ---------- */
 
-.sunorbit {
+.sunpath {
   pointer-events: none;
 }
-.sunorbit__track {
+.sunpath__track,
+.sunpath__passed {
   fill: none;
-  stroke: rgb(240 178 58 / 0.42);
-  stroke-width: 1.3;
-  stroke-dasharray: 2 6;
   stroke-linecap: round;
 }
-/* droga za budynkiem ciszej: to „dalsza” strona pętli */
-.sunorbit--back .sunorbit__track {
-  stroke: rgb(240 178 58 / 0.22);
+.sunpath__track {
+  stroke: rgb(240 178 58 / 0.24);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 7;
 }
-.sunorbit__ray {
-  stroke-width: 2.2;
-  stroke-linecap: round;
+.sunpath__passed {
+  stroke: rgb(240 178 58 / 0.55);
+  stroke-width: 1.4;
 }
-.sunorbit__disc {
+/* część za budynkiem ciszej: to dalsza strona łuku */
+.sunpath--back .sunpath__track {
+  stroke: rgb(240 178 58 / 0.16);
+}
+.sunpath--back .sunpath__passed {
+  stroke: rgb(240 178 58 / 0.32);
+}
+.sunpath__disc {
   fill: #ffd98a;
   stroke: #fff1cf;
   stroke-width: 1.5;
