@@ -5,7 +5,7 @@ import { FACADE_LABEL, STATUS_LABEL, floorLabel, formatArea, formatHour, formatP
 import { sunWindow } from '../domain/sun'
 import type { Apartment, Facade } from '../domain/types'
 import { useHour, useStore } from '../state/store'
-import { SunPath } from './SunPath'
+import { SunOrbit } from './SunOrbit'
 import './Building.css'
 
 /* ---------- rzut izometryczny ----------
@@ -179,8 +179,8 @@ export function Building() {
               </filter>
             </defs>
 
-            {/* skąd pada światło: łuk słońca na niebie, za budynkiem */}
-            <SunPath hour={hour} cx={310} horizon={300} rx={300} ry={340} minX={VB.x} maxX={VB.x + VB.w} layer="sky" />
+            {/* słońce za budynkiem: pod renderami, więc bryła je zasłania */}
+            <SunOrbit hour={hour} layer="back" cx={305} cy={270} rx={360} ry={330} />
 
             {/* rendery: bieżący i następny przenikają się wraz z godziną */}
             <g aria-hidden="true" className="building__renders">
@@ -216,7 +216,8 @@ export function Building() {
               </text>
             </g>
 
-            <SunPath hour={hour} cx={310} horizon={300} rx={300} ry={340} minX={VB.x} maxX={VB.x + VB.w} layer="label" />
+            {/* słońce przed budynkiem: nad renderami, z promieniem na oświetloną ścianę */}
+            <SunOrbit hour={hour} layer="front" cx={305} cy={270} rx={360} ry={330} />
 
             {/* klikalne pola mieszkań: przezroczyste, pokazują się dopiero przy stanie */}
             {ordered.map((a) => {
