@@ -1,0 +1,168 @@
+.typegal {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.typecard {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-s);
+  cursor: pointer;
+}
+.typecard--featured {
+  grid-column: 1 / -1;
+}
+
+/* obraz: overflow tylko tutaj, żeby pierścień fokusu przycisku nie był ucięty */
+.typecard__media {
+  position: relative;
+  display: block;
+  /* w kolumnie flex wewnątrz <button> element nie rozciąga się sam na szerokość karty */
+  width: 100%;
+  flex: none;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
+  background: var(--paper);
+}
+.typecard--featured .typecard__media {
+  aspect-ratio: 16 / 9;
+}
+.typecard__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* makieta z góry: kwadratowa, w kadrze 4:3 ucinamy tylko trochę zieleni u góry i u dołu */
+.typecard__img--base {
+  object-position: 50% 50%;
+  transform: scale(1.02);
+}
+.typecard__img--reveal {
+  opacity: 0;
+  transition: opacity 260ms var(--ease) 130ms;
+}
+.typecard[data-blinds='in'] .typecard__img--reveal {
+  opacity: 1;
+}
+
+/* żaluzje: 8 listew po 1/8 wysokości; zamykają się i otwierają kaskadowo z góry na dół,
+   a w chwili zamknięcia render zmienia się w makietę (przy zjeździe odwrotnie) */
+.typecard__blinds {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+.typecard__blinds span {
+  flex: 1 1 0;
+  background: var(--paper);
+  transform: scaleY(0);
+  transform-origin: 50% 50%;
+}
+.typecard[data-blinds='in'] .typecard__blinds span {
+  animation: typecard-blind-in 420ms var(--ease) calc(var(--i) * 35ms) both;
+}
+.typecard[data-blinds='out'] .typecard__blinds span {
+  animation: typecard-blind-out 420ms var(--ease) calc(var(--i) * 35ms) both;
+}
+@keyframes typecard-blind-in {
+  0% { transform: scaleY(0); }
+  45% { transform: scaleY(1); }
+  100% { transform: scaleY(0); }
+}
+@keyframes typecard-blind-out {
+  0% { transform: scaleY(0); }
+  45% { transform: scaleY(1); }
+  100% { transform: scaleY(0); }
+}
+
+.typecard__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px 16px;
+  flex: 1;
+}
+.typecard__name {
+  font-family: var(--font-display);
+  font-size: var(--fd-2);
+  line-height: 1.1;
+}
+.typecard--featured .typecard__name {
+  font-size: var(--fd-3);
+}
+.typecard__facts {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.typecard__price {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.typecard__price strong {
+  font-family: var(--font-display);
+  font-size: var(--fd-1);
+  font-weight: 500;
+  color: var(--ink);
+}
+.typecard__sun {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+.typecard__sun-label {
+  font-size: 12px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 560px) {
+  .typegal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typecard[data-blinds] .typecard__blinds span {
+    animation: none;
+  }
+  .typecard__img--reveal {
+    transition: none;
+  }
+}
+
+/* dotyk: bez żaluzji, wnętrze stale jako miniatura w rogu makiety */
+@media (hover: none) {
+  .typecard__blinds {
+    display: none;
+  }
+  .typecard__img--reveal,
+  .typecard[data-blinds='in'] .typecard__img--reveal {
+    inset: auto 10px 10px auto;
+    width: 30%;
+    height: auto;
+    aspect-ratio: 1;
+    opacity: 1;
+    transition: none;
+    object-fit: cover;
+    border: 1px solid var(--pick-line);
+    border-radius: 6px;
+  }
+}
