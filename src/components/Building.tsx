@@ -64,6 +64,15 @@ const SPOTS: { key: Spot; label: string }[] = [
 /** grupy statusu obejmują tylko mieszkania w filtrach, resztę zbiera „poza filtrami”, więc liczniki sumują się do 35 */
 const inSpot = (a: Apartment, spot: Spot, dim: boolean) => (spot === 'poza' ? dim : !dim && a.status === spot)
 
+/** „1 mieszkanie”, „3 mieszkania”, „12 mieszkań” */
+function flatsLabel(n: number): string {
+  if (n === 0) return 'żadne mieszkanie'
+  if (n === 1) return '1 mieszkanie'
+  const d = n % 10
+  const t = n % 100
+  return `${n} ${d >= 2 && d <= 4 && (t < 12 || t > 14) ? 'mieszkania' : 'mieszkań'}`
+}
+
 const cellLabel = (a: Apartment, dim: boolean) =>
   `${dim ? 'Poza filtrami: ' : ''}Mieszkanie ${a.id}, ${roomsLabel(a.rooms)}, ${formatArea(a.area)}, ${floorLabel(a.floor)}, ${formatPrice(a.price)}, ${STATUS_LABEL[a.status]}`
 
@@ -154,6 +163,13 @@ export function Building() {
   const hovered = apartments.find((a) => a.id === state.hoveredId) ?? null
   const selected = apartments.find((a) => a.id === state.selectedId) ?? null
   const focus = hovered ?? selected
+  // podświetlenie z rozdziałów strony (typ mieszkania, „kiedy jesteś w domu”) wygrywa z legendą
+  const storeSpot = state.spotlight
+  const spotIds = useMemo(() => (storeSpot ? new Set(storeSpot.ids) : null), [storeSpot])
+  const isSpot = (a: Apartment, dim: boolean) => (spotIds ? spotIds.has(a.id) : spot ? inSpot(a, spot, dim) : false)
+  const spotting = Boolean(spotIds || spot)
+  // karta nie może zasłaniać mieszkania, o którym mówi: dla niskich pięter (i podświetlenia) idzie do nieba u góry
+  const cardTop = focus ? focus.floor <= 3 : Boolean(storeSpot)
   const selectedId = state.selectedId
 
   // od góry do dołu — taka sama kolejność dla klawiatury
@@ -164,7 +180,7 @@ export function Building() {
     <div className="building">
       <div className="building__frame">
         <SceneSky hour={hour} />
-        <div ref={boxRef} className={`building__box${spot ? ' is-spotting' : ''}`}>
+        <div ref={boxRef} className={`building__box${spotting ? ' is-spotting' : ''}`}>
           <svg
             className="building__svg"
             viewBox={`${VB.x} ${VB.y} ${VB.w} ${VB.h}`}
@@ -235,7 +251,7 @@ export function Building() {
                 a.status === 'rezerwacja' && 'is-hold',
                 isHover && 'is-hover',
                 isSelected && 'is-selected',
-                spot && inSpot(a, spot, dim) && 'is-spot',
+                isSpot(a, dim) && 'is-spot',
               ]
                 .filter(Boolean)
                 .join(' ')
@@ -284,18 +300,18 @@ export function Building() {
               )
             })}
 
-            {/* obrys najechanego i wybranego — na wierzchu, ze złotą poświatą */}
+            {/* obrys najechanego (krem) i wybranego (złoto): ciemna podkładka pod linią, żeby obrys
+                miał kontrast także na jasnej fasadzie w południe */}
             {apartments
               .filter((a) => a.id === selectedId || a.id === state.hoveredId)
               .map((a) => {
                 const [d0, d1] = span(a)
+                const points = quad(a.facade, d0, d1, a.floor * HF, (a.floor + 1) * HF)
                 return (
-                  <polygon
-                    key={a.id}
-                    className={`building__outline${a.id === selectedId ? ' is-selected' : ''}`}
-                    points={quad(a.facade, d0, d1, a.floor * HF, (a.floor + 1) * HF)}
-                    filter="url(#b-glow)"
-                  />
+                  <g key={a.id} className={`building__mark-out${a.id === selectedId ? ' is-selected' : ''}`}>
+                    <polygon className="building__outline-under" points={points} />
+                    <polygon className="building__outline" points={points} filter="url(#b-glow)" />
+                  </g>
                 )
               })}
           </svg>
@@ -304,7 +320,10 @@ export function Building() {
         </div>
 
         {/* szklana karta: co jest pod kursorem albo co jest wybrane */}
-        <div className={`building__card${focus ? ' is-on' : ''}`} aria-hidden="true">
+        <div
+          className={`building__card${focus || storeSpot ? ' is-on' : ''}${cardTop ? ' is-top' : ''}`}
+          aria-hidden="true"
+        >
           {focus ? (
             <>
               <span className="building__card-eyebrow">Mieszkanie {focus.id}</span>
@@ -319,6 +338,13 @@ export function Building() {
                 {formatPrice(focus.price)}
                 <span className={`badge badge--${focus.status}`}>{STATUS_LABEL[focus.status]}</span>
               </span>
+              <span className="building__card-keys">Strzałki: następne mieszkanie · Enter: otwórz</span>
+            </>
+          ) : storeSpot ? (
+            <>
+              <span className="building__card-eyebrow">Na bryle</span>
+              <strong className="building__card-title">{storeSpot.label}</strong>
+              <span className="building__card-meta">{flatsLabel(storeSpot.ids.length)}</span>
             </>
           ) : (
             <>

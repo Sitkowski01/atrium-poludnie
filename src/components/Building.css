@@ -95,7 +95,7 @@
 }
 .building__cell.is-hover .building__hit,
 .building__cell:focus-visible .building__hit {
-  fill: rgb(217 163 91 / 0.2);
+  fill: rgb(242 237 227 / 0.18);
 }
 .building__cell.is-selected .building__hit {
   fill: rgb(217 163 91 / 0.32);
@@ -107,15 +107,24 @@
   pointer-events: none;
 }
 
-.building__outline {
-  fill: none;
-  stroke: var(--accent-2);
-  stroke-width: 2.2;
-  stroke-linejoin: round;
+.building__mark-out {
   pointer-events: none;
 }
-.building__outline.is-selected {
-  stroke: #fff4df;
+.building__outline-under {
+  fill: none;
+  stroke: rgb(15 18 26 / 0.85);
+  stroke-width: 6;
+  stroke-linejoin: round;
+}
+.building__outline {
+  fill: none;
+  stroke: var(--pick);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+}
+/* wybrane mieszkanie: jedyne złoto na bryle obok słońca */
+.building__mark-out.is-selected .building__outline {
+  stroke: var(--accent-2);
   stroke-width: 2.8;
 }
 
@@ -135,7 +144,11 @@
   font-size: max(11px, calc(10px * var(--svg-k, 1)));
   font-weight: 600;
   letter-spacing: 0.3em;
-  fill: var(--ink-2);
+  fill: var(--ink);
+  /* napis leży na trawie renderu: ciemna obwódka pod literami daje kontrast */
+  paint-order: stroke;
+  stroke: rgb(15 18 26 / 0.8);
+  stroke-width: 3px;
 }
 
 /* ---------- szklana karta ---------- */
@@ -144,6 +157,8 @@
   position: absolute;
   right: 0;
   bottom: 4px;
+  /* tylko informuje: nie może łapać kursora nad mieszkaniami, które zasłania */
+  pointer-events: none;
   display: grid;
   gap: 4px;
   width: min(330px, 70%);
@@ -156,7 +171,21 @@
   transition: border-color 0.25s var(--ease);
 }
 .building__card.is-on {
-  border-color: rgb(217 163 91 / 0.45);
+  border-color: var(--pick-line);
+}
+/* mieszkanie na niskim piętrze albo podświetlona grupa: karta idzie do nieba nad bryłą */
+.building__card.is-top {
+  top: 4px;
+  bottom: auto;
+}
+.building__card-keys {
+  display: none;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.building__frame:has(.building__cell:focus-visible) .building__card-keys {
+  display: block;
 }
 /* w spoczynku tylko krótka podpowiedź: render bryły jest najmocniejszym elementem strony
    i karta nie może zasłaniać wejścia ani zieleni; pełna karta wraca po najechaniu na okno */
@@ -177,12 +206,6 @@
   line-height: 1.4;
   color: var(--ink);
 }
-/* z klawiatury podpowiedź o strzałkach jest potrzebna, więc wraca, gdy bryła ma fokus */
-@media (hover: hover) {
-  .building__frame:focus-within .building__card:not(.is-on) .building__card-meta {
-    display: block;
-  }
-}
 .building__card-eyebrow {
   font-size: 11px;
   font-weight: 600;
@@ -192,7 +215,7 @@
 }
 .building__card-title {
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: var(--fd-1);
   font-weight: 500;
   line-height: 1.1;
 }
@@ -207,7 +230,7 @@
   gap: 10px;
   margin-top: 6px;
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: var(--fd-2);
   font-weight: 500;
 }
 
@@ -252,7 +275,7 @@
   font-weight: 400;
 }
 @media (hover: hover) {
-  .building__legend-item:hover:not([aria-disabled='true']) {
+  .building__legend-item:hover:not([aria-disabled='true']):not(.is-on) {
     color: var(--ink);
     border-color: var(--line-2);
   }
@@ -301,15 +324,15 @@
   fill: rgb(10 12 18 / 0.74);
 }
 .building__box.is-spotting .building__cell.is-spot .building__hit {
-  fill: rgb(217 163 91 / 0.16);
-  stroke: var(--accent-2);
+  fill: rgb(242 237 227 / 0.16);
+  stroke: var(--pick);
   stroke-width: 1.6;
   animation: building-spot 0.5s var(--ease) backwards;
   animation-delay: calc((6 - var(--f, 0)) * 40ms);
 }
 @keyframes building-spot {
   from {
-    fill: rgb(217 163 91 / 0.5);
+    fill: rgb(242 237 227 / 0.45);
     stroke-opacity: 0;
   }
 }
@@ -378,10 +401,10 @@
     padding: 12px 16px 14px;
   }
   .building__card-title {
-    font-size: 21px;
+    font-size: var(--fd-1);
   }
   .building__card-price {
     margin-top: 4px;
-    font-size: 20px;
+    font-size: var(--fd-2);
   }
 }
