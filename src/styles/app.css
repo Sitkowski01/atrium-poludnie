@@ -280,6 +280,10 @@ input[type='range'] {
   border-bottom: 1px solid rgb(255 255 255 / 0.05);
 }
 .topbar__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.26em; /* flex zjada spację między słowami */
+  min-height: 44px;
   font-family: var(--font-display);
   font-size: 27px;
   font-weight: 500;

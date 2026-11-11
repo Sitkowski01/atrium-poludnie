@@ -1,11 +1,87 @@
 .filter-bar {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 26px 28px;
-  padding: 22px;
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: transparent;
+}
+
+.filter-bar__body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 28px;
+  min-width: 0;
+  padding: 22px;
+}
+
+/* wiersz przełącznika — tylko poniżej 980 px (renderowany z JS) */
+.filter-bar__top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.filter-bar__toggle {
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.filter-bar__toggle[aria-expanded='true'] {
+  border-color: var(--accent);
+}
+
+.filter-bar__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.filter-bar__clear {
+  flex: none;
+  padding: 0 14px;
+}
+
+@media (max-width: 980px) {
+  /* rozwijanie przez wysokość wiersza siatki 0fr → 1fr, bez skoku układu */
+  .filter-bar__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition:
+      grid-template-rows 250ms var(--ease),
+      visibility 0s linear 250ms;
+  }
+  .filter-bar__panel--open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition:
+      grid-template-rows 250ms var(--ease),
+      visibility 0s;
+  }
+  .filter-bar__panel > .filter-bar__body {
+    min-height: 0;
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+    transition:
+      padding 250ms var(--ease),
+      border-color 250ms var(--ease);
+  }
+  .filter-bar__panel:not(.filter-bar__panel--open) > .filter-bar__body {
+    padding-top: 0;
+    padding-bottom: 0;
+    border-top-color: transparent;
+  }
 }
 
 .filter-bar__group {
@@ -109,7 +185,7 @@
 }
 
 @media (max-width: 640px) {
-  .filter-bar {
+  .filter-bar__body {
     grid-template-columns: minmax(0, 1fr);
     gap: 24px;
     padding: 20px 16px;

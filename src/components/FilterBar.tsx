@@ -1,3 +1,4 @@
+import { useEffect, useId, useRef, useState } from 'react'
 import { countActive } from '../domain/filter'
 import { floorLabel, formatArea, formatPrice } from '../domain/format'
 import type { Facade } from '../domain/types'
@@ -12,10 +13,55 @@ const FACADE_OPTIONS: { value: Facade | 'all'; label: string }[] = [
   { value: 'E', label: 'Wschód' },
 ]
 
+const NARROW_QUERY = '(max-width: 980px)'
+
+function matchNarrow(): MediaQueryList | null {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return null
+  try {
+    return window.matchMedia(NARROW_QUERY)
+  } catch {
+    return null
+  }
+}
+
+function useNarrow(): boolean {
+  const [narrow, setNarrow] = useState(() => matchNarrow()?.matches ?? false)
+  useEffect(() => {
+    const mq = matchNarrow()
+    if (!mq) return
+    const onChange = () => setNarrow(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+  return narrow
+}
+
+function SlidersIcon() {
+  return (
+    <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+      <path
+        d="M3 6h7M14 6h3M3 14h3M10 14h7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <circle cx="12" cy="6" r="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="8" cy="14" r="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+  )
+}
+
 export function FilterBar() {
   const { state, dispatch, limits } = useStore()
   const { filters, favourites } = state
   const active = countActive(filters, limits)
+  const narrow = useNarrow()
+  const [open, setOpen] = useState(false)
+  const panelId = useId()
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  const collapsed = narrow && !open
   const floors = Array.from({ length: limits.floorMax + 1 }, (_, i) => i)
 
   const toggleRoom = (n: number) => {
@@ -39,6 +85,48 @@ export function FilterBar() {
 
   return (
     <section className="filter-bar" aria-label="Filtry mieszkań">
+      {narrow && (
+        <div className="filter-bar__top">
+          <button
+            type="button"
+            ref={toggleRef}
+            className="btn filter-bar__toggle"
+            aria-expanded={open}
+            aria-controls={panelId}
+            onClick={() => setOpen(!open)}
+          >
+            <SlidersIcon />
+            Filtry
+            {active > 0 && (
+              <>
+                <span className="filter-bar__badge" aria-hidden="true">
+                  {active}
+                </span>
+                <span className="visually-hidden">, aktywnych: {active}</span>
+              </>
+            )}
+          </button>
+          {active > 0 && (
+            <button
+              type="button"
+              className="btn btn--ghost filter-bar__clear"
+              onClick={() => {
+                // przycisk zaraz zniknie — fokus wraca na przełącznik
+                toggleRef.current?.focus()
+                dispatch({ type: 'resetFilters' })
+              }}
+            >
+              Wyczyść
+            </button>
+          )}
+        </div>
+      )}
+      <div
+        id={panelId}
+        className={`filter-bar__panel${collapsed ? '' : ' filter-bar__panel--open'}`}
+        inert={collapsed}
+      >
+        <div className="filter-bar__body">
       <fieldset className="filter-bar__group">
         <legend className="filter-bar__label">Pokoje</legend>
         <div className="filter-bar__chips">
@@ -156,7 +244,7 @@ export function FilterBar() {
         </label>
       </div>
 
-      {active > 0 && (
+      {active > 0 && !narrow && (
         <div className="filter-bar__reset">
           <button
             type="button"
@@ -171,6 +259,8 @@ export function FilterBar() {
           </button>
         </div>
       )}
+        </div>
+      </div>
     </section>
   )
 }

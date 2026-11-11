@@ -101,7 +101,15 @@ export function Building() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hiRes])
 
-  const { a: fa, b: fb, t: ft } = framesFor(state.hour)
+  const want = framesFor(state.hour)
+  // render jeszcze się nie wczytał: pokaż najbliższy gotowy zamiast pustego miejsca
+  const nearest = (h: number) =>
+    loaded.has(h) || loaded.size === 0
+      ? h
+      : [...loaded].sort((x, y) => Math.abs(x - h) - Math.abs(y - h))[0]
+  const fa = nearest(want.a)
+  const fb = want.b
+  const ft = want.t
   const showB = fb !== fa && loaded.has(fb)
 
   const hovered = apartments.find((a) => a.id === state.hoveredId) ?? null

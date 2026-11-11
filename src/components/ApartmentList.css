@@ -151,18 +151,23 @@
 }
 
 .apt-list__facts {
-  display: block;
+  display: flex;
+  flex-wrap: wrap;
   max-width: 100%;
+  min-width: 0;
+  /* przycina separator, który wypadł na początku linii */
+  overflow: hidden;
   font-size: 14px;
   font-weight: 500;
   color: var(--ink-2);
 }
 
-/* separator sąsiaduje z elementem po lewej; wiersz przesunięty o szerokość separatora,
-   więc separator elementu zaczynającego linię ląduje poza krawędzią i jest przycięty */
+/* dwie logiczne linie: „pokoje · metraż” i „piętro · ekspozycja”. Separator stoi z lewej
+   strony elementu; wiersz jest przesunięty o jego szerokość, więc separator elementu
+   zaczynającego linię ląduje poza krawędzią kontenera i jest przycięty */
 .apt-list__facts-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   margin-left: -14px;
 }
 
@@ -172,7 +177,11 @@
   white-space: nowrap;
 }
 
-.apt-list__fact + .apt-list__fact::before {
+.apt-list__facts-row:first-child .apt-list__fact:first-child::before {
+  display: none;
+}
+
+.apt-list__fact::before {
   content: '';
   position: absolute;
   left: 5px;
@@ -302,6 +311,12 @@
     grid-template-columns: auto minmax(0, 1fr);
     gap: 6px 14px;
     padding: 16px 4px 16px 16px;
+  }
+  .apt-list__facts {
+    flex-direction: column;
+  }
+  .apt-list__facts-row:first-child {
+    color: var(--ink);
   }
   .apt-list__price {
     grid-column: 1 / -1;

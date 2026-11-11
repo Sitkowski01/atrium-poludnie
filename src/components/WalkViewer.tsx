@@ -292,24 +292,14 @@ function MiniMap({
     <svg
       className="walk__map"
       viewBox={`${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`}
-      role="group"
-      aria-label="Mini-mapa mieszkania"
+      // skrót dla myszy; klawiatura i czytniki mają tę samą nawigację w liście przejść pod kadrem
+      aria-hidden="true"
     >
       {plan.map((r, index) => (
         <g
           key={index}
           className="walk__room-hit"
-          role="button"
-          tabIndex={0}
-          aria-label={`Przejdź do: ${r.label}`}
-          aria-current={index === current ? 'true' : undefined}
           onClick={() => onPick(index)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              onPick(index)
-            }
-          }}
         >
           <title>{r.label}</title>
           <rect

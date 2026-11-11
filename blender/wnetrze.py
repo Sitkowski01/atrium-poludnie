@@ -878,7 +878,13 @@ except Exception as e:
     print("cycles: CPU", e)
 scene.cycles.samples = SAMPLES
 scene.cycles.use_denoising = True
-for attr, val in (("max_bounces", 10), ("diffuse_bounces", 5), ("glossy_bounces", 4), ("transmission_bounces", 8)):
+# adaptacyjne próbkowanie: gładkie ściany kończą się szybko, szum zostaje tylko w trudnych miejscach
+try:
+    scene.cycles.use_adaptive_sampling = True
+    scene.cycles.adaptive_threshold = 0.03
+except Exception:
+    pass
+for attr, val in (("max_bounces", 8), ("diffuse_bounces", 4), ("glossy_bounces", 3), ("transmission_bounces", 6)):
     try:
         setattr(scene.cycles, attr, val)
     except Exception:
@@ -929,6 +935,9 @@ for i, r in enumerate(PLAN):
     v = plan["views"][i]
     px, py = P(v["x"], v["y"])
     cam.location = (px, py, 1.55 if r["kind"] != "balkon" else 1.5)
-    scene.render.filepath = os.path.join(OUT, SLOT, f"{i}.jpg")
+    path = os.path.join(OUT, SLOT, f"{i}.jpg")
+    if os.path.exists(path) and ONLY is None:
+        continue  # wznowienie przerwanego renderu
+    scene.render.filepath = path
     bpy.ops.render.render(write_still=True)
 print("gotowe")

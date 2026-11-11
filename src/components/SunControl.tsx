@@ -39,6 +39,37 @@ export function SunControl() {
     return () => cancelAnimationFrame(raf)
   }, [playing, dispatch])
 
+  // moment podpisu: przy wejściu słońce wschodzi i dochodzi do 10:00; każdy ruch użytkownika przerywa
+  const intro = useRef(0)
+  useEffect(() => {
+    const reduce =
+      typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) return
+    const from = 5.6
+    const to = hourRef.current
+    let raf = 0
+    let t0 = 0
+    const tick = (now: number) => {
+      if (!t0) t0 = now
+      const p = Math.min(1, (now - t0) / 2600)
+      const eased = 1 - (1 - p) ** 3
+      dispatch({ type: 'setHour', hour: Math.round((from + (to - from) * eased) * 20) / 20 })
+      if (p < 1) intro.current = raf = requestAnimationFrame(tick)
+      else intro.current = 0
+    }
+    const start = window.setTimeout(() => {
+      intro.current = raf = requestAnimationFrame(tick)
+    }, 700)
+    return () => {
+      window.clearTimeout(start)
+      cancelAnimationFrame(raf)
+    }
+  }, [dispatch])
+  const stopIntro = () => {
+    if (intro.current) cancelAnimationFrame(intro.current)
+    intro.current = 0
+  }
+
   // otwarty panel zasłania przycisk zatrzymania, więc odtwarzanie kończy się samo
   const panelOpen = state.selectedId !== null
   useEffect(() => {
@@ -46,6 +77,7 @@ export function SunControl() {
   }, [panelOpen])
 
   const setHour = (hour: number) => {
+    stopIntro()
     setPlaying(false)
     dispatch({ type: 'setHour', hour })
   }
@@ -55,7 +87,10 @@ export function SunControl() {
       <button
         type="button"
         className="btn sun-control__play"
-        onClick={() => setPlaying((p) => !p)}
+        onClick={() => {
+          stopIntro()
+          setPlaying((p) => !p)
+        }}
       >
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
           {playing ? (

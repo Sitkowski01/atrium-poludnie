@@ -269,19 +269,20 @@ export function ApartmentList() {
                   <span className="apt-list__id">{a.id}</span>
                   <span className="apt-list__info">
                     <span className="apt-list__facts">
-                      <span className="apt-list__facts-row">
-                        {[
-                          roomsLabel(a.rooms),
-                          formatArea(a.area),
-                          floorLabel(a.floor),
-                          FACADE_LABEL[a.facade],
-                        ].map((fact, fi, all) => (
-                          <span key={fi} className="apt-list__fact">
-                            {fact}
-                            {fi < all.length - 1 && <span className="visually-hidden">, </span>}
-                          </span>
-                        ))}
-                      </span>
+                      {[
+                        [roomsLabel(a.rooms), formatArea(a.area)],
+                        [floorLabel(a.floor), FACADE_LABEL[a.facade]],
+                      ].map((row, ri) => (
+                        <span key={ri} className="apt-list__facts-row">
+                          {row.map((fact, fi) => (
+                            <span key={fi} className="apt-list__fact">
+                              {fact}
+                              {ri === 0 && <span className="visually-hidden">, </span>}
+                              {ri === 1 && fi === 0 && <span className="visually-hidden">, </span>}
+                            </span>
+                          ))}
+                        </span>
+                      ))}
                     </span>
                     <span className="apt-list__sun">
                       {sun && <SunIcon />}
