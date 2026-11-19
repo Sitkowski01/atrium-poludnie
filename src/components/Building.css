@@ -95,14 +95,14 @@
 }
 .building__cell.is-hover .building__hit,
 .building__cell:focus-visible .building__hit {
-  fill: rgb(242 237 227 / 0.18);
+  fill: rgb(255 252 245 / 0.32);
 }
 .building__cell.is-selected .building__hit {
-  fill: rgb(217 163 91 / 0.32);
+  fill: rgb(232 121 42 / 0.34);
 }
 .building__mark {
   fill: var(--hold);
-  stroke: rgb(15 18 26 / 0.8);
+  stroke: rgb(255 252 245 / 0.9);
   stroke-width: 2;
   pointer-events: none;
 }
@@ -112,7 +112,7 @@
 }
 .building__outline-under {
   fill: none;
-  stroke: rgb(15 18 26 / 0.85);
+  stroke: rgb(255 252 245 / 0.85);
   stroke-width: 6;
   stroke-linejoin: round;
 }
@@ -122,9 +122,9 @@
   stroke-width: 2.2;
   stroke-linejoin: round;
 }
-/* wybrane mieszkanie: jedyne złoto na bryle obok słońca */
+/* wybrane mieszkanie: jedyny pomarańcz na bryle obok słońca */
 .building__mark-out.is-selected .building__outline {
-  stroke: var(--accent-2);
+  stroke: var(--accent);
   stroke-width: 2.8;
 }
 
@@ -144,10 +144,10 @@
   font-size: max(11px, calc(10px * var(--svg-k, 1)));
   font-weight: 600;
   letter-spacing: 0.3em;
-  fill: var(--ink);
-  /* napis leży na trawie renderu: ciemna obwódka pod literami daje kontrast */
+  fill: #fbf8f2;
+  /* napis leży na trawie renderu: ciemna obwódka pod jasnymi literami daje kontrast */
   paint-order: stroke;
-  stroke: rgb(15 18 26 / 0.8);
+  stroke: rgb(24 30 20 / 0.72);
   stroke-width: 3px;
 }
 
@@ -163,9 +163,9 @@
   gap: 4px;
   width: min(330px, 70%);
   padding: 16px 20px 18px;
-  border: 1px solid rgb(242 237 227 / 0.1);
+  border: 1px solid var(--glass-line);
   border-radius: var(--radius);
-  background: rgb(22 26 36 / 0.72);
+  background: var(--glass);
   backdrop-filter: blur(14px);
   box-shadow: var(--shadow-m);
   transition: border-color 0.25s var(--ease);
@@ -213,7 +213,7 @@
   text-transform: uppercase;
   color: var(--ink-2);
 }
-/* złoto tylko dla wybranego mieszkania, nie dla najechania ani podświetlenia z rozdziału */
+/* pomarańcz tylko dla wybranego mieszkania, nie dla najechania ani podświetlenia z rozdziału */
 .building__card.is-picked .building__card-eyebrow {
   color: var(--accent);
 }
@@ -264,8 +264,8 @@
   min-height: 36px;
   padding: 0 12px 0 10px;
   border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.02);
+  border-radius: var(--radius-s);
+  background: transparent;
   color: var(--ink-2);
   font: inherit;
   font-size: 13px;
@@ -284,7 +284,7 @@
     border-color: var(--line-2);
   }
 }
-/* włączona grupa: krem jak inne stany wybrane (złoto zostaje dla słońca i wybranego mieszkania) */
+/* włączona grupa: grafit jak inne stany wybrane (pomarańcz zostaje dla słońca i wybranego mieszkania) */
 .building__legend-item.is-on {
   color: var(--pick-ink);
   border-color: var(--pick);
@@ -323,12 +323,12 @@
   background: linear-gradient(rgb(10 12 18 / 0.66), rgb(10 12 18 / 0.66)), #b8b2a6;
 }
 
-/* podświetlenie z legendy: wybrana grupa w złotej ramce, reszta wyraźnie przygaszona */
+/* podświetlenie z legendy: wybrana grupa w ramce, reszta wyraźnie przygaszona */
 .building__box.is-spotting .building__cell:not(.is-spot) .building__hit {
   fill: rgb(10 12 18 / 0.74);
 }
 .building__box.is-spotting .building__cell.is-spot .building__hit {
-  fill: rgb(242 237 227 / 0.16);
+  fill: rgb(255 252 245 / 0.26);
   stroke: var(--pick);
   stroke-width: 1.6;
   animation: building-spot 0.5s var(--ease) backwards;
@@ -336,7 +336,7 @@
 }
 @keyframes building-spot {
   from {
-    fill: rgb(242 237 227 / 0.45);
+    fill: rgb(255 252 245 / 0.6);
     stroke-opacity: 0;
   }
 }
@@ -396,24 +396,24 @@
   stroke-linecap: round;
 }
 .sunpath__track {
-  stroke: rgb(240 178 58 / 0.24);
+  stroke: rgb(232 121 42 / 0.4);
   stroke-width: 1.2;
   stroke-dasharray: 2 7;
 }
 .sunpath__passed {
-  stroke: rgb(240 178 58 / 0.55);
+  stroke: rgb(232 121 42 / 0.75);
   stroke-width: 1.4;
 }
 /* część za budynkiem ciszej: to dalsza strona łuku */
 .sunpath--back .sunpath__track {
-  stroke: rgb(240 178 58 / 0.16);
+  stroke: rgb(232 121 42 / 0.24);
 }
 .sunpath--back .sunpath__passed {
-  stroke: rgb(240 178 58 / 0.32);
+  stroke: rgb(232 121 42 / 0.45);
 }
 .sunpath__disc {
-  fill: #ffd98a;
-  stroke: #fff1cf;
+  fill: #ffc65c;
+  stroke: #e8792a;
   stroke-width: 1.5;
 }
 

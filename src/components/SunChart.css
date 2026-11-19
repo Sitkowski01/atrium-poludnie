@@ -61,7 +61,7 @@
   fill: var(--sun);
   stroke: var(--accent-2);
   stroke-width: 1.5;
-  filter: drop-shadow(0 0 5px rgb(240 178 58 / 0.85)) drop-shadow(0 0 12px rgb(240 178 58 / 0.45));
+  filter: drop-shadow(0 0 4px var(--sun-glow));
 }
 
 /* etykieta godziny: ciemna pigułka */

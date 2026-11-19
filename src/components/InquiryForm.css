@@ -31,8 +31,8 @@
 
 /* kolor błędu jak we wspólnym .field__error (ciepły koral) */
 .inquiry .field [aria-invalid='true'] {
-  border-color: #f0a58c;
-  background: rgb(240 165 140 / 0.06);
+  border-color: var(--danger);
+  background: rgb(179 38 30 / 0.05);
 }
 
 /* fokus ma pierwszeństwo także na polu z błędem */

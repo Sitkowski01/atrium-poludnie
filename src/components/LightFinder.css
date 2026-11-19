@@ -76,14 +76,14 @@
   stroke-width: 1.2;
   opacity: 0.4;
 }
-/* tarcza zawsze złota: to słońce; na kremowym kaflu dostaje ciemną obwódkę */
+/* tarcza zawsze w kolorze słońca; na grafitowym kaflu dostaje jasną obwódkę */
 .light__glyph circle {
-  fill: #f0b23a;
-  stroke: #ffe2a0;
+  fill: var(--sun);
+  stroke: #ffc65c;
   stroke-width: 1;
 }
 .light__moment.is-on .light__glyph circle {
-  stroke: rgb(15 18 26 / 0.55);
+  stroke: rgb(255 252 245 / 0.7);
 }
 .light__moment-label {
   /* zawsze dwie linie miejsca: godziny we wszystkich kaflach stoją na jednej wysokości */
@@ -107,7 +107,7 @@
   color: var(--ink-2);
 }
 .light__moment.is-on .light__moment-note {
-  color: rgb(15 18 26 / 0.72);
+  color: rgb(239 235 227 / 0.78);
 }
 
 /* wynik: duża liczba, zdanie, lista najlepszych */

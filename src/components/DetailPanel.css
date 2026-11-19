@@ -17,7 +17,7 @@ dialog.detail {
   color: var(--ink);
   overflow-y: auto;
   overscroll-behavior: contain;
-  box-shadow: -24px 0 80px rgb(0 0 0 / 0.55);
+  box-shadow: -24px 0 80px rgb(28 27 24 / 0.18);
 }
 
 dialog.detail[open] {
@@ -25,7 +25,7 @@ dialog.detail[open] {
 }
 
 dialog.detail::backdrop {
-  background: rgb(6 8 12 / 0.62);
+  background: rgb(28 27 24 / 0.38);
   backdrop-filter: blur(3px);
 }
 
@@ -93,11 +93,11 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgb(15 18 26 / 0.15) 0%, rgb(15 18 26 / 0.05) 35%, rgb(15 18 26 / 0.92) 92%, var(--paper));
+  background: linear-gradient(rgb(20 19 17 / 0.18) 0%, rgb(239 235 227 / 0) 40%, rgb(239 235 227 / 0.9) 90%, var(--paper));
 }
 .detail__cover--empty {
   background:
-    radial-gradient(500px 260px at 70% 20%, #2a3043, transparent 70%),
+    radial-gradient(500px 260px at 70% 20%, var(--card), transparent 70%),
     var(--paper-2);
 }
 .detail__head-top {
@@ -114,9 +114,9 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid rgb(242 237 227 / 0.18);
+  border: 1px solid var(--glass-line);
   border-radius: 50%;
-  background: rgb(15 18 26 / 0.6);
+  background: var(--glass);
   backdrop-filter: blur(10px);
   color: var(--ink);
   cursor: pointer;
@@ -232,7 +232,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   margin: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: radial-gradient(420px 300px at 50% 45%, #1d2230, var(--paper-2));
+  background: radial-gradient(420px 300px at 50% 45%, var(--card), var(--paper-2));
   overflow: hidden;
 }
 .detail__plan3d img {
@@ -271,7 +271,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   margin-top: 8px;
   padding: 14px 28px calc(14px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
-  background: rgb(15 18 26 / 0.9);
+  background: rgb(239 235 227 / 0.92);
   backdrop-filter: blur(12px);
   font-size: 14px;
   color: var(--ink-2);

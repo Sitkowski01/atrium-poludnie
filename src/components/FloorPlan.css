@@ -1,11 +1,11 @@
-/* Rzut jak rysunek architektoniczny na ciemnym papierze. */
+/* Rzut jak rysunek architektoniczny na papierze. */
 .floor-plan {
-  /* przygaszone odcienie pomieszczeń: granat, grafit, ciepły grafit, morski */
-  --fp-salon: #222a3a;
-  --fp-sypialnia: #1e2535;
-  --fp-hol: #1a202c;
-  --fp-kuchnia: #2a2a2f;
-  --fp-lazienka: #1b2b33;
+  /* przygaszone odcienie pomieszczeń: piasek, len, kamień, glina, szałwia */
+  --fp-salon: #f4ede0;
+  --fp-sypialnia: #ece6dc;
+  --fp-hol: #e4dfd5;
+  --fp-kuchnia: #efe2d4;
+  --fp-lazienka: #dfe5e0;
 
   display: block;
   width: 100%;

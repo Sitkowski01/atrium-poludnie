@@ -13,9 +13,8 @@
   display: block;
   height: 6px;
   border-radius: 999px;
-  /* noc po bokach, dzień w środku: pasek czyta się jak oś dnia nawet bez podziałki */
-  background: linear-gradient(90deg, #232a3c 0%, #2b3346 18%, #2f374b 50%, #2b3346 82%, #232a3c 100%);
-  box-shadow: inset 0 0 0 1px rgb(242 237 227 / 0.06);
+  /* płaski tor dnia; słońce na nim jedynym kolorem */
+  background: var(--track);
 }
 .sunbar__sun {
   position: absolute;
@@ -23,19 +22,18 @@
   top: 0;
   bottom: 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, #e9a24f, #ffd98a 50%, #e9a24f);
-  box-shadow: 0 0 10px rgb(240 178 58 / 0.45);
+  background: linear-gradient(90deg, #e8792a, #f4a94e 50%, #e8792a);
 }
-/* okno „jestem w domu”: kremowe pole pod złotem; słońce zostaje na wierzchu,
-   więc od razu widać, czy w nie trafia (wcześniej ramka zasłaniała złoto) */
+/* okno „jestem w domu”: szare pole pod słońcem; słońce zostaje na wierzchu,
+   więc od razu widać, czy w nie trafia */
 .sunbar__want {
   position: absolute;
   top: -4px;
   bottom: -4px;
   z-index: -1;
   border-radius: 3px;
-  background: rgb(242 237 227 / 0.14);
-  box-shadow: inset 0 0 0 1px rgb(242 237 227 / 0.38);
+  background: rgb(28 27 24 / 0.07);
+  box-shadow: inset 0 0 0 1px rgb(28 27 24 / 0.4);
 }
 .sunbar__now {
   position: absolute;
@@ -45,8 +43,8 @@
   width: 2px;
   margin-left: -1px;
   border-radius: 1px;
-  background: var(--ink, #f2ede3);
-  box-shadow: 0 0 0 2px rgb(15 18 26 / 0.7);
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--paper);
 }
 .sunbar__ticks {
   position: relative;
