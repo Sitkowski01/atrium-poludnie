@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FocusEvent } from 'react'
 import { formatArea, formatHour, formatPrice, freeLabel } from '../domain/format'
-import { sunRange } from '../domain/sun'
+import { sunRange, sunWindow } from '../domain/sun'
 import type { Facade } from '../domain/types'
 import { useStore, type Spotlight } from '../state/store'
 import { SunBar } from './SunBar'
@@ -157,14 +157,23 @@ function TypeButton({
 
   const base = import.meta.env.BASE_URL
   const priceText = priceFrom == null ? 'wyprzedane' : `od ${formatPrice(priceFrom)}`
-  // pokazujemy to, co zmienia się z piętrem: „od 7:40 do 16:30–18:20” (wyżej dłużej), „od 5:25–7:15 do 12:35” (wyżej wcześniej)
-  const span = (a: number, b: number) => (Math.abs(a - b) < 0.1 ? formatHour(a) : `${formatHour(a)}–${formatHour(b)}`)
-  const sunText = sun
-    ? `słońce w salonie od ${span(sun.from, sun.fromLate)} do ${span(sun.toEarly, sun.to)}`
+  const ground = sunWindow(card.facade, 0)
+  const higher = sun && ground
+    ? [
+        formatHour(sun.from) !== formatHour(ground.from) ? `od ${formatHour(sun.from)}` : '',
+        formatHour(sun.to) !== formatHour(ground.to) ? `do ${formatHour(sun.to)}` : '',
+      ].filter(Boolean).join(' i ')
+    : ''
+  const groundHours = ground ? `od ${formatHour(ground.from)} do ${formatHour(ground.to)}` : ''
+  const sunText = ground
+    ? `słońce ${groundHours}${higher ? `, wyżej ${higher}` : ''}`
     : 'bez bezpośredniego słońca'
+  const sunLabel = ground
+    ? `słońce w salonie ${groundHours} na parterze${higher ? `, na wyższych piętrach ${higher}` : ''}`
+    : sunText
   const label = `${info.name}, ${info.note}, ${formatArea(area)}, ${priceText}${
     priceFrom == null ? '' : `, ${freeLabel(free)}`
-  }, ${sunText}${sun ? ", zależnie od piętra" : ""} — pokaż w wyszukiwarce`
+  }, ${sunLabel} — pokaż w wyszukiwarce`
 
   return (
     <button

@@ -1,12 +1,26 @@
+/* wpisy w parze dzielą wiersze siatki (subgrid): nazwy, ceny i paski słońca stoją na jednej linii,
+   nawet gdy opis jednego typu zajmuje dwie linie */
 .typegal {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 36px 24px;
+  column-gap: 24px;
+  row-gap: 0;
 }
 
 .typecard {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-row: span 5;
+  grid-template-rows: subgrid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'media media'
+    'num num'
+    'name price'
+    'facts free'
+    'sun sun';
+  align-items: baseline;
+  column-gap: 16px;
+  row-gap: 4px;
   min-width: 0;
   padding: 0;
   text-align: left;
@@ -22,6 +36,8 @@
 
 /* obraz: overflow tylko tutaj, żeby pierścień fokusu przycisku nie był ucięty */
 .typecard__media {
+  grid-area: media;
+  align-self: stretch;
   position: relative;
   display: block;
   /* w kolumnie flex wewnątrz <button> element nie rozciąga się sam na szerokość karty */
@@ -85,17 +101,7 @@
 }
 
 .typecard__body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    'num num'
-    'name price'
-    'facts free'
-    'sun sun';
-  align-items: baseline;
-  gap: 4px 16px;
-  margin-top: 12px;
-  flex: 1;
+  display: contents;
 }
 /* numer typu na kresce: kreska ciemnieje przy najechaniu */
 .typecard__num {
@@ -103,7 +109,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 8px;
+  margin: 12px 0 8px;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -144,8 +150,11 @@
 }
 .typecard__price {
   grid-area: price;
-  font-size: 15px;
+  /* cena jednym stylem na całej stronie: krój nagłówków, półgruby, cyfry równej szerokości */
+  font-family: var(--font-display);
+  font-size: var(--fd-1);
   font-weight: 600;
+  letter-spacing: -0.01em;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
@@ -167,6 +176,9 @@
 }
 .typecard__sun {
   grid-area: sun;
+  align-self: start;
+  /* odstęp do następnego wiersza: w subgridzie padding karty nie powiększa wierszy, margines tak */
+  margin-bottom: 36px;
   display: flex;
   flex-direction: column;
   gap: 6px;
