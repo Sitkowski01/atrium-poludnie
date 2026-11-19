@@ -1,5 +1,4 @@
 .contact {
-  --p: 0.5;
   padding: clamp(64px, 9vh, 112px) 0 0;
 }
 .contact:focus:not(:focus-visible) {
@@ -10,37 +9,11 @@
   margin: 0 auto;
   padding: 0 clamp(16px, 4vw, 56px);
 }
-.contact__horizon {
-  margin-bottom: clamp(40px, 6vh, 72px);
-}
-.contact__track {
-  position: relative;
-  height: 2px;
-  background: linear-gradient(90deg, var(--line), #e9b48a 18%, #f0a35a 50%, #e9b48a 82%, var(--line));
-}
-.contact__sun {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--p) * 100%);
-  width: 10px;
-  height: 10px;
-  margin: -5px 0 0 -5px;
-  border-radius: 50%;
-  background: var(--sun);
-  box-shadow: 0 0 0 4px var(--paper), 0 0 14px 4px var(--sun-glow);
-}
-.contact__hours {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--ink-2);
-  letter-spacing: 0.04em;
-}
 .contact__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
-  align-items: end;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+  /* biuro zaczyna się na wysokości znacznika „05 Kontakt”, nie wisi pod tytułem */
+  align-items: start;
   gap: clamp(40px, 6vw, 112px);
 }
 .contact__main {
@@ -392,7 +365,7 @@
   transform: none;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 900px) {
   .contact__grid {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;

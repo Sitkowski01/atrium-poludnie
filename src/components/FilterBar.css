@@ -53,6 +53,16 @@
 }
 
 @media (max-width: 980px) {
+  /* bez ramki wokół: sam przycisk „Filtry” ma obrys, inaczej wychodzi ramka w ramce */
+  .filter-bar {
+    border: 0;
+  }
+  .filter-bar__top {
+    padding: 0;
+  }
+  .filter-bar__panel--open > .filter-bar__body {
+    border-bottom: 1px solid var(--line);
+  }
   /* rozwijanie przez wysokość wiersza siatki 0fr → 1fr, bez skoku układu */
   .filter-bar__panel {
     display: grid;

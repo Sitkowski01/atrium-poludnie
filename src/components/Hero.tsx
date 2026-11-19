@@ -167,7 +167,7 @@ export function Hero() {
         <span>Szczecin · odbiór 2027</span>
       </p>
       <h1 className="hero__title">
-        Dom, w&nbsp;którym <em>słońce</em> ma&nbsp;swój rozkład.
+        Dom, w&nbsp;którym <em>słońce</em>&nbsp;ma swój rozkład.
       </h1>
       <p className="hero__lead">
         {apartments.length} mieszkań od południa i wschodu. Przesuń porę dnia pod bryłą i zobacz, do których salonów

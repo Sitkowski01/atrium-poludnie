@@ -192,8 +192,9 @@ export function Building() {
   const spotIds = useMemo(() => (storeSpot ? new Set(storeSpot.ids) : null), [storeSpot])
   const isSpot = (a: Apartment, dim: boolean) => (spotIds ? spotIds.has(a.id) : spot ? inSpot(a, spot, dim) : false)
   const spotting = Boolean(spotIds || spot)
-  // karta nie może zasłaniać mieszkania, o którym mówi: dla niskich pięter (i podświetlenia) idzie do nieba u góry
-  const cardTop = focus ? focus.floor <= 3 : Boolean(storeSpot)
+  // karta nie może zasłaniać mieszkania, o którym mówi: dla niskich pięter idzie do nieba u góry.
+  // Podświetlenie grupy z rozdziału zostaje na dole: u góry zakrywało słońce i dach, czyli to, o czym mówi strona
+  const cardTop = focus ? focus.floor <= 3 : false
   const selectedId = state.selectedId
 
   // od góry do dołu — taka sama kolejność dla klawiatury
@@ -387,7 +388,7 @@ export function Building() {
             <button
               key={key}
               type="button"
-              className={`building__legend-item${on ? ' is-on' : ''}`}
+              className={`building__legend-item building__legend-item--${key}${on ? ' is-on' : ''}`}
               aria-pressed={on}
               // aria-disabled, nie disabled: przycisk z fokusem nie może zniknąć spod klawiatury
               aria-disabled={count === 0 && !on}

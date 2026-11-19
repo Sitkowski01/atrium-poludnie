@@ -151,8 +151,9 @@
 }
 .walk__side {
   display: grid;
+  grid-template-rows: auto auto 1fr;
   gap: 12px;
-  align-content: start;
+  align-self: stretch;
   min-width: 0;
 }
 .walk__label {
@@ -192,6 +193,7 @@
 .walk__actions {
   display: flex;
   flex-wrap: wrap;
+  align-self: end;
   gap: 4px 20px;
 }
 /* akcje drugiego rzędu jako linki tekstowe: nie konkurują z pomieszczeniami */
@@ -211,7 +213,8 @@
   transition: color var(--hover) var(--ease-hover), text-decoration-color var(--hover) var(--ease-hover);
 }
 .walk__link:disabled {
-  opacity: 0.45;
+  color: var(--ink-3);
+  text-decoration: none;
   cursor: default;
 }
 @media (hover: hover) {

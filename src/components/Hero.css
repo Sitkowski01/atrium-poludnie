@@ -290,10 +290,12 @@
   .hero__cta {
     width: 100%;
   }
+}
+@container hero (max-width: 520px) {
   .hero__facts {
     gap: 6px 18px;
   }
-  /* wąsko: „od 411 tys. zł”, „31–87 m²”; pełne etykiety zostają dla czytnika */
+  /* wąsko (telefon, 1024 px): „od 411 tys. zł”, „31–87 m²” w jednej linii; pełne etykiety zostają dla czytnika */
   .hero__facts-long,
   .hero__facts div:last-child dt {
     position: absolute;

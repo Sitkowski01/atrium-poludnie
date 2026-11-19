@@ -156,8 +156,7 @@
   color: var(--ink-2);
 }
 /* w parze kart opis zajmuje zawsze dwie linie: paski słońca stoją na jednej wysokości */
-.typecard:not(.typecard--featured) .typecard__facts {
-  min-height: calc(2 * 1.45em);
+.typecard__facts {
   line-height: 1.45;
 }
 .typecard__free {

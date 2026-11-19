@@ -371,3 +371,18 @@
   margin-top: 8px;
   justify-content: center;
 }
+
+/* telefon: licznik i sortowanie w jednym rzędzie; „Sortuj” zostaje dla czytnika w nazwie pola */
+@media (max-width: 520px) {
+  .apt-list__head {
+    flex-wrap: nowrap;
+  }
+  .apt-list__sort-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

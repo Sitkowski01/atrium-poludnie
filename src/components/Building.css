@@ -142,6 +142,11 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   fill: var(--ink-2);
+  /* numer stoi częściowo na koronie drzewa: papierowa obwódka pod cyfrą */
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 4px;
+  stroke-linejoin: round;
 }
 .building__compass {
   font-family: var(--font-body);
@@ -165,7 +170,7 @@
   pointer-events: none;
   display: grid;
   gap: 4px;
-  width: min(330px, 70%);
+  width: min(300px, 64%);
   padding: 16px 20px 18px;
   border: 1px solid var(--glass-line);
   border-radius: var(--radius);
@@ -305,6 +310,10 @@
   cursor: default;
   border-style: dashed;
   background: transparent;
+}
+/* „poza filtrami 0” to szum, gdy nic nie jest odfiltrowane: pojawia się dopiero, gdy coś znaczy */
+.building__legend-item--poza[aria-disabled='true'] {
+  display: none;
 }
 .building__swatch {
   width: 12px;

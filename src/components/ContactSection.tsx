@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react'
 import type { MouseEvent } from 'react'
 import './ContactSection.css'
 
@@ -33,77 +32,17 @@ const NAV = [
   ['typy', 'Typy'],
   ['swiatlo', 'Światło'],
   ['mieszkania', 'Mieszkania'],
+  ['kontakt', 'Kontakt'],
 ] as const
 
 /** godzina na osi 5:00–21:00, jak pasek słońca */
 const pos = (h: number) => `${(((h - 5) / 16) * 100).toFixed(2)}%`
 
 export function ContactSection() {
-  const ref = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const mq = typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null
-    let frame = 0
-    let listening = false
-    const update = () => {
-      frame = 0
-      const rect = el.getBoundingClientRect()
-      const vh = window.innerHeight
-      const start = vh
-      const end = vh * 0.2
-      const p = (start - rect.top) / (start - end)
-      el.style.setProperty('--p', String(Math.min(1, Math.max(0, p))))
-    }
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update)
-    }
-    const start = () => {
-      if (listening) return
-      listening = true
-      update()
-      window.addEventListener('scroll', onScroll, { passive: true })
-      window.addEventListener('resize', onScroll)
-    }
-    const stop = () => {
-      listening = false
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-      if (frame) cancelAnimationFrame(frame)
-      frame = 0
-    }
-    const apply = () => {
-      if (mq?.matches) {
-        stop()
-        el.style.setProperty('--p', '0.5')
-      } else {
-        start()
-      }
-    }
-    apply()
-    mq?.addEventListener('change', apply)
-    return () => {
-      mq?.removeEventListener('change', apply)
-      stop()
-    }
-  }, [])
-
   return (
     <>
-    <section className="contact" id="kontakt" tabIndex={-1} aria-labelledby="kontakt-title" ref={ref}>
+    <section className="contact" id="kontakt" tabIndex={-1} aria-labelledby="kontakt-title">
       <div className="contact__inner">
-        <div className="contact__horizon" aria-hidden="true">
-          <div className="contact__track">
-            <span className="contact__sun" />
-          </div>
-          <div className="contact__hours">
-            <span>5:00</span>
-            <span>13:00</span>
-            <span>21:00</span>
-          </div>
-        </div>
-
         <div className="contact__grid">
           <div className="contact__main">
             <p className="contact__label">
