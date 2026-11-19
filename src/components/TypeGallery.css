@@ -1,7 +1,7 @@
 .typegal {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 36px 24px;
 }
 
 .typecard {
@@ -12,15 +12,9 @@
   text-align: left;
   font: inherit;
   color: var(--ink);
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-s);
+  background: transparent;
+  border: 0;
   cursor: pointer;
-  transition:
-    border-color var(--hover) var(--ease-hover),
-    box-shadow var(--hover) var(--ease-hover),
-    transform var(--hover) var(--ease-hover);
 }
 .typecard--featured {
   grid-column: 1 / -1;
@@ -35,8 +29,8 @@
   flex: none;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  border-radius: calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0 0;
-  background: var(--paper);
+  border-radius: var(--radius);
+  background: var(--paper-2);
 }
 .typecard--featured .typecard__media {
   aspect-ratio: 16 / 9;
@@ -91,26 +85,56 @@
 }
 
 .typecard__body {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 14px 16px 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'num num'
+    'name price'
+    'facts free'
+    'sun sun';
+  align-items: baseline;
+  gap: 4px 16px;
+  margin-top: 12px;
   flex: 1;
 }
+/* numer typu na kresce: kreska ciemnieje przy najechaniu */
+.typecard__num {
+  grid-area: num;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.typecard__num::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(var(--ink), var(--ink)) 0 0 / 0 100% no-repeat, var(--line);
+  transition: background-size 0.7s var(--ease-hover);
+}
 .typecard__name {
+  grid-area: name;
   display: flex;
   align-items: baseline;
   gap: 10px;
+  min-width: 0;
   font-family: var(--font-display);
   font-size: var(--fd-2);
   font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.1;
 }
-/* strzałka przy nazwie: zapowiada, że karta prowadzi do listy */
+.typecard--featured .typecard__name {
+  font-size: var(--fd-3);
+}
+/* strzałka przy nazwie: zapowiada, że wpis prowadzi do listy */
 .typecard__name::after {
   content: '→';
-  margin-left: auto;
   color: var(--accent);
   font-family: var(--font-body);
   font-size: 0.7em;
@@ -118,55 +142,63 @@
   transform: translateX(-8px);
   transition: opacity var(--hover) var(--ease-hover), transform var(--hover) var(--ease-hover);
 }
+.typecard__price {
+  grid-area: price;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.typecard__facts {
+  grid-area: facts;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+/* w parze kart opis zajmuje zawsze dwie linie: paski słońca stoją na jednej wysokości */
+.typecard:not(.typecard--featured) .typecard__facts {
+  min-height: calc(2 * 1.45em);
+  line-height: 1.45;
+}
+.typecard__free {
+  grid-area: free;
+  font-size: 14px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.typecard__sun {
+  grid-area: sun;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+}
+.typecard__sun-label {
+  font-size: 13px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
 @media (hover: hover) {
-  .typecard:hover {
-    border-color: var(--pick-line);
-    box-shadow: var(--shadow-m);
-    transform: translateY(-3px);
-  }
   .typecard:hover .typecard__img--base {
-    transform: scale(1.06);
+    transform: scale(1.05);
   }
   .typecard:hover .typecard__name::after {
     opacity: 1;
     transform: none;
+  }
+  .typecard:hover .typecard__num {
+    color: var(--ink);
+  }
+  .typecard:hover .typecard__num::after {
+    background-size: 100% 100%;
   }
 }
 .typecard:focus-visible .typecard__name::after {
   opacity: 1;
   transform: none;
 }
-.typecard--featured .typecard__name {
-  font-size: var(--fd-3);
-}
-.typecard__facts {
-  font-size: 13px;
-  color: var(--ink-2);
-}
-.typecard__price {
-  margin-top: 6px;
-  font-size: 13px;
-  color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
-}
-.typecard__price strong {
-  font-family: var(--font-body);
-  font-size: 15px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.typecard__sun {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: auto;
-  padding-top: 12px;
-}
-.typecard__sun-label {
-  font-size: 12px;
-  color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
+.typecard:focus-visible .typecard__num::after {
+  background-size: 100% 100%;
 }
 
 @container chapter (max-width: 479px) {

@@ -118,6 +118,7 @@ export function TypeGallery() {
           key={card.slot}
           card={card}
           featured={i === 0}
+          index={i + 1}
           onActive={(on) => {
             ownSpot.current = on ? card.spot : null
             dispatch(on ? { type: 'spotlight', spot: card.spot } : { type: 'spotlight', spot: null, owner: card.spot })
@@ -132,11 +133,13 @@ export function TypeGallery() {
 function TypeButton({
   card,
   featured,
+  index,
   onActive,
   onPick,
 }: {
   card: TypeCard
   featured: boolean
+  index: number
   onActive: (on: boolean) => void
   onPick: () => void
 }) {
@@ -214,15 +217,17 @@ function TypeButton({
           ))}
         </span>
       </span>
+      {/* wpis jak w katalogu: numer typu na kresce, nazwa i cena w jednym rzędzie, dane pod spodem */}
       <span className="typecard__body">
+        <span className="typecard__num" aria-hidden="true">
+          T{index}
+        </span>
         <span className="typecard__name">{info.name}</span>
+        <span className="typecard__price">{priceText}</span>
         <span className="typecard__facts">
           {formatArea(area)} · {info.note}
         </span>
-        <span className="typecard__price">
-          <strong>{priceText}</strong>
-          {priceFrom != null && <span> · {freeLabel(free)}</span>}
-        </span>
+        <span className="typecard__free">{priceFrom != null ? freeLabel(free) : ''}</span>
         <span className="typecard__sun">
           <SunBar sun={sun} />
           <span className="typecard__sun-label">
