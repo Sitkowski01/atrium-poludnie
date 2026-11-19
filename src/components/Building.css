@@ -83,15 +83,19 @@
 .building__hit {
   fill: transparent;
   stroke: none;
-  transition: fill 0.25s var(--ease);
+  transition: fill var(--hover) var(--ease-hover);
 }
-/* sprzedane: przygaszone, ale widać, co jest pod spodem */
+/* na jasnym papierze przygaszenie to mgła w kolorze strony, nie czerń: okna bledną, ale nie robią dziury.
+   Sprzedane: lekki grafitowy cień (czyta się jak zasłonięte okno), widać, co jest pod spodem */
+.building__cell .building__hit {
+  --fog: 239 235 227;
+}
 .building__cell.is-sold .building__hit {
-  fill: rgb(10 12 18 / 0.42);
+  fill: rgb(28 27 24 / 0.34);
 }
-/* poza filtrami: mocniej przygaszone */
+/* poza filtrami: mocniej wyblakłe */
 .building__cell.is-dim .building__hit {
-  fill: rgb(10 12 18 / 0.66);
+  fill: rgb(var(--fog) / 0.74);
 }
 .building__cell.is-hover .building__hit,
 .building__cell:focus-visible .building__hit {
@@ -181,7 +185,7 @@
 .building__card-keys {
   display: none;
   margin-top: 4px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-2);
 }
 .building__frame:has(.building__cell:focus-visible) .building__card-keys {
@@ -207,7 +211,7 @@
   color: var(--ink);
 }
 .building__card-eyebrow {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -309,7 +313,7 @@
   border: 1px solid var(--line-2);
 }
 .building__swatch--wolne {
-  background: #b8b2a6;
+  background: #8a857b;
 }
 .building__swatch--rezerwacja {
   width: 10px;
@@ -319,15 +323,15 @@
   background: var(--hold);
 }
 .building__swatch--sprzedane {
-  background: linear-gradient(rgb(10 12 18 / 0.42), rgb(10 12 18 / 0.42)), #b8b2a6;
+  background: linear-gradient(rgb(28 27 24 / 0.34), rgb(28 27 24 / 0.34)), #8a857b;
 }
 .building__swatch--poza {
-  background: linear-gradient(rgb(10 12 18 / 0.66), rgb(10 12 18 / 0.66)), #b8b2a6;
+  background: linear-gradient(rgb(239 235 227 / 0.74), rgb(239 235 227 / 0.74)), #8a857b;
 }
 
-/* podświetlenie z legendy: wybrana grupa w ramce, reszta wyraźnie przygaszona */
+/* podświetlenie z legendy i rozdziałów: wybrana grupa w ramce, reszta tonie we mgle papieru */
 .building__box.is-spotting .building__cell:not(.is-spot) .building__hit {
-  fill: rgb(10 12 18 / 0.74);
+  fill: rgb(var(--fog) / 0.8);
 }
 .building__box.is-spotting .building__cell.is-spot .building__hit {
   fill: rgb(255 252 245 / 0.26);
