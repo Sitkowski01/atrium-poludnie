@@ -69,5 +69,8 @@
   --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
 
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* najechania: łagodny rozpęd i hamowanie, w obie strony (wejście i zejście kursora); bez szarpnięcia na starcie */
+  --hover: 0.45s;
+  --ease-hover: cubic-bezier(0.4, 0, 0.2, 1);
   --header-h: 76px;
 }

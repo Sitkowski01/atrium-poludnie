@@ -78,8 +78,8 @@
   border-bottom: 1px solid var(--line);
   background-color: transparent;
   transition:
-    background-color 180ms var(--ease),
-    box-shadow 180ms var(--ease);
+    background-color var(--hover) var(--ease-hover),
+    box-shadow var(--hover) var(--ease-hover);
 }
 
 .apt-list__items--intro .apt-list__item {
@@ -109,7 +109,7 @@
   width: 2px;
   background: var(--pick);
   transform: scaleY(0);
-  transition: transform 180ms var(--ease);
+  transition: transform var(--hover) var(--ease-hover);
   pointer-events: none;
 }
 
@@ -154,8 +154,8 @@
   line-height: 1;
   color: var(--ink);
   transition:
-    color 180ms var(--ease),
-    transform 220ms var(--ease);
+    color var(--hover) var(--ease-hover),
+    transform var(--hover) var(--ease-hover);
 }
 /* najechany wiersz (także z bryły): numer przesuwa się i bierze kolor marki */
 .apt-list__item--hover .apt-list__id {
@@ -286,9 +286,9 @@
   color: var(--ink-2);
   cursor: pointer;
   transition:
-    background-color 180ms var(--ease),
-    color 180ms var(--ease),
-    transform 180ms var(--ease);
+    background-color var(--hover) var(--ease-hover),
+    color var(--hover) var(--ease-hover),
+    transform var(--hover) var(--ease-hover);
 }
 
 .apt-list__fav:active {

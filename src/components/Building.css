@@ -272,7 +272,7 @@
   font-size: 13px;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: color 0.18s var(--ease), border-color 0.18s var(--ease), background 0.18s var(--ease);
+  transition: color var(--hover) var(--ease-hover), border-color var(--hover) var(--ease-hover), background var(--hover) var(--ease-hover);
 }
 .building__legend-count {
   font-variant-numeric: tabular-nums;

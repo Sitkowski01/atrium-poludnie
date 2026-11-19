@@ -13,8 +13,8 @@
   width: 100%;
   min-width: 0;
   transition:
-    border-color 0.15s var(--ease),
-    box-shadow 0.15s var(--ease);
+    border-color var(--hover) var(--ease-hover),
+    box-shadow var(--hover) var(--ease-hover);
 }
 
 .inquiry .field textarea {

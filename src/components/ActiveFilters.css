@@ -22,8 +22,8 @@
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
-  animation: active-filters-in 160ms var(--ease) backwards;
-  transition: background-color 160ms var(--ease);
+  animation: active-filters-in var(--hover) var(--ease-hover) backwards;
+  transition: background-color var(--hover) var(--ease-hover);
 }
 
 .active-filters__x {

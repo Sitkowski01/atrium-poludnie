@@ -121,8 +121,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   color: var(--ink);
   cursor: pointer;
   transition:
-    border-color 0.18s var(--ease),
-    color 0.18s var(--ease);
+    border-color var(--hover) var(--ease-hover),
+    color var(--hover) var(--ease-hover);
 }
 @media (hover: hover) {
   .detail__icon:hover {

@@ -42,10 +42,10 @@
   text-align: left;
   cursor: pointer;
   transition:
-    background 0.25s var(--ease),
-    border-color 0.25s var(--ease),
-    color 0.25s var(--ease),
-    transform 0.25s var(--ease);
+    background var(--hover) var(--ease-hover),
+    border-color var(--hover) var(--ease-hover),
+    color var(--hover) var(--ease-hover),
+    transform var(--hover) var(--ease-hover);
 }
 @media (hover: hover) {
   .light__moment:hover:not(.is-on) {
@@ -172,7 +172,7 @@
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background 0.2s var(--ease);
+  transition: background var(--hover) var(--ease-hover);
 }
 @media (hover: hover) {
   .light__flat:hover {
@@ -184,7 +184,7 @@
   }
 }
 .light__flat-id {
-  transition: color 0.2s var(--ease), transform 0.25s var(--ease);
+  transition: color var(--hover) var(--ease-hover), transform var(--hover) var(--ease-hover);
   font-family: var(--font-display);
   font-size: var(--fd-2);
   line-height: 1;
