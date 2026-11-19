@@ -28,7 +28,8 @@
 }
 .light__moment {
   display: grid;
-  grid-template-rows: auto auto auto 1fr;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
   align-content: start;
   gap: 4px;
   min-width: 0;
@@ -79,11 +80,11 @@
 /* tarcza zawsze w kolorze słońca; na grafitowym kaflu dostaje jasną obwódkę */
 .light__glyph circle {
   fill: var(--sun);
-  stroke: #ffc65c;
+  stroke: var(--sun);
   stroke-width: 1;
 }
 .light__moment.is-on .light__glyph circle {
-  stroke: rgb(255 252 245 / 0.7);
+  stroke: var(--accent-ink);
 }
 .light__moment-label {
   /* zawsze dwie linie miejsca: godziny we wszystkich kaflach stoją na jednej wysokości */
@@ -107,7 +108,7 @@
   color: var(--ink-2);
 }
 .light__moment.is-on .light__moment-note {
-  color: rgb(239 235 227 / 0.78);
+  color: var(--pick-ink);
 }
 
 /* wynik: duża liczba, zdanie, lista najlepszych */
@@ -199,8 +200,17 @@
   font-size: 13px;
   color: var(--ink-2);
 }
+.light__flat-facts > span {
+  display: inline-block;
+  white-space: nowrap;
+}
+.light__flat-facts > span + span::before {
+  content: '·';
+  margin: 0 5px;
+}
 .light__flat-share {
   grid-area: share;
+  font-family: var(--font-display);
   font-size: 13px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -232,20 +242,18 @@
 }
 
 .light__bar-legend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 14px;
+  display: block;
   margin: 0;
   color: var(--ink-2);
   font-size: 12px;
   line-height: 1.5;
 }
 
-.light__bar-legend > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.light__bar-legend > strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .light__key-home,
@@ -273,6 +281,7 @@
     gap: 6px;
   }
   .light__moment {
+    grid-row: auto;
     grid-template-columns: 48px minmax(0, 1fr) auto;
     grid-template-rows: auto auto;
     grid-template-areas:

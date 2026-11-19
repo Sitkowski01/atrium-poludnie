@@ -128,7 +128,6 @@ export function LightFinder() {
     if (!on) dispatch({ type: 'setHour', hour: Math.round(((m.from + m.to) / 2) * 20) / 20, byUser: true })
   }
 
-  const highlighted = inView && spot !== null && wide
   const evening = picked.length === 1 && picked[0] === 'wieczor'
 
   return (
@@ -210,7 +209,9 @@ export function LightFinder() {
                 >
                   <span className="light__flat-id">{a.id}</span>
                   <span className="light__flat-facts">
-                    {roomsLabel(a.rooms)} · {formatArea(a.area)} · {floorLabel(a.floor)}
+                    <span>{roomsLabel(a.rooms)}</span>
+                    <span>{formatArea(a.area)}</span>
+                    <span>{floorLabel(a.floor)}</span>
                   </span>
                   <SunBar sun={sunWindow(a.facade, a.floor)} wants={wants} className="light__flat-bar" />
                   <span className="light__flat-share">
@@ -225,16 +226,14 @@ export function LightFinder() {
         )}
         {matches.length > 0 && (
           <p className="light__bar-legend">
-            <span><i className="light__key-home" aria-hidden="true" />Twoje pory w domu</span>
-            <span><i className="light__key-sun" aria-hidden="true" />słońce w salonie</span>
-            <span>godziny — ile z Twojego czasu w domu salon ma słońce</span>
+            <strong>{hoursText(matches[0].share)} h</strong> — tyle z Twoich godzin w domu salon jest w słońcu
           </p>
         )}
         {matches.length > SHOWN && (
           <p className="light__more">
-            {highlighted
-              ? `i jeszcze ${matches.length - SHOWN} — wszystkie są podświetlone na bryle`
-              : `i jeszcze ${matches.length - SHOWN} ${flats(matches.length - SHOWN)} w wyszukiwarce poniżej`}
+            {wide
+              ? `i jeszcze ${matches.length - SHOWN} — podświetlone na bryle`
+              : `i jeszcze ${matches.length - SHOWN} w wyszukiwarce poniżej`}
           </p>
         )}
       </div>

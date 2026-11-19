@@ -6,6 +6,7 @@ import {
   formatArea,
   formatHour,
   formatPrice,
+  formatPerM2,
   roomsLabel,
 } from '../domain/format'
 import { sunWindow } from '../domain/sun'
@@ -102,8 +103,12 @@ function useNarrow(): boolean {
   return narrow
 }
 
+/** „1 mieszkanie”, „3 mieszkania”, „12 mieszkań” */
+const flatsWord = (n: number) =>
+  n === 1 ? 'mieszkanie' : n % 10 >= 2 && n % 10 <= 4 && !(n % 100 >= 12 && n % 100 <= 14) ? 'mieszkania' : 'mieszkań'
+
 export function ApartmentList() {
-  const { state, dispatch, visible, apartments } = useStore()
+  const { state, dispatch, visible } = useStore()
   const { hoveredId, selectedId, favourites } = state
   const listRef = useRef<HTMLUListElement>(null)
   const pointerInside = useRef(false)
@@ -179,7 +184,8 @@ export function ApartmentList() {
     <section className="apt-list" aria-label="Lista mieszkań">
       <div className="apt-list__head">
         <p className="apt-list__count" aria-live="polite" ref={countRef} tabIndex={-1}>
-          <strong>{visible.length}</strong> z {apartments.length} mieszkań
+          <strong>{visible.length}</strong> {flatsWord(visible.length)}
+          {collapsible && !expanded && <span className="apt-list__count-shown"> · widać {shown.length}</span>}
         </p>
         <label className="apt-list__sort">
           <span className="apt-list__sort-label">Sortuj</span>
@@ -259,7 +265,10 @@ export function ApartmentList() {
                   aria-haspopup="dialog"
                   onClick={() => dispatch({ type: 'select', id: a.id })}
                 >
-                  <span className="apt-list__id">{a.id}</span>
+                  <span className="apt-list__number">
+                    <span className="apt-list__id">{a.id}</span>
+                    <span className={`badge badge--${a.status}`}>{STATUS_LABEL[a.status]}</span>
+                  </span>
                   <span className="apt-list__info">
                     <span className="apt-list__facts">
                       {[
@@ -283,11 +292,10 @@ export function ApartmentList() {
                         {sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez słońca'}
                       </span>
                     </span>
-                    <span className={`badge badge--${a.status}`}>{STATUS_LABEL[a.status]}</span>
                   </span>
                   <span className="apt-list__price">
                     <strong>{formatPrice(a.price)}</strong>
-                    <span className="apt-list__ppm">{formatPrice(a.pricePerM2)}/m²</span>
+                    <span className="apt-list__ppm">{formatPerM2(a.pricePerM2)}</span>
                   </span>
                 </button>
                 <button
@@ -337,7 +345,7 @@ export function ApartmentList() {
               setExpanded(!expanded)
             }}
           >
-            {expanded ? 'Zwiń listę' : `Pokaż wszystkie (${visible.length})${hiddenHovered ? ` · ${hoveredId} niżej` : ''}`}
+            {expanded ? 'Zwiń listę' : `Pokaż pozostałe ${visible.length - shown.length}${hiddenHovered ? ` · ${hoveredId} niżej` : ''}`}
           </button>
         )}
         </>
