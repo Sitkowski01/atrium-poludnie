@@ -1,10 +1,25 @@
 import { describe, expect, it } from 'vitest'
 import { APARTMENTS } from './data'
-import { MATCH_FROM, MOMENTS, matchMoments, onlySoldMatch, summarizeMatches } from './light'
+import { MATCH_FROM, MOMENTS, homeHours, matchMoments, onlySoldMatch, summarizeMatches } from './light'
 import { sunShare, sunWindow } from './sun'
 
 const pick = (...ids: string[]) => MOMENTS.filter((m) => ids.includes(m.id))
 const morning = pick('poranek')
+
+describe('homeHours', () => {
+  it('brak pór daje zero godzin', () => {
+    expect(homeHours([])).toBe(0)
+  })
+
+  it('sumuje wybrane pory bez przerw między nimi', () => {
+    expect(homeHours(pick('poranek', 'popoludnie'))).toBe(6)
+  })
+
+  it('uwzględnia krótszy wieczór i ułamki godzin', () => {
+    expect(homeHours(pick('wieczor'))).toBe(2.5)
+    expect(homeHours(MOMENTS)).toBe(14.5)
+  })
+})
 
 describe('matchMoments', () => {
   it('brak pór daje pustą listę', () => {

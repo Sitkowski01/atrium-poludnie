@@ -113,6 +113,7 @@
 /* wynik: duża liczba, zdanie, lista najlepszych */
 .light__result {
   display: grid;
+  align-content: start;
   gap: 18px;
   padding-top: 26px;
   border-top: 1px solid var(--line);
@@ -204,12 +205,14 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-align: right;
+  white-space: nowrap;
 }
 .light__flat-price {
   grid-area: price;
-  font-family: var(--font-body);
-  font-size: 15px;
+  font-family: var(--font-display);
+  font-size: var(--fd-1);
   font-weight: 600;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
   text-align: right;
@@ -221,10 +224,11 @@
   min-width: 0;
 }
 
-.light__flat .sunbar__want {
-  background: transparent;
+.light__flat .sunbar__want,
+.light__key-home {
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 16%, transparent) 0 2px, transparent 2px 5px);
   box-shadow: none;
-  border: 1px solid color-mix(in srgb, var(--ink-2) 50%, transparent);
+  border: 0;
 }
 
 .light__bar-legend {
@@ -253,7 +257,6 @@
 
 .light__key-home {
   height: 12px;
-  border: 1px solid color-mix(in srgb, var(--ink-2) 50%, transparent);
   border-radius: 3px;
 }
 

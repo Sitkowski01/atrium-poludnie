@@ -28,6 +28,11 @@ export interface Match {
   share: number
 }
 
+/** Łączna długość wybranych pór w domu, w godzinach. */
+export function homeHours(moments: readonly Moment[]): number {
+  return moments.reduce((total, moment) => total + (moment.to - moment.from), 0)
+}
+
 /**
  * Mieszkania, w których słońce wpada do salonu przez większość czasu, gdy użytkownik jest w domu.
  * Sprzedane pomijamy. Kolejność: udział, całodzienne słońce, piętro, cena.
@@ -38,7 +43,7 @@ export function matchMoments(
   moments: readonly Moment[],
   opts: { includeSold?: boolean } = {},
 ): Match[] {
-  const total = moments.reduce((s, m) => s + (m.to - m.from), 0)
+  const total = homeHours(moments)
   if (total <= 0) return []
   return apartments
     .filter((a) => opts.includeSold || a.status !== 'sprzedane')

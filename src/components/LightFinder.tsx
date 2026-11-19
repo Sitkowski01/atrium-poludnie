@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
-import { MOMENTS, matchMoments, onlySoldMatch, summarizeMatches, type Moment } from '../domain/light'
+import { MOMENTS, homeHours, matchMoments, onlySoldMatch, summarizeMatches, type Moment } from '../domain/light'
 import { sunAt, sunWindow } from '../domain/sun'
 import { useCountUp } from '../hooks/useCountUp'
 import { useStore, type Spotlight } from '../state/store'
@@ -8,6 +8,7 @@ import { SunBar } from './SunBar'
 import './LightFinder.css'
 
 const SHOWN = 5
+const hoursFormat = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 })
 const FACADE_NAMES = {
   S: { from: 'od południa', subject: 'Południe' },
   E: { from: 'od wschodu', subject: 'Wschód' },
@@ -56,6 +57,8 @@ export function LightFinder() {
   const { apartments, dispatch } = useStore()
   const [picked, setPicked] = useState<string[]>(['poranek', 'popoludnie'])
   const moments = useMemo(() => MOMENTS.filter((m) => picked.includes(m.id)), [picked])
+  const totalHours = homeHours(moments)
+  const hoursText = (share: number) => `${hoursFormat.format(Math.round(share * totalHours * 2) / 2)} z ${hoursFormat.format(totalHours)}`
   const matches = useMemo(() => matchMoments(apartments, moments), [apartments, moments])
   const summary = useMemo(() => summarizeMatches(apartments, moments, matches), [apartments, moments, matches])
   const facadeName = summary.wholeFacade ? FACADE_NAMES[summary.wholeFacade].from : null
@@ -211,7 +214,8 @@ export function LightFinder() {
                   </span>
                   <SunBar sun={sunWindow(a.facade, a.floor)} wants={wants} className="light__flat-bar" />
                   <span className="light__flat-share">
-                    {Math.round(share * 100)}%<span className="visually-hidden"> czasu w domu ze słońcem</span>
+                    <span aria-hidden="true">{hoursText(share)} h</span>
+                    <span className="visually-hidden">{hoursText(share)} godzin w domu ze słońcem w salonie</span>
                   </span>
                   <span className="light__flat-price">{formatPrice(a.price)}</span>
                 </button>
@@ -223,7 +227,7 @@ export function LightFinder() {
           <p className="light__bar-legend">
             <span><i className="light__key-home" aria-hidden="true" />Twoje pory w domu</span>
             <span><i className="light__key-sun" aria-hidden="true" />słońce w salonie</span>
-            <span>% — część Twojego czasu w domu ze słońcem</span>
+            <span>godziny — ile z Twojego czasu w domu salon ma słońce</span>
           </p>
         )}
         {matches.length > SHOWN && (
