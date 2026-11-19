@@ -282,7 +282,8 @@
 @media (hover: hover) {
   .building__legend-item:hover:not([aria-disabled='true']):not(.is-on) {
     color: var(--ink);
-    border-color: var(--line-2);
+    border-color: var(--ink-3);
+    background: var(--pick-soft);
   }
 }
 /* włączona grupa: grafit jak inne stany wybrane (pomarańcz zostaje dla słońca i wybranego mieszkania) */

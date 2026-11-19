@@ -89,7 +89,18 @@ svg text,
 @media (hover: hover) {
   .btn:hover {
     border-color: var(--pick-line);
+    background-color: var(--card);
     color: var(--ink);
+  }
+}
+/* strzałka w przycisku popycha się w stronę, w którą prowadzi */
+.btn > span[aria-hidden='true'] {
+  display: inline-block;
+  transition: transform 0.25s var(--ease);
+}
+@media (hover: hover) {
+  .btn:hover > span[aria-hidden='true'] {
+    transform: translateX(4px);
   }
 }
 .btn:active {
@@ -105,9 +116,12 @@ svg text,
   color: var(--accent-ink);
   font-weight: 600;
 }
+/* obrys przy najechaniu wypełnia się grafitem */
 @media (hover: hover) {
   .btn--outline:hover {
-    background: var(--pick-soft);
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
   }
 }
 @media (hover: hover) {
@@ -150,8 +164,9 @@ svg text,
     color 0.18s var(--ease);
 }
 @media (hover: hover) {
-  .chip:hover {
+  .chip:hover:not([aria-pressed='true']) {
     border-color: var(--ink-3);
+    background: var(--pick-soft);
     color: var(--ink);
   }
 }
@@ -229,6 +244,21 @@ svg text,
 select {
   background-color: var(--paper-2);
   color: var(--ink);
+}
+.field input,
+.field select,
+.field textarea,
+select {
+  transition: border-color 0.18s var(--ease), background-color 0.18s var(--ease);
+}
+@media (hover: hover) {
+  .field input:hover,
+  .field select:hover,
+  .field textarea:hover,
+  select:hover {
+    border-color: var(--ink-3);
+    background-color: var(--card);
+  }
 }
 
 input[type='range'] {
@@ -361,6 +391,17 @@ input[type='range'] {
   .topbar__nav a:hover {
     color: var(--ink);
   }
+  /* najechanie: cienka szara kreska; aktywna sekcja ma grafitową */
+  .topbar__nav a:hover:not(.is-active)::after {
+    background: var(--line-2);
+    transform: scaleX(1);
+  }
+  .topbar__logo:hover em {
+    color: var(--accent-2);
+  }
+}
+.topbar__logo em {
+  transition: color 0.2s var(--ease);
 }
 
 /* ---------- scena: treść po lewej, budynek przyklejony po prawej ---------- */
