@@ -20,7 +20,7 @@ const SPAN = DAY_END - DAY_START
 const pct = (h: number) => `${(((Math.min(DAY_END, Math.max(DAY_START, h)) - DAY_START) / SPAN) * 100).toFixed(2)}%`
 
 /**
- * Dzień od 5:00 do 21:00 jako pasek: złoty odcinek to słońce w salonie, ramka to okno, w którym
+ * Dzień od 5:00 do 21:00 jako pasek: pomarańczowy odcinek to słońce w salonie, ramka to okno, w którym
  * użytkownik jest w domu, kreska to godzina z suwaka. Ten sam pasek w wyszukiwarce, w sekcji
  * „Światło” i w kartach typów, więc oko uczy się go raz.
  */
