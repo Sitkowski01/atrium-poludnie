@@ -1,5 +1,5 @@
 .contact {
-  padding: clamp(64px, 9vh, 112px) 0 0;
+  padding: clamp(48px, 7vh, 80px) 0 0;
 }
 .contact:focus:not(:focus-visible) {
   outline: none;
@@ -123,27 +123,19 @@
 }
 .contact__open {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr) 92px;
-  align-items: center;
-  gap: 14px;
-  font-size: 13px;
+  grid-template-columns: auto minmax(24px, 1fr) auto;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 14px;
 }
 .contact__open-days {
   color: var(--ink-2);
 }
-.contact__open-bar {
-  position: relative;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--track);
-}
-/* otwarte: grafit, nie pomarańcz — pomarańcz jest zarezerwowany dla słońca */
-.contact__open-bar span {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  border-radius: 999px;
-  background: var(--ink-2);
+/* kropkowana prowadnica jak w rozkładzie jazdy */
+.contact__open-lead {
+  align-self: end;
+  margin-bottom: 0.35em;
+  border-bottom: 1px dotted var(--line-2);
 }
 .contact__open-time {
   text-align: right;
@@ -402,10 +394,6 @@
   }
 }
 @media (max-width: 420px) {
-  .contact__open {
-    grid-template-columns: 58px minmax(0, 1fr) auto;
-    gap: 10px;
-  }
 }
 
 /* najwęższe telefony: długi adres e-mail może się złamać, zamiast wyjść poza ekran */
@@ -413,5 +401,12 @@
   .contact__lines dd {
     white-space: normal;
     overflow-wrap: anywhere;
+  }
+}
+
+/* telefon: oba wezwania na pełną szerokość, jak w hero */
+@media (max-width: 560px) {
+  .contact__actions > * {
+    flex: 1 1 100%;
   }
 }

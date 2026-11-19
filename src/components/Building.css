@@ -270,6 +270,43 @@
 
 /* ---------- legenda ---------- */
 
+/* opis podświetlenia z rozdziału stoi w miejscu legendy: znak obrysu jak na bryle, nazwa, liczba */
+.building__spotnote {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  min-height: 36px;
+  margin: 0;
+  font-size: 14px;
+  animation: building-note-in var(--hover) var(--ease-hover);
+}
+.building__spotnote-mark {
+  flex: none;
+  width: 14px;
+  height: 10px;
+  border: 1.5px solid var(--pick);
+  border-radius: 1px;
+}
+.building__spotnote-label {
+  font-weight: 600;
+  color: var(--ink);
+}
+.building__spotnote-count {
+  color: var(--ink-2);
+}
+@keyframes building-note-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@media (pointer: coarse), (max-width: 980px) {
+  .building__spotnote {
+    min-height: 44px;
+  }
+}
+
 .building__legend {
   display: flex;
   flex-wrap: wrap;
@@ -293,7 +330,7 @@
 }
 .building__legend-count {
   font-variant-numeric: tabular-nums;
-  color: var(--ink-2);
+  color: var(--ink);
   font-weight: 400;
 }
 @media (hover: hover) {
@@ -395,6 +432,8 @@
   .building__card.is-top {
     top: auto;
     bottom: auto;
+    left: auto;
+    width: 100%;
   }
   /* w spoczynku jedna linia podpisu pod bryłą */
   .building__card:not(.is-on) {

@@ -57,7 +57,22 @@
   text-transform: uppercase;
   color: var(--ink-2);
 }
+/* kompas przed opisem słońca */
+.sun-control__compass {
+  flex: none;
+  color: var(--ink-2);
+}
+.sun-control__compass .is-up {
+  fill: var(--sun);
+  transition: cx 0.2s linear, cy 0.2s linear;
+}
+.sun-control__compass .is-down {
+  fill: var(--ink-3);
+}
 .sun-control__sun {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   font-size: 12px;
   letter-spacing: 0.01em;
   /* jedna linia: opis pod suwakiem nie może przesuwać panelu przy każdej zmianie godziny */
@@ -73,60 +88,6 @@
   font-weight: 500;
   line-height: 1;
   color: var(--ink);
-}
-
-/* tor suwaka: noc → ciepły dzień → noc */
-.sun-control__slider input[type='range'] {
-  appearance: none;
-  height: 28px;
-  background: transparent;
-}
-.sun-control__slider input[type='range']::-webkit-slider-runnable-track {
-  height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #56607a 0%, #d79a74 10%, #efb066 30%, #f5c98a 50%, #efb066 70%, #d79a74 88%, #56607a 100%);
-}
-.sun-control__slider input[type='range']::-moz-range-track {
-  height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #56607a 0%, #d79a74 10%, #efb066 30%, #f5c98a 50%, #efb066 70%, #d79a74 88%, #56607a 100%);
-}
-.sun-control__slider input[type='range']::-webkit-slider-thumb {
-  appearance: none;
-  width: 22px;
-  height: 22px;
-  margin-top: -9px;
-  border: 3px solid var(--paper);
-  border-radius: 50%;
-  background: var(--sun);
-  box-shadow:
-    0 0 0 1px var(--accent),
-    0 0 14px var(--sun-glow);
-}
-.sun-control__slider input[type='range']::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border: 3px solid var(--paper);
-  border-radius: 50%;
-  background: var(--sun);
-  box-shadow:
-    0 0 0 1px var(--accent),
-    0 0 14px var(--sun-glow);
-}
-.sun-control__slider input[type='range']:focus-visible {
-  outline: none;
-}
-.sun-control__slider input[type='range']:focus-visible::-webkit-slider-thumb {
-  box-shadow:
-    0 0 0 3px var(--paper),
-    0 0 0 5px var(--accent),
-    0 0 14px var(--sun-glow);
-}
-.sun-control__slider input[type='range']:focus-visible::-moz-range-thumb {
-  box-shadow:
-    0 0 0 3px var(--paper),
-    0 0 0 5px var(--accent),
-    0 0 14px var(--sun-glow);
 }
 
 .sun-control__presets {

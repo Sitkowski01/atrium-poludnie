@@ -232,7 +232,7 @@ export function Building() {
               {Array.from({ length: FLOORS }, (_, f) => {
                 const p = pt('S', LEN.S, f * HF + HF / 2)
                 return (
-                  <text key={f} className="building__floor" x={p[0] - 16} y={p[1] + 4} textAnchor="end">
+                  <text key={f} className="building__floor" x={p[0] - 28} y={p[1] + 4} textAnchor="end">
                     {f === 0 ? 'P' : f}
                   </text>
                 )
@@ -340,7 +340,7 @@ export function Building() {
 
         {/* szklana karta: co jest pod kursorem albo co jest wybrane */}
         <div
-          className={`building__card${focus || storeSpot ? ' is-on' : ''}${cardTop ? ' is-top' : ''}${focus && !hovered ? ' is-picked' : ''}`}
+          className={`building__card${focus ? ' is-on' : ''}${cardTop ? ' is-top' : ''}${focus && !hovered ? ' is-picked' : ''}`}
           aria-hidden="true"
         >
           {focus ? (
@@ -359,12 +359,6 @@ export function Building() {
               </span>
               <span className="building__card-keys">Strzałki: następne mieszkanie · Enter: otwórz</span>
             </>
-          ) : storeSpot ? (
-            <>
-              <span className="building__card-eyebrow">Na bryle</span>
-              <strong className="building__card-title">{storeSpot.label}</strong>
-              <span className="building__card-meta">{flatsLabel(storeSpot.ids.length)}</span>
-            </>
           ) : (
             <>
               <span className="building__card-eyebrow">35 mieszkań · 7 kondygnacji</span>
@@ -378,7 +372,15 @@ export function Building() {
         </div>
       </div>
 
-      {/* legenda jest też przełącznikiem: pokazuje na bryle, gdzie leży dana grupa */}
+      {/* podświetlenie z rozdziału (typ, pory w domu) opisuje się w miejscu legendy, nie kartą na rysunku;
+          legenda wraca, gdy rozdział oddaje bryłę */}
+      {storeSpot ? (
+        <p className="building__spotnote">
+          <span className="building__spotnote-mark" aria-hidden="true" />
+          <span className="building__spotnote-label">{storeSpot.label}</span>
+          <span className="building__spotnote-count">{flatsLabel(storeSpot.ids.length)}</span>
+        </p>
+      ) : (
       <div className="building__legend" role="group" aria-label="Legenda: pokaż na bryle">
         {SPOTS.map(({ key, label }) => {
           const count = apartments.filter((a) => inSpot(a, key, !visibleIds.has(a.id))).length
@@ -404,6 +406,7 @@ export function Building() {
           )
         })}
       </div>
+      )}
     </div>
   )
 }

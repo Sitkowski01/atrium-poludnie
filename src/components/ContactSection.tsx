@@ -35,8 +35,6 @@ const NAV = [
   ['kontakt', 'Kontakt'],
 ] as const
 
-/** godzina na osi 5:00–21:00, jak pasek słońca */
-const pos = (h: number) => `${(((h - 5) / 16) * 100).toFixed(2)}%`
 
 export function ContactSection() {
   return (
@@ -59,6 +57,7 @@ export function ContactSection() {
             <div className="contact__actions">
               <a className="btn btn--primary" href="#mieszkania" onClick={(e) => goTo(e, 'mieszkania')}>
                 Wybierz mieszkanie
+                <span aria-hidden="true">→</span>
               </a>
               <a className="btn btn--outline" href="#swiatlo" onClick={(e) => goTo(e, 'swiatlo')}>
                 Kiedy jesteś w domu?
@@ -77,14 +76,12 @@ export function ContactSection() {
             </p>
             <p className="contact__note">adres przykładowy, inwestycja fikcyjna</p>
 
-            {/* godziny otwarcia na tej samej osi dnia co słońce w mieszkaniach */}
+            {/* godziny jak w rozkładzie jazdy: dzień, kropkowana prowadnica, godziny */}
             <ul className="contact__hours-list">
               {OPEN.map((o) => (
                 <li key={o.days} className="contact__open">
                   <span className="contact__open-days">{o.days}</span>
-                  <span className="contact__open-bar" aria-hidden="true">
-                    <span style={{ left: pos(o.from), right: `calc(100% - ${pos(o.to)})` }} />
-                  </span>
+                  <span className="contact__open-lead" aria-hidden="true" />
                   <span className="contact__open-time">
                     {o.from}:00–{o.to}:00
                   </span>

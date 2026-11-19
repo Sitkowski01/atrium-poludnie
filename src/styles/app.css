@@ -360,6 +360,46 @@ input[type='range']::-moz-range-thumb {
 input[type='range']:focus-visible {
   outline: none;
 }
+
+/* suwak pory dnia (pod bryłą i w panelu mieszkania): tor noc → ciepły dzień → noc, tarcza to słońce.
+   Podwójna klasa: wygrywa z wypełnieniem toru (--pct) ze stylów komponentów */
+input[type='range'].range--sun.range--sun {
+  height: 28px;
+}
+input[type='range'].range--sun.range--sun::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #56607a 0%, #d79a74 10%, #efb066 30%, #f5c98a 50%, #efb066 70%, #d79a74 88%, #56607a 100%);
+}
+input[type='range'].range--sun.range--sun::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #56607a 0%, #d79a74 10%, #efb066 30%, #f5c98a 50%, #efb066 70%, #d79a74 88%, #56607a 100%);
+}
+input[type='range'].range--sun.range--sun::-moz-range-progress {
+  background: transparent;
+}
+input[type='range'].range--sun.range--sun::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  margin-top: -9px;
+  border: 3px solid var(--paper);
+  background: var(--sun);
+  box-shadow: 0 0 0 1px var(--accent), 0 0 14px var(--sun-glow);
+}
+input[type='range'].range--sun.range--sun::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 3px solid var(--paper);
+  background: var(--sun);
+  box-shadow: 0 0 0 1px var(--accent), 0 0 14px var(--sun-glow);
+}
+input[type='range'].range--sun.range--sun:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--accent), 0 0 14px var(--sun-glow);
+}
+input[type='range'].range--sun.range--sun:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--accent), 0 0 14px var(--sun-glow);
+}
 input[type='range']:focus-visible::-webkit-slider-thumb {
   box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--accent);
 }

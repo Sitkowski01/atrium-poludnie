@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatHour } from '../domain/format'
-import { DAY_END, DAY_START, sunCaption } from '../domain/sun'
+import { DAY_END, DAY_START, sunAt, sunCaption } from '../domain/sun'
 import { useHour, useStore } from '../state/store'
 import './SunControl.css'
 
@@ -114,6 +114,7 @@ export function SunControl() {
         </span>
         <input
           type="range"
+          className="range--sun"
           min={DAY_START}
           max={DAY_END}
           step={0.05}
@@ -123,6 +124,7 @@ export function SunControl() {
         />
         {/* skąd pada światło o tej godzinie; czytnik dostaje to w aria-valuetext suwaka */}
         <span className="sun-control__sun" aria-hidden="true">
+          <Compass hour={hour} />
           {sunCaption(hour)}
         </span>
       </label>
@@ -141,5 +143,21 @@ export function SunControl() {
         ))}
       </div>
     </div>
+  )
+}
+
+/** Mała róża jak na rysunku architekta: północ u góry, kropka pokazuje, skąd świeci słońce. */
+function Compass({ hour }: { hour: number }) {
+  const { azimuth, elevation } = sunAt(hour)
+  const up = elevation > 0
+  const rad = (azimuth * Math.PI) / 180
+  const x = 8 + Math.sin(rad) * 5.5
+  const y = 8 - Math.cos(rad) * 5.5
+  return (
+    <svg className="sun-control__compass" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+      <circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" strokeOpacity="0.45" />
+      <path d="M8 0.5 L9.4 3.2 L6.6 3.2 Z" fill="currentColor" />
+      <circle cx={x} cy={y} r="2" className={up ? 'is-up' : 'is-down'} />
+    </svg>
   )
 }
