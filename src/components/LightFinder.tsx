@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
-import { MOMENTS, matchMoments, onlySoldMatch, type Moment } from '../domain/light'
+import { MOMENTS, matchMoments, onlySoldMatch, summarizeMatches, type Moment } from '../domain/light'
 import { sunAt, sunWindow } from '../domain/sun'
 import { useCountUp } from '../hooks/useCountUp'
 import { useStore, type Spotlight } from '../state/store'
@@ -8,6 +8,10 @@ import { SunBar } from './SunBar'
 import './LightFinder.css'
 
 const SHOWN = 5
+const FACADE_NAMES = {
+  S: { from: 'od południa', subject: 'Południe' },
+  E: { from: 'od wschodu', subject: 'Wschód' },
+}
 
 /** „1 mieszkanie”, „3 mieszkania”, „12 mieszkań” */
 const flats = (n: number) => {
@@ -53,6 +57,19 @@ export function LightFinder() {
   const [picked, setPicked] = useState<string[]>(['poranek', 'popoludnie'])
   const moments = useMemo(() => MOMENTS.filter((m) => picked.includes(m.id)), [picked])
   const matches = useMemo(() => matchMoments(apartments, moments), [apartments, moments])
+  const summary = useMemo(() => summarizeMatches(apartments, moments, matches), [apartments, moments, matches])
+  const facadeName = summary.wholeFacade ? FACADE_NAMES[summary.wholeFacade].from : null
+  // dlaczego druga elewacja odpada: słońce kończy się za wcześnie albo zaczyna za późno
+  const missedFacade = summary.missed[0]
+  const missedWindow = missedFacade ? sunWindow(missedFacade.facade, 3) : null
+  const homeFrom = moments.length ? Math.min(...moments.map((m) => m.from)) : 0
+  const comparison = !missedFacade
+    ? ''
+    : !missedWindow
+      ? `${FACADE_NAMES[missedFacade.facade].subject} nie ma wtedy słońca w salonie.`
+      : missedWindow.from > homeFrom + 1
+        ? `${FACADE_NAMES[missedFacade.facade].subject} dostaje słońce do salonu dopiero od ${formatHour(missedWindow.from)}, więc w tych godzinach przegrywa.`
+        : `${FACADE_NAMES[missedFacade.facade].subject} ma słońce w salonie tylko do ${formatHour(missedWindow.to)}, więc przy tylu godzinach w domu odpada.`
   const shownCount = Math.round(useCountUp(matches.length, { duration: 700 }))
   const soldOnly = useMemo(() => onlySoldMatch(apartments, moments), [apartments, moments])
   const wants = useMemo(() => moments.map((m) => [m.from, m.to] as const), [moments])
@@ -140,7 +157,7 @@ export function LightFinder() {
         {moments.length === 0
           ? 'Zaznacz choć jedną porę dnia.'
           : matches.length > 0
-            ? `${matches.length} ${flats(matches.length)} ${has(matches.length)} słońce w salonie przez większość czasu, kiedy jesteś w domu.`
+            ? `${matches.length} ${flats(matches.length)} ${has(matches.length)} słońce w salonie przez większość czasu, kiedy jesteś w domu${facadeName ? `, wszystkie dostępne ${facadeName}` : ''}.`
             : soldOnly
               ? 'Takie mieszkania są, ale już sprzedane — dobierz inną porę dnia.'
               : 'Żadne mieszkanie nie ma słońca w salonie przez większość czasu, kiedy jesteś w domu.'}
@@ -157,6 +174,11 @@ export function LightFinder() {
                 {flats(shownCount)} {has(shownCount)} słońce w&nbsp;salonie przez większość czasu, kiedy jesteś w&nbsp;domu
               </span>
             </p>
+            {matches.length > 0 && facadeName && (
+              <p className="light__note">
+                Pasują wszystkie dostępne mieszkania {facadeName}. {comparison}
+              </p>
+            )}
             {matches.length === 0 && (
               <p className="light__note">
                 {soldOnly

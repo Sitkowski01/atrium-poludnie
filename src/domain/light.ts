@@ -1,5 +1,5 @@
-import { sunShare } from './sun'
-import type { Apartment } from './types'
+import { sunShare, sunWindow } from './sun'
+import type { Apartment, Facade } from './types'
 
 /** Pora dnia, którą użytkownik spędza w domu. Godziny w ułamkach (18.5 = 18:30). */
 export interface Moment {
@@ -30,7 +30,8 @@ export interface Match {
 
 /**
  * Mieszkania, w których słońce wpada do salonu przez większość czasu, gdy użytkownik jest w domu.
- * Sprzedane pomijamy. Kolejność: najlepszy udział, potem cena. Brak pór = brak wyników.
+ * Sprzedane pomijamy. Kolejność: udział, całodzienne słońce, piętro, cena.
+ * Różnicę udziału poniżej 0.005 traktujemy jako remis. Brak pór = brak wyników.
  */
 export function matchMoments(
   apartments: readonly Apartment[],
@@ -46,7 +47,45 @@ export function matchMoments(
       share: moments.reduce((s, m) => s + sunShare(a.facade, a.floor, m.from, m.to) * (m.to - m.from), 0) / total,
     }))
     .filter((m) => m.share >= MATCH_FROM)
-    .sort((x, y) => y.share - x.share || x.apartment.price - y.apartment.price)
+    .sort((x, y) => {
+      if (Math.abs(y.share - x.share) >= 0.005) return y.share - x.share
+      const a = x.apartment
+      const b = y.apartment
+      return (
+        (sunWindow(b.facade, b.floor)?.total ?? 0) - (sunWindow(a.facade, a.floor)?.total ?? 0) ||
+        b.floor - a.floor ||
+        a.price - b.price ||
+        a.id.localeCompare(b.id)
+      )
+    })
+}
+
+export interface MatchSummary {
+  /** Wszystkie niesprzedane mieszkania tej elewacji pasują, a z innych żadne. */
+  wholeFacade: Facade | null
+  /** Elewacje bez dopasowań, z końcem słońca na referencyjnym piętrze 3. */
+  missed: { facade: Facade; sunUntil: number | null }[]
+}
+
+export function summarizeMatches(
+  apartments: readonly Apartment[],
+  moments: readonly Moment[],
+  matches: readonly Match[],
+): MatchSummary {
+  if (moments.length === 0) return { wholeFacade: null, missed: [] }
+  const facades: Facade[] = ['S', 'E']
+  const available = apartments.filter((a) => a.status !== 'sprzedane')
+  const matchedIds = new Set(matches.map((m) => m.apartment.id))
+  const matched = available.filter((a) => matchedIds.has(a.id))
+  const wholeFacade = facades.find((facade) =>
+    matched.some((a) => a.facade === facade) &&
+    matched.every((a) => a.facade === facade) &&
+    available.filter((a) => a.facade === facade).every((a) => matchedIds.has(a.id)),
+  ) ?? null
+  const missed = facades
+    .filter((facade) => !matched.some((a) => a.facade === facade))
+    .map((facade) => ({ facade, sunUntil: sunWindow(facade, 3)?.to ?? null }))
+  return { wholeFacade, missed }
 }
 
 /** Brak wolnych dopasowań, ale takie mieszkania istnieją wśród sprzedanych. */
