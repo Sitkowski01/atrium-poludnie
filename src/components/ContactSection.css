@@ -1,6 +1,6 @@
 .contact {
   --p: 0.5;
-  padding: clamp(96px, 14vh, 160px) 0 0;
+  padding: clamp(64px, 9vh, 112px) 0 0;
 }
 .contact:focus:not(:focus-visible) {
   outline: none;

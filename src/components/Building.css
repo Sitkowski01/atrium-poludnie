@@ -373,6 +373,15 @@
     top: auto;
     bottom: auto;
   }
+  /* karta ma tu stałą wysokość: w spoczynku pokazuje też nagłówek, żeby nie była pustym pudłem */
+  .building__card:not(.is-on) .building__card-eyebrow {
+    display: block;
+  }
+  .building__card:not(.is-on) .building__card-title {
+    font-family: var(--font-display);
+    font-size: var(--fd-2);
+    line-height: 1.15;
+  }
 }
 
 
