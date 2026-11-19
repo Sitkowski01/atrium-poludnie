@@ -8,7 +8,8 @@
 /* pory dnia: pięć kafli jak kartki z kalendarza dnia */
 .light__moments {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  /* pięć pór zawsze w jednym rzędzie, jak pięć odcinków dnia (wcześniej 3 + 2 nierówne kafle) */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 8px;
   margin: 0;
   padding: 0;
@@ -26,12 +27,13 @@
   color: var(--ink-2);
 }
 .light__moment {
-  grid-column: span 2;
   display: grid;
+  grid-template-rows: auto auto auto 1fr;
   align-content: start;
   gap: 4px;
-  min-height: 150px;
-  padding: 14px 12px 14px;
+  min-width: 0;
+  min-height: 168px;
+  padding: 14px 11px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--card);
@@ -84,8 +86,13 @@
   stroke: rgb(15 18 26 / 0.55);
 }
 .light__moment-label {
+  /* zawsze dwie linie miejsca: godziny we wszystkich kaflach stoją na jednej wysokości */
+  display: flex;
+  align-items: flex-end;
+  min-height: 2.2em;
   font-family: var(--font-display);
-  font-size: var(--fd-1);
+  /* pięć kafli w kolumnie ~590 px: 18 px mieści „Popołudnie” bez łamania słowa */
+  font-size: clamp(17px, 3.1cqi, var(--fd-1));
   font-weight: 500;
   line-height: 1.1;
 }
@@ -197,29 +204,37 @@
   white-space: nowrap;
 }
 
-.light__moment:nth-of-type(n + 4) {
-  grid-column: span 3;
-}
-
-/* pięć pór w jednym rzędzie dopiero w szerokiej kolumnie; węziej 3 + 2 */
-@container chapter (min-width: 760px) {
-  .light__moments .light__moment:nth-of-type(n) {
-    grid-column: span 1;
-  }
-  .light__moments {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
+/* wąsko: pory jako lista wierszy — znak, nazwa z notką, godziny po prawej */
 @container chapter (max-width: 559px) {
   .light__moments {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
   }
-  .light__moments .light__moment:nth-of-type(n) {
-    grid-column: span 1;
+  .light__moment {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      'glyph label time'
+      'glyph note time';
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 2px;
+    min-height: 64px;
+    padding: 10px 14px;
+  }
+  .light__glyph {
+    grid-area: glyph;
+    margin: 0;
+  }
+  .light__moment-label {
+    grid-area: label;
     min-height: 0;
   }
-  .light__moments .light__moment:last-of-type {
-    grid-column: 1 / -1;
+  .light__moment-time {
+    grid-area: time;
+  }
+  .light__moment-note {
+    grid-area: note;
   }
   .light__count {
     grid-template-columns: minmax(0, 1fr);

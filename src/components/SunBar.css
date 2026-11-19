@@ -8,6 +8,8 @@
 }
 .sunbar__track {
   position: relative;
+  z-index: 0;
+  isolation: isolate;
   display: block;
   height: 6px;
   border-radius: 999px;
@@ -17,22 +19,27 @@
 }
 .sunbar__sun {
   position: absolute;
+  z-index: 1;
   top: 0;
   bottom: 0;
   border-radius: 999px;
   background: linear-gradient(90deg, #e9a24f, #ffd98a 50%, #e9a24f);
   box-shadow: 0 0 10px rgb(240 178 58 / 0.45);
 }
-/* okno „jestem w domu”: kremowa ramka nad paskiem, żeby było widać, czy słońce w nią trafia */
+/* okno „jestem w domu”: kremowe pole pod złotem; słońce zostaje na wierzchu,
+   więc od razu widać, czy w nie trafia (wcześniej ramka zasłaniała złoto) */
 .sunbar__want {
   position: absolute;
   top: -4px;
   bottom: -4px;
-  border: 1.5px solid var(--pick, #f2ede3);
-  border-radius: 4px;
+  z-index: -1;
+  border-radius: 3px;
+  background: rgb(242 237 227 / 0.14);
+  box-shadow: inset 0 0 0 1px rgb(242 237 227 / 0.38);
 }
 .sunbar__now {
   position: absolute;
+  z-index: 2;
   top: -5px;
   bottom: -5px;
   width: 2px;
