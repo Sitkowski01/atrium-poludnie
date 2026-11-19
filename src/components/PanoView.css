@@ -57,7 +57,7 @@
   border: 3px solid #fff;
   border-radius: 50%;
   background: rgb(217 163 91 / 0.94);
-  color: var(--accent-ink);
+  color: #1c1b18;
   box-shadow:
     0 0 0 6px rgb(255 255 255 / 0.22),
     0 8px 18px rgb(0 0 0 / 0.35);

@@ -341,7 +341,7 @@ input[type='range'] {
   inset: 8px -10px 10px;
   border-radius: var(--radius);
   pointer-events: none;
-  box-shadow: 0 0 0 1px rgb(196 83 27 / 0.55), 0 0 40px rgb(196 83 27 / 0.12);
+  box-shadow: 0 0 0 1px rgb(179 71 22 / 0.55), 0 0 40px rgb(179 71 22 / 0.12);
   opacity: 0;
 }
 .stage__scene.is-flash::after {

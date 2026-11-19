@@ -1,8 +1,8 @@
 /*
  * Kierunek „Dzień”: ciepły papier, grafitowy tekst, przypalony pomarańcz.
  * Krój nagłówków Barlow Semi Condensed (techniczny, jak opis na planie), treść Inter.
- * Kontrast (na --paper): --ink 15,2:1, --ink-2 6,3:1, --accent 5,2:1 (tekst ≥ 14 px pogrubiony
- * albo duży), biały na --accent 6,2:1; --ink-3 tylko do ozdobników.
+ * Kontrast (na --paper): --ink 15,2:1, --ink-2 6,0:1, --accent 4,6:1, --accent-ink na --accent 5,2:1
+ * (na --accent-2 przy najechaniu 6,3:1); --sun tylko do grafiki, --ink-3 tylko do ozdobników.
  */
 :root {
   color-scheme: light;
@@ -21,8 +21,8 @@
   --line-2: #bdb6a7;
 
   /* pomarańcz: główna akcja, marka, wybrane mieszkanie */
-  --accent: #c4531b;
-  --accent-2: #d9662c;
+  --accent: #b34716;
+  --accent-2: #9e3d12;
   --accent-ink: #fff8f0;
   --accent-soft: #f3dccb;
   --sun: #e8792a;
@@ -57,7 +57,7 @@
   --shadow-s: 0 1px 2px rgb(28 27 24 / 0.06);
   --shadow-m: 0 10px 28px rgb(28 27 24 / 0.08);
   --shadow: 0 24px 60px rgb(28 27 24 / 0.16);
-  --glow: 0 0 0 1px rgb(196 83 27 / 0.6), 0 0 18px rgb(196 83 27 / 0.2);
+  --glow: 0 0 0 1px rgb(179 71 22 / 0.6), 0 0 18px rgb(179 71 22 / 0.2);
 
   --font-display: 'Barlow Semi Condensed', 'Bahnschrift', 'DIN Alternate', 'Arial Narrow', sans-serif;
   /* skala kroju nagłówków poza clamp tytułów */

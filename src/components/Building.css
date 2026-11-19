@@ -213,9 +213,10 @@
   text-transform: uppercase;
   color: var(--ink-2);
 }
-/* pomarańcz tylko dla wybranego mieszkania, nie dla najechania ani podświetlenia z rozdziału */
+/* wybrane mieszkanie: podpis ciemniejszy niż przy najechaniu; drobny pomarańcz na szkle nad renderem
+   nie trzymał kontrastu, pomarańcz zostaje na obrysie mieszkania */
 .building__card.is-picked .building__card-eyebrow {
-  color: var(--accent);
+  color: var(--ink);
 }
 .building__card-title {
   font-family: var(--font-display);

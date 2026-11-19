@@ -338,6 +338,7 @@
   }
   .site-footer__credit {
     text-align: left;
+    white-space: normal;
   }
   .site-footer__credit,
   .site-footer__top {
