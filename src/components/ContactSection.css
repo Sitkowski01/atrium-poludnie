@@ -16,7 +16,7 @@
 .contact__track {
   position: relative;
   height: 2px;
-  background: linear-gradient(90deg, #232a3c, #c98f6a, #f0c27a, #fbe3b4, #f0c27a, #c98f6a, #232a3c);
+  background: linear-gradient(90deg, var(--line), #e9b48a 18%, #f0a35a 50%, #e9b48a 82%, var(--line));
 }
 .contact__sun {
   position: absolute;
@@ -26,8 +26,8 @@
   height: 10px;
   margin: -5px 0 0 -5px;
   border-radius: 50%;
-  background: #ffd98a;
-  box-shadow: 0 0 12px 4px rgb(255 217 138 / 0.55);
+  background: var(--sun);
+  box-shadow: 0 0 0 4px var(--paper), 0 0 14px 4px var(--sun-glow);
 }
 .contact__hours {
   display: flex;
@@ -75,16 +75,16 @@
   max-width: 15ch;
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 500;
+  font-weight: 600;
   font-size: clamp(42px, 5.4vw, 80px);
-  line-height: 1;
-  letter-spacing: -0.01em;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
   color: var(--ink);
   text-wrap: balance;
 }
 .contact__title em {
-  font-style: italic;
-  color: var(--ink);
+  font-style: normal;
+  color: var(--accent);
 }
 .contact__lead {
   max-width: 52ch;
@@ -111,15 +111,12 @@
   font-size: 14px;
 }
 
-/* ---------- biuro: karta z godzinami na osi dnia ---------- */
+/* ---------- biuro: kolumna pod grubą kreską, jak tabliczka na planie (bez karty) ---------- */
 
 .contact__office {
   min-width: 0;
-  padding: 26px 26px 22px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: linear-gradient(180deg, var(--card), rgb(24 29 40 / 0.6));
-  box-shadow: var(--shadow-m);
+  padding: 18px 0 0;
+  border-top: 2px solid var(--ink);
 }
 .contact__office-title {
   margin: 0 0 14px;
@@ -131,9 +128,10 @@
 }
 .contact__address {
   font-family: var(--font-display);
-  font-size: var(--fd-3);
-  font-weight: 500;
-  line-height: 1.1;
+  font-size: var(--fd-4);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
   color: var(--ink);
 }
 .contact__note {
@@ -163,17 +161,15 @@
   position: relative;
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #232a3c 0%, #2b3346 18%, #2f374b 50%, #2b3346 82%, #232a3c 100%);
-  box-shadow: inset 0 0 0 1px rgb(242 237 227 / 0.06);
+  background: var(--track);
 }
-/* otwarte: krem, nie złoto — złoto jest zarezerwowane dla słońca */
+/* otwarte: grafit, nie pomarańcz — pomarańcz jest zarezerwowany dla słońca */
 .contact__open-bar span {
   position: absolute;
   top: 0;
   bottom: 0;
   border-radius: 999px;
-  background: var(--pick);
-  opacity: 0.85;
+  background: var(--ink);
 }
 .contact__open-time {
   text-align: right;
@@ -216,78 +212,105 @@
   }
 }
 
-/* ---------- stopka ---------- */
+/* ---------- stopka: grafitowy pas, numerowane rozdziały i logotyp na całą szerokość ---------- */
 
 .site-footer {
+  --f-ink: #f1ede5;
+  --f-ink-2: #a8a397;
+  --f-line: #3a3833;
   margin-top: clamp(72px, 10vh, 120px);
-  border-top: 1px solid var(--line);
-  background: rgb(10 12 18 / 0.55);
+  background: var(--ink);
+  color: var(--f-ink);
+  overflow: hidden;
+}
+.site-footer :focus-visible {
+  outline-color: var(--sun);
 }
 .site-footer__inner {
+  container-type: inline-size;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
-    'logo nav top'
-    'note note note';
+    'nav top'
+    'mark mark'
+    'note credit';
   align-items: center;
-  gap: 18px 40px;
-  padding-top: 28px;
-  padding-bottom: 32px;
-}
-.site-footer__logo {
-  grid-area: logo;
-  display: inline-flex;
-  gap: 0.26em;
-  align-items: center;
-  min-height: 44px;
-  font-family: var(--font-display);
-  font-size: var(--fd-2);
-  font-weight: 500;
-  color: var(--ink);
-  text-decoration: none;
-  white-space: nowrap;
-}
-.site-footer__logo em {
-  font-style: italic;
-  color: var(--accent);
+  column-gap: 40px;
+  padding-top: 22px;
+  padding-bottom: 26px;
 }
 .site-footer__nav {
   grid-area: nav;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px 26px;
+  gap: 0 32px;
 }
 .site-footer__nav a,
 .site-footer__top {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-height: 44px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--ink-2);
+  color: var(--f-ink);
   text-decoration: none;
   transition: color 0.18s var(--ease);
 }
+.site-footer__num {
+  color: var(--f-ink-2);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
 .site-footer__top {
   grid-area: top;
+  justify-self: end;
+  color: var(--f-ink-2);
 }
 @media (hover: hover) {
   .site-footer__nav a:hover,
   .site-footer__top:hover {
-    color: var(--ink);
+    color: var(--sun);
   }
+}
+.site-footer__mark {
+  grid-area: mark;
+  display: block;
+  margin: clamp(20px, 4vw, 48px) 0 18px;
+  padding: clamp(14px, 2vw, 24px) 0 clamp(18px, 2.4vw, 30px);
+  border-top: 1px solid var(--f-line);
+  border-bottom: 1px solid var(--f-line);
+  font-family: var(--font-display);
+  /* „Atrium Południe” wypełnia szerokość stopki: rozmiar liczony od szerokości kontenera */
+  font-size: 17.1cqi;
+  font-weight: 600;
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  color: var(--f-ink);
+  text-decoration: none;
+}
+.site-footer__mark em {
+  font-style: normal;
+  color: var(--sun);
+}
+.site-footer__note,
+.site-footer__credit {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--f-ink-2);
 }
 .site-footer__note {
   grid-area: note;
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-  font-size: 12px;
-  line-height: 1.6;
-  color: var(--ink-2);
+  max-width: 72ch;
+}
+.site-footer__credit {
+  grid-area: credit;
+  align-self: start;
+  text-align: right;
+  white-space: nowrap;
 }
 
 @media (max-width: 1080px) {
@@ -303,20 +326,28 @@
   .site-footer__inner {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
-      'logo top'
       'nav nav'
-      'note note';
-    gap: 8px 24px;
+      'mark mark'
+      'note note'
+      'credit top';
   }
   .site-footer__nav {
-    justify-content: flex-start;
-    gap: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 0 32px;
+  }
+  .site-footer__credit {
+    text-align: left;
+  }
+  .site-footer__credit,
+  .site-footer__top {
+    align-self: center;
+  }
+  .site-footer__credit {
+    margin-top: 6px;
   }
 }
 @media (max-width: 420px) {
-  .contact__office {
-    padding: 22px 18px 18px;
-  }
   .contact__open {
     grid-template-columns: 58px minmax(0, 1fr) auto;
     gap: 10px;

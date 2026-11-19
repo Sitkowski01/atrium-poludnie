@@ -179,6 +179,7 @@ export function Hero() {
       <div className="hero__foot">
         <a className="btn btn--primary hero__cta" href="#mieszkania" onClick={goTo('mieszkania')}>
           Wybierz mieszkanie
+          <span aria-hidden="true">→</span>
         </a>
         <dl className="hero__facts">
           <div>
@@ -189,7 +190,9 @@ export function Hero() {
             </dd>
           </div>
           <div>
-            <dt>cena od</dt>
+            <dt>
+              <span className="hero__facts-long">cena </span>od
+            </dt>
             <dd>
               <span aria-hidden="true">{thousands.format(priceShown)} tys. zł</span>
               <span className="visually-hidden">{thousands.format(cheapest)} zł</span>

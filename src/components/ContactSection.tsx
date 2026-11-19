@@ -173,12 +173,12 @@ export function ContactSection() {
     </section>
     <footer className="site-footer">
       <div className="contact__inner site-footer__inner">
-        <a className="site-footer__logo" href="#top" onClick={(e) => goTo(e, 'top')}>
-          Atrium <em>Południe</em>
-        </a>
         <nav className="site-footer__nav" aria-label="Stopka">
-          {NAV.map(([id, label]) => (
+          {NAV.map(([id, label], i) => (
             <a key={id} href={`#${id}`} onClick={(e) => goTo(e, id)}>
+              <span className="site-footer__num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
               {label}
             </a>
           ))}
@@ -187,10 +187,15 @@ export function ContactSection() {
           Do góry
           <span aria-hidden="true">↑</span>
         </a>
+        {/* logotyp na całą szerokość: podpis pod stroną zamiast kolejnego rzędu linków */}
+        <a className="site-footer__mark" href="#top" onClick={(e) => goTo(e, 'top')}>
+          Atrium <em>Południe</em>
+        </a>
         <p className="site-footer__note">
           Atrium Południe to inwestycja fikcyjna. Strona jest demonstracją wyszukiwarki mieszkań: ceny, dostępność,
-          wnętrza i nasłonecznienie są przykładowe. Rendery: Blender Cycles.
+          wnętrza i nasłonecznienie są przykładowe.
         </p>
+        <p className="site-footer__credit">Rendery: Blender Cycles · Szczecin 2027</p>
       </div>
     </footer>
     </>
