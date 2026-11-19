@@ -435,19 +435,32 @@ input[type='range'] {
 }
 .chapter__head {
   display: grid;
-  grid-template-columns: 3.2em minmax(0, 1fr);
-  column-gap: 14px;
-  row-gap: 14px;
-  align-items: baseline;
-  padding-top: 22px;
+  row-gap: 18px;
+  padding-top: 26px;
   border-top: 1px solid var(--line);
 }
-.chapter__num {
+.chapter__kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.2em;
-  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
   color: var(--ink-2);
+}
+.chapter__num {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.chapter__num::after {
+  content: '';
+  width: 36px;
+  height: 1px;
+  background: var(--line-2);
 }
 .chapter__title {
   font-family: var(--font-display);
@@ -463,22 +476,12 @@ input[type='range'] {
   color: var(--ink);
 }
 .chapter__lead {
-  grid-column: 2;
-  max-width: 46ch;
+  max-width: 50ch;
   font-size: 16px;
   line-height: 1.6;
   color: var(--ink-2);
   text-wrap: pretty;
 }
-@media (max-width: 520px) {
-  .chapter__head {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .chapter__lead {
-    grid-column: 1;
-  }
-}
-
 @media (max-width: 1080px) {
   .topbar__nav {
     display: none;

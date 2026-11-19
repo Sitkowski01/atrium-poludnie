@@ -12,13 +12,29 @@ import { TypeGallery } from './components/TypeGallery'
 import { StoreProvider } from './state/store'
 
 /** Rozdział lewej kolumny: numer, tytuł, lead. Bryła po prawej reaguje na to, co się w nim dzieje. */
-function Chapter({ id, num, title, lead, children }: { id: string; num: string; title: ReactNode; lead: ReactNode; children: ReactNode }) {
+function Chapter({
+  id,
+  num,
+  name,
+  title,
+  lead,
+  children,
+}: {
+  id: string
+  num: string
+  name: string
+  title: ReactNode
+  lead: ReactNode
+  children: ReactNode
+}) {
   return (
     <section className="chapter" id={id} tabIndex={-1} aria-labelledby={`${id}-title`}>
       <div className="chapter__head">
-        <span className="chapter__num" aria-hidden="true">
-          {num}
-        </span>
+        {/* ten sam znacznik co w hero i kontakcie: numer, kreska, nazwa rozdziału */}
+        <p className="chapter__kicker" aria-hidden="true">
+          <span className="chapter__num">{num}</span>
+          <span>{name}</span>
+        </p>
         <h2 className="chapter__title" id={`${id}-title`}>
           {title}
         </h2>
@@ -55,6 +71,7 @@ export default function App() {
           <Chapter
             id="typy"
             num="02"
+            name="Typy"
             title={
               <>
                 Pięć układów, <em>jedno</em> światło
@@ -67,6 +84,7 @@ export default function App() {
           <Chapter
             id="swiatlo"
             num="03"
+            name="Światło"
             title={
               <>
                 Kiedy jesteś <em>w&nbsp;domu</em>?
@@ -79,6 +97,7 @@ export default function App() {
           <Chapter
             id="mieszkania"
             num="04"
+            name="Mieszkania"
             title="Wszystkie mieszkania"
             lead="Pasek przy każdym mieszkaniu to jego dzień od 5:00 do 21:00: złoty odcinek to słońce w salonie."
           >
