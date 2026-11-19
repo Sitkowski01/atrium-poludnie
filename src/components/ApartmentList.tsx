@@ -78,6 +78,7 @@ function EmptyArt() {
 
 const NARROW_QUERY = '(max-width: 980px)'
 const COLLAPSED_ROWS = 8
+const COLLAPSED_ROWS_WIDE = 8
 
 function matchNarrow(): MediaQueryList | null {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return null
@@ -122,8 +123,16 @@ export function ApartmentList() {
   // wiersz, którego serce miało fokus w chwili usuwania z listy „Tylko ulubione”
   const pendingFocus = useRef<{ id: string; next: string | null; prev: string | null } | null>(null)
 
-  const collapsible = narrow && visible.length > COLLAPSED_ROWS
-  const shown = collapsible && !expanded ? visible.slice(0, COLLAPSED_ROWS) : visible
+  const collapsedRows = narrow ? COLLAPSED_ROWS : COLLAPSED_ROWS_WIDE
+  const collapsible = visible.length > collapsedRows
+  const shown = collapsible && !expanded ? visible.slice(0, collapsedRows) : visible
+  const hiddenHovered = !expanded && visible.findIndex((a) => a.id === hoveredId) >= collapsedRows
+
+  useEffect(() => {
+    if (selectedId && visible.findIndex((a) => a.id === selectedId) >= collapsedRows) {
+      setExpanded(true)
+    }
+  }, [selectedId, visible, collapsedRows])
 
   useEffect(() => {
     if (!justCollapsed.current) return
@@ -328,7 +337,7 @@ export function ApartmentList() {
               setExpanded(!expanded)
             }}
           >
-            {expanded ? 'Zwiń listę' : `Pokaż wszystkie (${visible.length})`}
+            {expanded ? 'Zwiń listę' : `Pokaż wszystkie (${visible.length})${hiddenHovered ? ` · ${hoveredId} niżej` : ''}`}
           </button>
         )}
         </>

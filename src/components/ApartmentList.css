@@ -33,7 +33,7 @@
 }
 
 .apt-list__sort-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -225,7 +225,7 @@
 }
 
 .apt-list__sun-hours {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-2);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -252,7 +252,7 @@
 }
 
 .apt-list__ppm {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-2);
   font-variant-numeric: tabular-nums;
 }
@@ -364,4 +364,10 @@
     justify-content: space-between;
     align-items: baseline;
   }
+}
+
+.apt-list__more {
+  width: 100%;
+  margin-top: 8px;
+  justify-content: center;
 }
