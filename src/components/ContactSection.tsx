@@ -171,31 +171,66 @@ export function ContactSection() {
         </div>
       </div>
     </section>
+    {/* stopka jak tabliczka rysunkowa w rogu planu: nazwa, rozdziały, dane inwestycji, numer arkusza */}
     <footer className="site-footer">
       <div className="contact__inner site-footer__inner">
-        <nav className="site-footer__nav" aria-label="Stopka">
-          {NAV.map(([id, label], i) => (
-            <a key={id} href={`#${id}`} onClick={(e) => goTo(e, id)}>
-              <span className="site-footer__num" aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              {label}
-            </a>
-          ))}
+        <div className="site-footer__cell site-footer__brand">
+          <a className="site-footer__logo" href="#top" onClick={(e) => goTo(e, 'top')}>
+            Atrium <em>Południe</em>
+          </a>
+          <p className="site-footer__note">
+            Inwestycja fikcyjna. Strona jest demonstracją wyszukiwarki mieszkań: ceny, dostępność, wnętrza
+            i nasłonecznienie są przykładowe.
+          </p>
+        </div>
+        <nav className="site-footer__cell" aria-label="Stopka">
+          <p className="site-footer__label" aria-hidden="true">
+            Rozdziały
+          </p>
+          <ul className="site-footer__nav">
+            {NAV.map(([id, label], i) => (
+              <li key={id}>
+                <a href={`#${id}`} onClick={(e) => goTo(e, id)}>
+                  <span className="site-footer__num" aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  {label}
+                  <span className="site-footer__go" aria-hidden="true">
+                    →
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </nav>
-        <a className="site-footer__top" href="#top" onClick={(e) => goTo(e, 'top')}>
-          Do góry
-          <span aria-hidden="true">↑</span>
-        </a>
-        {/* logotyp na całą szerokość: podpis pod stroną zamiast kolejnego rzędu linków */}
-        <a className="site-footer__mark" href="#top" onClick={(e) => goTo(e, 'top')}>
-          Atrium <em>Południe</em>
-        </a>
-        <p className="site-footer__note">
-          Atrium Południe to inwestycja fikcyjna. Strona jest demonstracją wyszukiwarki mieszkań: ceny, dostępność,
-          wnętrza i nasłonecznienie są przykładowe.
-        </p>
-        <p className="site-footer__credit">Rendery: Blender Cycles · Szczecin 2027</p>
+        <div className="site-footer__cell">
+          <p className="site-footer__label">Inwestycja</p>
+          <dl className="site-footer__spec">
+            <div>
+              <dt>Miejsce</dt>
+              <dd>Szczecin, ul. Słoneczna 14</dd>
+            </div>
+            <div>
+              <dt>Odbiór</dt>
+              <dd>2027</dd>
+            </div>
+            <div>
+              <dt>Budynek</dt>
+              <dd>35 mieszkań · 7 kondygnacji</dd>
+            </div>
+            <div>
+              <dt>Rendery</dt>
+              <dd>Blender Cycles</dd>
+            </div>
+          </dl>
+        </div>
+        <div className="site-footer__base">
+          <span>Arkusz 05 / 05</span>
+          <a className="site-footer__top" href="#top" onClick={(e) => goTo(e, 'top')}>
+            Do góry
+            <span aria-hidden="true">↑</span>
+          </a>
+        </div>
       </div>
     </footer>
     </>
