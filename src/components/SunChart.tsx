@@ -34,7 +34,7 @@ export function SunChart({ facade, floor, hour }: { facade: Facade; floor: numbe
   const line = samples.map((sample, index) =>
     `${index === 0 ? 'M' : 'L'} ${xAt(sample.hour)} ${yAt(plottedValue(sample.hour, sample.value))}`,
   ).join(' ')
-  const ticks = [6, 12, 18]
+  const ticks = [DAY_START, (DAY_START + DAY_END) / 2, DAY_END]
   const summary = window
     ? `Słońce w oknach salonu: ${formatHour(window.from)}–${formatHour(window.to)} · łącznie ${formatDuration(window.total)}`
     : 'Brak bezpośredniego słońca w oknach salonu'
@@ -73,7 +73,7 @@ export function SunChart({ facade, floor, hour }: { facade: Facade; floor: numbe
           <span key={tick} style={{ left: `${xAt(tick) / WIDTH * 100}%` }}>{formatHour(tick)}</span>
         ))}
       </div>
-      <p className="sun-chart__legend"><span aria-hidden="true" />{current}</p>
+      <p className="sun-chart__legend"><span aria-hidden="true" />słońce w salonie</p>
       <p className="sun-chart__summary">{summary}</p>
     </div>
   )

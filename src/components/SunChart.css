@@ -53,6 +53,14 @@
   transform: translateX(-50%);
 }
 
+.sun-chart__axis span:first-child {
+  transform: none;
+}
+
+.sun-chart__axis span:last-child {
+  transform: translateX(-100%);
+}
+
 .sun-chart__marker {
   fill: none;
   stroke: var(--sun);

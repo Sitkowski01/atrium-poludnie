@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { formatPrice } from '../domain/format'
 import { calcMortgage } from '../domain/mortgage'
 import { useCountUp } from '../hooks/useCountUp'
@@ -36,6 +36,7 @@ export function MortgageCalculator({ price }: { price: number }) {
           max={80}
           step={5}
           value={downPct}
+          style={{ '--pct': `${(downPct - 10) / (80 - 10) * 100}%` } as CSSProperties}
           aria-valuetext={`${downPct}%, ${formatPrice(res.downPayment)}`}
           onChange={(e) => setDownPct(Number(e.target.value))}
         />
@@ -52,6 +53,7 @@ export function MortgageCalculator({ price }: { price: number }) {
           max={35}
           step={1}
           value={years}
+          style={{ '--pct': `${(years - 5) / (35 - 5) * 100}%` } as CSSProperties}
           aria-valuetext={`${years} lat`}
           onChange={(e) => setYears(Number(e.target.value))}
         />
@@ -68,6 +70,7 @@ export function MortgageCalculator({ price }: { price: number }) {
           max={12}
           step={0.1}
           value={rate}
+          style={{ '--pct': `${(rate - 4) / (12 - 4) * 100}%` } as CSSProperties}
           aria-valuetext={`${decimal.format(rate)}%`}
           onChange={(e) => setRate(Number(e.target.value))}
         />

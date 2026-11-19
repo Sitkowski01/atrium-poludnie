@@ -1,3 +1,7 @@
+.filter-bar input[type='range']::-webkit-slider-runnable-track {
+  background: linear-gradient(var(--ink), var(--ink)) 0 0 / var(--pct, 0%) 100% no-repeat, var(--line-2);
+}
+
 .filter-bar {
   min-width: 0;
   border: 1px solid var(--line);

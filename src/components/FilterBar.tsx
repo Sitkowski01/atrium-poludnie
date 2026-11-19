@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 import { countActive } from '../domain/filter'
 import { floorLabel, formatArea, formatPrice } from '../domain/format'
 import type { Facade } from '../domain/types'
@@ -171,6 +171,7 @@ export function FilterBar() {
           max={limits.priceMax}
           step={10000}
           value={filters.priceMax}
+          style={{ '--pct': `${limits.priceMax > limits.priceMin ? (filters.priceMax - limits.priceMin) / (limits.priceMax - limits.priceMin) * 100 : 0}%` } as CSSProperties}
           aria-valuetext={formatPrice(filters.priceMax)}
           onChange={(e) =>
             dispatch({ type: 'setFilters', patch: { priceMax: Number(e.target.value) } })
@@ -188,6 +189,7 @@ export function FilterBar() {
           max={limits.areaMax}
           step={1}
           value={filters.areaMin}
+          style={{ '--pct': `${limits.areaMax > limits.areaMin ? (filters.areaMin - limits.areaMin) / (limits.areaMax - limits.areaMin) * 100 : 0}%` } as CSSProperties}
           aria-valuetext={`od ${formatArea(filters.areaMin)}`}
           onChange={(e) =>
             dispatch({ type: 'setFilters', patch: { areaMin: Number(e.target.value) } })

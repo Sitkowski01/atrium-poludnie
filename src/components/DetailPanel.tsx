@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import {
   FACADE_LABEL,
   STATUS_LABEL,
@@ -225,6 +225,7 @@ export function DetailPanel() {
                 max={DAY_END}
                 step={0.05}
                 value={hour}
+                style={{ '--pct': `${(hour - DAY_START) / (DAY_END - DAY_START) * 100}%` } as CSSProperties}
                 aria-valuetext={formatHour(hour)}
                 onChange={(e) => dispatch({ type: 'setHour', hour: Number(e.target.value), byUser: true })}
               />
