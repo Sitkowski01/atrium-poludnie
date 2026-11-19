@@ -82,7 +82,9 @@ export function summarizeMatches(
     matched.every((a) => a.facade === facade) &&
     available.filter((a) => a.facade === facade).every((a) => matchedIds.has(a.id)),
   ) ?? null
+  // elewacja bez dostępnych mieszkań (wszystko sprzedane) nie „odpada przez słońce”, więc jej nie tłumaczymy
   const missed = facades
+    .filter((facade) => available.some((a) => a.facade === facade))
     .filter((facade) => !matched.some((a) => a.facade === facade))
     .map((facade) => ({ facade, sunUntil: sunWindow(facade, 3)?.to ?? null }))
   return { wholeFacade, missed }

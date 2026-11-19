@@ -130,9 +130,10 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
     if (leaving) return
     const commit = () => {
       pending.current = null
-      // przyciski przejść zmieniają key po ruchu i giną razem z fokusem — przenieś go na kadr
+      // punkty przejść w panoramie zmieniają key po ruchu i giną razem z fokusem — przenieś go na kadr;
+      // chipy pomieszczeń pod kadrem zostają, więc fokus na nich zostaje tam, gdzie był
       const active = document.activeElement
-      if (rootRef.current && (active === document.body || rootRef.current.contains(active))) {
+      if (active === document.body || (active && frameRef.current?.contains(active))) {
         frameRef.current?.focus({ preventScroll: true })
       }
       if (remember) setHistory((h) => [...h, view])
@@ -318,7 +319,8 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
           </ul>
           <div className="walk__actions">
             <button type="button" className="walk__link" disabled={history.length === 0} onClick={back}>
-              ← Wstecz
+              <span aria-hidden="true">← </span>
+              Wstecz
             </button>
             <button type="button" className="walk__link" onClick={restart}>
               Od początku
