@@ -199,7 +199,7 @@ export function FilterBar() {
         <legend className="filter-bar__label">Piętro</legend>
         <div className="filter-bar__floors">
           <label className="field">
-            <span className="field__label">od</span>
+            <span className="visually-hidden">Piętro od</span>
             <select value={filters.floorMin} onChange={(e) => setFloorMin(Number(e.target.value))}>
               {floors.map((f) => (
                 <option key={f} value={f}>
@@ -209,7 +209,7 @@ export function FilterBar() {
             </select>
           </label>
           <label className="field">
-            <span className="field__label">do</span>
+            <span className="visually-hidden">Piętro do</span>
             <select value={filters.floorMax} onChange={(e) => setFloorMax(Number(e.target.value))}>
               {floors.map((f) => (
                 <option key={f} value={f}>
@@ -221,7 +221,8 @@ export function FilterBar() {
         </div>
       </fieldset>
 
-      <div className="filter-bar__group filter-bar__checks">
+      <fieldset className="filter-bar__group filter-bar__checks">
+        <legend className="filter-bar__label">Pokaż</legend>
         <label className="filter-bar__check">
           <input
             type="checkbox"
@@ -242,7 +243,7 @@ export function FilterBar() {
           />
           Tylko ulubione ({favourites.length})
         </label>
-      </div>
+      </fieldset>
 
       {active > 0 && !narrow && (
         <div className="filter-bar__reset">
