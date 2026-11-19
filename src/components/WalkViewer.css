@@ -140,13 +140,36 @@
 
 /* ---------- pasek pod kadrem ---------- */
 
+/* pod kadrem: pomieszczenia i akcje po lewej, mini-mapa po prawej, bez pustego pola */
+.walk__bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 160px;
+  align-items: start;
+  gap: 24px;
+  min-width: 0;
+  padding-top: 4px;
+}
 .walk__side {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   align-content: start;
   min-width: 0;
 }
-.walk__doors {
+.walk__label {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.walk__label span {
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.walk__rooms {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -154,23 +177,48 @@
   padding: 0;
   list-style: none;
 }
-
-.walk__bar {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  min-width: 0;
+.walk__room-chip {
+  gap: 8px;
 }
-
+.walk__door {
+  color: var(--accent);
+  transition: transform var(--hover) var(--ease-hover);
+}
+@media (hover: hover) {
+  .walk__room-chip:hover .walk__door {
+    transform: translateX(3px);
+  }
+}
 .walk__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px 20px;
 }
-.walk__actions .btn:disabled {
+/* akcje drugiego rzędu jako linki tekstowe: nie konkurują z pomieszczeniami */
+.walk__link {
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--line-2);
+  text-underline-offset: 4px;
+  cursor: pointer;
+  transition: color var(--hover) var(--ease-hover), text-decoration-color var(--hover) var(--ease-hover);
+}
+.walk__link:disabled {
   opacity: 0.45;
   cursor: default;
+}
+@media (hover: hover) {
+  .walk__link:hover:not(:disabled) {
+    color: var(--ink);
+    text-decoration-color: var(--ink);
+  }
 }
 
 /* ---------- mini-mapa ---------- */
@@ -246,43 +294,17 @@
 .walk--expanded .walk__bar {
   padding-top: 12px;
 }
-.walk--expanded .walk__actions .btn {
-  background: var(--card);
-}
 .walk--expanded .walk__map {
   padding: 6px;
   border-radius: var(--radius-s);
   background: var(--card);
 }
 
-/* telefon: „Wstecz” i „Od początku” obok siebie przy mini-mapie, przejścia pod spodem na całą szerokość */
+/* telefon: mini-mapa mniejsza obok listy pomieszczeń */
 @media (max-width: 560px) {
   .walk__bar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      'actions map'
-      'doors doors';
-    gap: 10px 12px;
-    align-items: start;
-  }
-  .walk__side {
-    display: contents;
-  }
-  .walk__actions {
-    grid-area: actions;
-    flex-wrap: wrap; /* przy 320 px albo powiększonej czcionce „Od początku” schodzi niżej, zamiast wejść na mapę */
-  }
-  .walk__actions .btn {
-    padding: 0 14px;
-    white-space: nowrap;
-  }
-  .walk__doors {
-    grid-area: doors;
-  }
-  .walk__map {
-    grid-area: map;
-    width: 104px;
+    grid-template-columns: minmax(0, 1fr) 104px;
+    gap: 16px;
   }
   /* w panelu kadr kwadratowy: szeroki pasek 16:10 na wąskim ekranie pokazywał mało pokoju */
   .walk:not(.walk--expanded) .walk__frame {

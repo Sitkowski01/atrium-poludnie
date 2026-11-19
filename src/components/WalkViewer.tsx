@@ -284,24 +284,46 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
       </div>
 
       <div className="walk__bar">
+        {/* wszystkie pomieszczenia jak legenda mini-mapy: sąsiednie przez drzwi, dalsze skokiem */}
         <div className="walk__side">
+          <p className="walk__label" id={`${apartment.id}-rooms`}>
+            Pomieszczenia
+            <span>
+              {view.room + 1} / {plan.length}
+            </span>
+          </p>
+          <ul className="walk__rooms" aria-labelledby={`${apartment.id}-rooms`}>
+            {plan.map((r, i) => {
+              const door = doors.find((l) => l.to === i)
+              const here = i === view.room
+              return (
+                <li key={i}>
+                  <button
+                    type="button"
+                    className={`chip walk__room-chip${door ? ' is-door' : ''}`}
+                    aria-pressed={here}
+                    onClick={() => (door ? through(door) : jump(i))}
+                  >
+                    {r.label}
+                    {door && (
+                      <span className="walk__door" aria-hidden="true">
+                        →
+                      </span>
+                    )}
+                    {door && <span className="visually-hidden"> (przejście obok)</span>}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
           <div className="walk__actions">
-            <button type="button" className="btn" disabled={history.length === 0} onClick={back}>
-              Wstecz
+            <button type="button" className="walk__link" disabled={history.length === 0} onClick={back}>
+              ← Wstecz
             </button>
-            <button type="button" className="btn" onClick={restart}>
+            <button type="button" className="walk__link" onClick={restart}>
               Od początku
             </button>
           </div>
-          <ul className="walk__doors" aria-label="Przejścia z tego pomieszczenia">
-            {doors.map((l) => (
-              <li key={l.to}>
-                <button type="button" className="chip" onClick={() => through(l)}>
-                  {plan[l.to].label}
-                </button>
-              </li>
-            ))}
-          </ul>
         </div>
         <MiniMap apartment={apartment} room={view.room} at={center} yaw={view.yaw} onPick={jump} />
       </div>
