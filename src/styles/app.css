@@ -12,11 +12,7 @@ html {
 body {
   font-feature-settings: 'lnum' 1, 'tnum' 1;
   margin: 0;
-  background:
-    radial-gradient(1200px 700px at 78% 18%, #242a3d 0%, transparent 62%),
-    radial-gradient(900px 500px at 72% 100%, rgb(217 163 91 / 0.07), transparent 70%),
-    var(--paper);
-  background-attachment: fixed;
+  background: var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
   font-variant-numeric: lining-nums tabular-nums;
@@ -41,7 +37,7 @@ textarea {
 }
 
 ::selection {
-  background: rgb(217 163 91 / 0.35);
+  background: rgb(232 121 42 / 0.28);
 }
 
 :focus-visible {
@@ -60,7 +56,7 @@ textarea {
 
 /* ---------- wspólne klocki (używaj ich w komponentach) ---------- */
 
-/* Cormorant ma domyślnie cyfry nautyczne; w danych zawsze proste i równej szerokości */
+/* w danych cyfry zawsze proste i równej szerokości */
 svg text,
 .display {
   font-variant-numeric: lining-nums tabular-nums;
@@ -108,7 +104,6 @@ svg text,
   border-color: var(--accent);
   color: var(--accent-ink);
   font-weight: 600;
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.35) inset, 0 8px 22px rgb(217 163 91 / 0.22);
 }
 @media (hover: hover) {
   .btn--outline:hover {
@@ -125,7 +120,7 @@ svg text,
 .btn--ghost {
   background: transparent;
 }
-/* obrys kremem, wersaliki: wezwanie w nagłówku */
+/* obrys grafitem, wersaliki: wezwanie w nagłówku */
 .btn--outline {
   background: transparent;
   border-color: var(--pick-line);
@@ -143,7 +138,7 @@ svg text,
   min-height: 36px;
   padding: 0 15px;
   border: 1px solid var(--line-2);
-  border-radius: 999px;
+  border-radius: var(--radius-s);
   background: transparent;
   color: var(--ink-2);
   font-size: 13px;
@@ -171,8 +166,8 @@ svg text,
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 10px;
-  border-radius: 999px;
+  padding: 2px 8px;
+  border-radius: var(--radius-s);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -226,7 +221,7 @@ svg text,
   opacity: 0.85;
 }
 .field__error {
-  color: #f0a58c;
+  color: var(--danger);
   font-size: 13px;
   font-weight: 500;
 }
@@ -265,8 +260,8 @@ input[type='range'] {
 
 .display {
   font-family: var(--font-display);
-  font-weight: 500;
-  letter-spacing: -0.005em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 /* ---------- nagłówek ---------- */
@@ -281,9 +276,9 @@ input[type='range'] {
   gap: 24px;
   height: var(--header-h);
   padding: 0 clamp(16px, 4vw, 56px);
-  background: linear-gradient(rgb(15 18 26 / 0.92), rgb(15 18 26 / 0.78));
+  background: rgb(239 235 227 / 0.9);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgb(255 255 255 / 0.05);
+  border-bottom: 1px solid var(--line);
 }
 .topbar__logo {
   display: inline-flex;
@@ -292,14 +287,14 @@ input[type='range'] {
   min-height: 44px;
   font-family: var(--font-display);
   font-size: var(--fd-2);
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
 }
 .topbar__logo em {
-  font-style: italic;
+  font-style: normal;
   color: var(--accent);
 }
 .topbar__nav {
@@ -315,7 +310,7 @@ input[type='range'] {
   text-decoration: none;
   transition: color 0.18s var(--ease);
 }
-/* aktywna sekcja: kremowa kreska pod spodem, wjeżdża od środka */
+/* aktywna sekcja: grafitowa kreska pod spodem, wjeżdża od środka */
 .topbar__nav a {
   position: relative;
   display: inline-flex;
@@ -339,14 +334,14 @@ input[type='range'] {
 .topbar__nav a.is-active::after {
   transform: scaleX(1);
 }
-/* bryła po kliknięciu „Budynek”, gdy już jest na ekranie: krótki złoty błysk ramki */
+/* bryła po kliknięciu „Budynek”, gdy już jest na ekranie: krótki błysk ramki */
 .stage__scene::after {
   content: '';
   position: absolute;
   inset: 8px -10px 10px;
-  border-radius: 18px;
+  border-radius: var(--radius);
   pointer-events: none;
-  box-shadow: 0 0 0 1px rgb(217 163 91 / 0.55), 0 0 40px rgb(217 163 91 / 0.18);
+  box-shadow: 0 0 0 1px rgb(196 83 27 / 0.55), 0 0 40px rgb(196 83 27 / 0.12);
   opacity: 0;
 }
 .stage__scene.is-flash::after {
@@ -464,16 +459,16 @@ input[type='range'] {
 }
 .chapter__title {
   font-family: var(--font-display);
-  font-size: clamp(40px, 4.2vw, 56px);
-  font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: -0.01em;
+  font-size: clamp(40px, 4.2vw, 58px);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
-/* kursywa w tytułach rozdziałów kremowa: złoto zostaje dla słońca (także w tytule hero) */
+/* wyróżnienie w tytułach rozdziałów szarym tonem: pomarańcz zostaje dla słońca w tytule hero */
 .chapter__title em {
-  font-style: italic;
-  color: var(--ink);
+  font-style: normal;
+  color: var(--ink-2);
 }
 .chapter__lead {
   max-width: 50ch;

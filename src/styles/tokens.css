@@ -1,57 +1,66 @@
 /*
- * Kierunek „Wieczór”: granat, ciepła biel, złoto. Ciemny motyw jest jedynym motywem.
- * Kontrast (na --paper): --ink 15,6:1, --ink-2 7,5:1, --accent 8,3:1, --ink-3 tylko do ozdobników.
+ * Kierunek „Dzień”: ciepły papier, grafitowy tekst, przypalony pomarańcz.
+ * Krój nagłówków Barlow Semi Condensed (techniczny, jak opis na planie), treść Inter.
+ * Kontrast (na --paper): --ink 15,2:1, --ink-2 6,3:1, --accent 5,2:1 (tekst ≥ 14 px pogrubiony
+ * albo duży), biały na --accent 6,2:1; --ink-3 tylko do ozdobników.
  */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
   /* tła: strona, wnęka, karta, karta uniesiona */
-  --paper: #0f121a;
-  --paper-2: #161a24;
-  --card: #181d28;
-  --card-2: #1f2532;
+  --paper: #efebe3;
+  --paper-2: #e7e2d8;
+  --card: #f6f3ed;
+  --card-2: #ebe6dc;
 
   /* tekst: --ink i --ink-2 do treści; --ink-3 tylko do ozdobników i ikon */
-  --ink: #f2ede3;
-  --ink-2: #aca79e;
-  --ink-3: #6e6b66;
-  --line: #2a303d;
-  --line-2: #3a4152;
+  --ink: #1c1b18;
+  --ink-2: #5b574f;
+  --ink-3: #9a958a;
+  --line: #d5cfc2;
+  --line-2: #bdb6a7;
 
-  /* złoto: akcent, tekst na złocie, złoto przygaszone na tło */
-  --accent: #d9a35b;
-  --accent-2: #e8bb7c;
-  --accent-ink: #17120a;
-  --accent-soft: #2b2519;
-  --sun: #f0b23a;
+  /* pomarańcz: główna akcja, marka, wybrane mieszkanie */
+  --accent: #c4531b;
+  --accent-2: #d9662c;
+  --accent-ink: #fff8f0;
+  --accent-soft: #f3dccb;
+  --sun: #e8792a;
+  --sun-glow: rgb(232 121 42 / 0.55);
 
-  /* stan wybrany/aktywny: krem zamiast złota (złoto zostaje dla słońca, głównej akcji, marki) */
+  /* stan wybrany/aktywny: grafit (pomarańcz zostaje dla słońca, głównej akcji, marki) */
   --pick: var(--ink);
   --pick-ink: var(--paper);
-  --pick-soft: rgb(242 237 227 / 0.08);
-  --pick-line: rgb(242 237 227 / 0.5);
+  --pick-soft: rgb(28 27 24 / 0.05);
+  --pick-line: rgb(28 27 24 / 0.45);
 
-  /* statusy na ciemnym tle: znak, tekst, tło plakietki */
-  --ok: #6fbf8e;
-  --ok-ink: #9fdcb6;
-  --ok-soft: #17291f;
-  --hold: #e0a84a;
-  --hold-ink: #f0c788;
-  --hold-soft: #2c2416;
-  --sold: #77736b;
-  --sold-ink: #b9b3a8;
-  --sold-soft: #23262e;
+  /* warstwy nad renderem i zdjęciami */
+  --glass: rgb(248 245 239 / 0.88);
+  --glass-line: rgb(28 27 24 / 0.1);
+  --scrim: rgb(20 19 17 / 0.62);
+  --track: #ddd6c8;
 
-  --radius: 10px;
-  --radius-s: 6px;
-  /* na ciemnym cień musi być głęboki; jasna krawędź u góry robi „szkło” */
-  --shadow-s: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 2px 8px rgb(0 0 0 / 0.35);
-  --shadow-m: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 10px 28px rgb(0 0 0 / 0.45);
-  --shadow: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 24px 60px rgb(0 0 0 / 0.55);
-  --glow: 0 0 0 1px rgb(217 163 91 / 0.55), 0 0 24px rgb(217 163 91 / 0.35);
+  /* statusy na jasnym tle: znak, tekst, tło plakietki */
+  --ok: #2f8a57;
+  --ok-ink: #1f6540;
+  --ok-soft: #dbe9de;
+  --hold: #d08f1c;
+  --hold-ink: #855510;
+  --hold-soft: #f3e4c4;
+  --sold: #8f897e;
+  --sold-ink: #57534b;
+  --sold-soft: #e3dfd6;
+  --danger: #b3261e;
 
-  --font-display: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  /* skala kroju wyświetlanego: wszystkie rozmiary Cormorant poza clamp tytułów */
+  --radius: 2px;
+  --radius-s: 2px;
+  --shadow-s: 0 1px 2px rgb(28 27 24 / 0.06);
+  --shadow-m: 0 10px 28px rgb(28 27 24 / 0.08);
+  --shadow: 0 24px 60px rgb(28 27 24 / 0.16);
+  --glow: 0 0 0 1px rgb(196 83 27 / 0.6), 0 0 18px rgb(196 83 27 / 0.2);
+
+  --font-display: 'Barlow Semi Condensed', 'Bahnschrift', 'DIN Alternate', 'Arial Narrow', sans-serif;
+  /* skala kroju nagłówków poza clamp tytułów */
   --fd-1: 20px;
   --fd-2: 24px;
   --fd-3: 30px;
