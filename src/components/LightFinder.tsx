@@ -219,6 +219,13 @@ export function LightFinder() {
             ))}
           </ol>
         )}
+        {matches.length > 0 && (
+          <p className="light__bar-legend">
+            <span><i className="light__key-home" aria-hidden="true" />Twoje pory w domu</span>
+            <span><i className="light__key-sun" aria-hidden="true" />słońce w salonie</span>
+            <span>% — część Twojego czasu w domu ze słońcem</span>
+          </p>
+        )}
         {matches.length > SHOWN && (
           <p className="light__more">
             {highlighted

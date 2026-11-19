@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FocusEvent } from 'react'
 import { formatArea, formatHour, formatPrice, freeLabel } from '../domain/format'
-import { sunWindow, type SunWindow } from '../domain/sun'
+import { sunRange } from '../domain/sun'
 import type { Facade } from '../domain/types'
 import { useStore, type Spotlight } from '../state/store'
 import { SunBar } from './SunBar'
@@ -57,7 +57,7 @@ interface TypeCard {
   facade: Facade
   free: number
   priceFrom: number | null
-  sun: SunWindow | null
+  sun: ReturnType<typeof sunRange>
   spot: Spotlight
 }
 
@@ -81,7 +81,7 @@ export function TypeGallery() {
             facade: first.facade,
             free: list.filter((a) => a.status === 'wolne').length,
             priceFrom: open.length ? Math.min(...open.map((a) => a.price)) : null,
-            sun: sunWindow(first.facade, 3),
+            sun: sunRange(first.facade),
             spot: { ids: list.map((a) => a.id), label: `${info.name}, ${info.note}` },
           },
         ]
@@ -157,10 +157,14 @@ function TypeButton({
 
   const base = import.meta.env.BASE_URL
   const priceText = priceFrom == null ? 'wyprzedane' : `od ${formatPrice(priceFrom)}`
-  const sunText = sun ? `słońce w salonie ${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez bezpośredniego słońca'
+  // pokazujemy to, co zmienia się z piętrem: „od 7:40 do 16:30–18:20” (wyżej dłużej), „od 5:25–7:15 do 12:35” (wyżej wcześniej)
+  const span = (a: number, b: number) => (Math.abs(a - b) < 0.1 ? formatHour(a) : `${formatHour(a)}–${formatHour(b)}`)
+  const sunText = sun
+    ? `słońce w salonie od ${span(sun.from, sun.fromLate)} do ${span(sun.toEarly, sun.to)}`
+    : 'bez bezpośredniego słońca'
   const label = `${info.name}, ${info.note}, ${formatArea(area)}, ${priceText}${
     priceFrom == null ? '' : `, ${freeLabel(free)}`
-  }, ${sunText}${sun ? ' na 3. piętrze' : ''} — pokaż w wyszukiwarce`
+  }, ${sunText}${sun ? ", zależnie od piętra" : ""} — pokaż w wyszukiwarce`
 
   return (
     <button
@@ -229,9 +233,9 @@ function TypeButton({
         </span>
         <span className="typecard__free">{priceFrom != null ? freeLabel(free) : ''}</span>
         <span className="typecard__sun">
-          <SunBar sun={sun} />
+          <SunBar sun={sun ? { ...sun, total: sun.to - sun.from } : null} />
           <span className="typecard__sun-label">
-            {sun ? `${sunText} · 3. piętro` : sunText}
+            {sunText}
           </span>
         </span>
       </span>

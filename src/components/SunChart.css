@@ -9,7 +9,7 @@
   display: block;
   width: 100%;
   height: auto;
-  margin-bottom: 12px;
+  margin-bottom: 0;
   overflow: hidden;
   background: transparent;
 }
@@ -41,11 +41,16 @@
   stroke-width: 1;
 }
 
-.sun-chart__hour {
-  fill: var(--ink-2);
-  font-family: var(--font-body);
-  font-size: 13px;
-  text-anchor: middle;
+.sun-chart__axis {
+  position: relative;
+  height: 20px;
+  color: var(--ink-2);
+  font-size: 12px;
+}
+
+.sun-chart__axis span {
+  position: absolute;
+  transform: translateX(-50%);
 }
 
 .sun-chart__marker {
@@ -80,7 +85,7 @@
 }
 
 .sun-chart__summary,
-.sun-chart__current {
+.sun-chart__legend {
   margin: 0;
   overflow-wrap: anywhere;
 }
@@ -93,9 +98,19 @@
   color: var(--ink);
 }
 
-.sun-chart__current {
-  margin-top: 4px;
+.sun-chart__legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 8px;
   font-size: 13px;
   line-height: 1.6;
-  color: var(--ink-2);
+  color: var(--ink);
+}
+
+.sun-chart__legend > span {
+  width: 18px;
+  height: 3px;
+  flex-shrink: 0;
+  background: var(--sun);
 }

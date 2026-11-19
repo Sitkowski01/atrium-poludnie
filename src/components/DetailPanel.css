@@ -16,6 +16,7 @@ dialog.detail {
   background: var(--paper);
   color: var(--ink);
   overflow-y: auto;
+  scroll-padding-bottom: calc(88px + env(safe-area-inset-bottom));
   overscroll-behavior: contain;
   box-shadow: -24px 0 80px rgb(28 27 24 / 0.18);
 }
@@ -39,6 +40,7 @@ dialog.detail::backdrop {
 .detail__body {
   display: grid;
   gap: 26px;
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
 }
 .detail__body > :not(.detail__head):not(.detail__dock) {
   margin: 0 28px;
@@ -93,7 +95,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgb(20 19 17 / 0.18) 0%, rgb(239 235 227 / 0) 40%, rgb(239 235 227 / 0.9) 90%, var(--paper));
+  background: linear-gradient(color-mix(in srgb, var(--ink) 18%, transparent) 0%, transparent 40%, color-mix(in srgb, var(--paper) 94%, transparent) 70%, var(--paper));
 }
 .detail__cover--empty {
   background:
@@ -145,6 +147,12 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   font-size: clamp(40px, 7vw, 56px);
   font-weight: 500;
   line-height: 1;
+}
+
+.detail__head-copy .eyebrow {
+  justify-self: start;
+  padding: 2px 6px;
+  background: color-mix(in srgb, var(--paper) 85%, transparent);
 }
 
 /* ---------- cena i fakty ---------- */
@@ -221,6 +229,18 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   font-size: 13px;
   letter-spacing: 0.06em;
   color: var(--ink-2);
+}
+
+#detail-walk {
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .detail__section-head:has(#detail-walk) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
 }
 
 .detail__switch {

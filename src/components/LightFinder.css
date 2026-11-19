@@ -159,7 +159,10 @@
 }
 .light__flat {
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr) 140px 44px auto;
+  grid-template-columns: 56px minmax(0, 1fr) 112px;
+  grid-template-areas:
+    'id facts price'
+    'id bar share';
   align-items: center;
   gap: 14px;
   width: 100%;
@@ -184,22 +187,26 @@
   }
 }
 .light__flat-id {
+  grid-area: id;
   transition: color var(--hover) var(--ease-hover), transform var(--hover) var(--ease-hover);
   font-family: var(--font-display);
   font-size: var(--fd-2);
   line-height: 1;
 }
 .light__flat-facts {
+  grid-area: facts;
   font-size: 13px;
   color: var(--ink-2);
 }
 .light__flat-share {
+  grid-area: share;
   font-size: 13px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-align: right;
 }
 .light__flat-price {
+  grid-area: price;
   font-family: var(--font-body);
   font-size: 15px;
   font-weight: 600;
@@ -207,6 +214,53 @@
   color: var(--ink);
   text-align: right;
   white-space: nowrap;
+}
+
+.light__flat-bar {
+  grid-area: bar;
+  min-width: 0;
+}
+
+.light__flat .sunbar__want {
+  background: transparent;
+  box-shadow: none;
+  border: 1px solid color-mix(in srgb, var(--ink-2) 50%, transparent);
+}
+
+.light__bar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.light__bar-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.light__key-home,
+.light__key-sun {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 18px;
+}
+
+.light__key-home {
+  height: 12px;
+  border: 1px solid color-mix(in srgb, var(--ink-2) 50%, transparent);
+  border-radius: 3px;
+}
+
+.light__key-sun {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--sun);
 }
 
 /* wąsko: pory jako lista wierszy — znak, nazwa z notką, godziny po prawej */
@@ -248,7 +302,7 @@
 }
 @container chapter (max-width: 619px) {
   .light__flat {
-    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-columns: 56px minmax(0, 1fr) 112px;
     grid-template-areas:
       'id facts price'
       'id bar share';

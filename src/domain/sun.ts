@@ -1,4 +1,5 @@
 import type { Facade } from './types'
+import { FLOORS } from './data'
 
 /**
  * Uproszczony model słońca dla długiego letniego dnia (ok. 53°N).
@@ -146,4 +147,31 @@ export function sunShare(facade: Facade, floor: number, from: number, to: number
   const result = all ? lit / all : 0
   shareCache.set(key, result)
   return result
+}
+
+export interface SunRange {
+  /** skrajne godziny na wszystkich piętrach */
+  from: number
+  to: number
+  /** początek słońca: najwcześniej (wysokie piętra) i najpóźniej (niskie) */
+  fromLate: number
+  /** koniec słońca: najwcześniej (niskie piętra, cień sąsiada) */
+  toEarly: number
+}
+
+/** Skrajne godziny słońca na wszystkich piętrach, nie okno jednego mieszkania. */
+export function sunRange(facade: Facade): SunRange | null {
+  let from = Infinity
+  let fromLate = -Infinity
+  let to = -Infinity
+  let toEarly = Infinity
+  for (let floor = 0; floor < FLOORS; floor++) {
+    const window = sunWindow(facade, floor)
+    if (!window) continue
+    from = Math.min(from, window.from)
+    fromLate = Math.max(fromLate, window.from)
+    to = Math.max(to, window.to)
+    toEarly = Math.min(toEarly, window.to)
+  }
+  return Number.isFinite(from) ? { from, to, fromLate, toEarly } : null
 }

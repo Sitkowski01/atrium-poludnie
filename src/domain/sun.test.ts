@@ -1,5 +1,22 @@
 import { describe, expect, it } from 'vitest'
-import { sunAt, sunCaption, sunFrom } from './sun'
+import { sunAt, sunCaption, sunFrom, sunRange, sunWindow } from './sun'
+import { FLOORS } from './data'
+
+describe('sunRange — zakres wszystkich pięter', () => {
+  it.each(['S', 'E'] as const)('obejmuje skrajne godziny elewacji %s', (facade) => {
+    const windows = Array.from({ length: FLOORS }, (_, floor) => sunWindow(facade, floor)!)
+    const range = sunRange(facade)!
+    expect(range.from).toBe(Math.min(...windows.map((window) => window.from)))
+    expect(range.to).toBe(Math.max(...windows.map((window) => window.to)))
+    expect(range.from).toBeLessThanOrEqual(windows[3].from)
+    expect(range.to).toBeGreaterThanOrEqual(windows[3].to)
+    expect(range).not.toEqual({ from: windows[0].from, to: windows[0].to })
+  })
+  it('rozróżnia wschód i południe', () => {
+    expect(sunRange('E')!.from).toBeLessThan(sunRange('S')!.from)
+    expect(sunRange('E')!.to).toBeLessThan(sunRange('S')!.to)
+  })
+})
 
 describe('sunFrom — kierunek padania światła', () => {
   it('osiem kierunków głównych', () => {

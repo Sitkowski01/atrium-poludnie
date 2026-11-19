@@ -1,7 +1,8 @@
+/// <reference lib="es2023.intl" />
 import type { Facade, Status } from './types'
 
-const money = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 0 })
-const area = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+const money = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 0, useGrouping: 'always' })
+const area = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1, useGrouping: 'always' })
 
 /** "754 000 zł" */
 export const formatPrice = (n: number) => `${money.format(n)} zł`
