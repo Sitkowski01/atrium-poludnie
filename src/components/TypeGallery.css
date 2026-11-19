@@ -56,9 +56,13 @@
 .typecard[data-blinds='in'] .typecard__img--reveal {
   opacity: 1;
 }
+.typecard[data-blinds='out'] .typecard__img--reveal {
+  transition: opacity 220ms var(--ease);
+}
 
 /* żaluzje: 8 listew po 1/8 wysokości; zamykają się i otwierają kaskadowo z góry na dół,
-   a w chwili zamknięcia render zmienia się w makietę (przy zjeździe odwrotnie) */
+   a w chwili zamknięcia makieta zmienia się w render. Tylko przy wejściu: przy zjeździe
+   wnętrze po cichu gaśnie, inaczej przejście z karty na kartę puszczało żaluzje na obu naraz. */
 .typecard__blinds {
   position: absolute;
   inset: 0;
@@ -75,15 +79,7 @@
 .typecard[data-blinds='in'] .typecard__blinds span {
   animation: typecard-blind-in 420ms var(--ease) calc(var(--i) * 35ms) both;
 }
-.typecard[data-blinds='out'] .typecard__blinds span {
-  animation: typecard-blind-out 420ms var(--ease) calc(var(--i) * 35ms) both;
-}
 @keyframes typecard-blind-in {
-  0% { transform: scaleY(0); }
-  45% { transform: scaleY(1); }
-  100% { transform: scaleY(0); }
-}
-@keyframes typecard-blind-out {
   0% { transform: scaleY(0); }
   45% { transform: scaleY(1); }
   100% { transform: scaleY(0); }
