@@ -73,19 +73,19 @@
   border-bottom: 1px solid var(--line);
 }
 .timetable__title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink);
 }
 .timetable__meta {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-2);
 }
 .timetable__clock {
   margin-left: auto;
-  font-size: 12px;
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
   color: var(--ink-2);
 }
@@ -189,7 +189,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-2);
   white-space: nowrap;
 }
@@ -212,7 +212,7 @@
 .timetable__free {
   grid-area: free;
   justify-self: end;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--ink-2);
   white-space: nowrap;
 }
@@ -221,7 +221,7 @@
   display: flex;
   justify-content: space-between;
   margin: 8px calc(var(--tt-hours) + var(--tt-gap)) 0 calc(var(--tt-name) + var(--tt-gap));
-  font-size: 11px;
+  font-size: 13px;
   color: var(--ink-2);
   font-variant-numeric: tabular-nums;
 }

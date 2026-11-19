@@ -44,7 +44,7 @@
 .sun-chart__hour {
   fill: var(--ink-2);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 13px;
   text-anchor: middle;
 }
 
@@ -74,7 +74,7 @@
 .sun-chart__label {
   fill: var(--ink);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-anchor: middle;
 }
