@@ -7,6 +7,9 @@ const area = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 1, maximumF
 /** "754 000 zł" */
 export const formatPrice = (n: number) => `${money.format(n)} zł`
 
+/** "13 173 zł/m²" */
+export const formatPerM2 = (n: number) => `${formatPrice(n)}/m²`
+
 /** "63,8 m²" */
 export const formatArea = (n: number) => `${area.format(n)} m²`
 

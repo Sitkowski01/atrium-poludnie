@@ -18,7 +18,7 @@ dialog.detail {
   overflow-y: auto;
   scroll-padding-bottom: calc(88px + env(safe-area-inset-bottom));
   overscroll-behavior: contain;
-  box-shadow: -24px 0 80px rgb(28 27 24 / 0.18);
+  box-shadow: -24px 0 80px color-mix(in srgb, var(--ink) 18%, transparent);
 }
 
 dialog.detail[open] {
@@ -26,7 +26,7 @@ dialog.detail[open] {
 }
 
 dialog.detail::backdrop {
-  background: rgb(28 27 24 / 0.38);
+  background: color-mix(in srgb, var(--ink) 38%, transparent);
   backdrop-filter: blur(3px);
 }
 
@@ -95,7 +95,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(color-mix(in srgb, var(--ink) 18%, transparent) 0%, transparent 40%, color-mix(in srgb, var(--paper) 94%, transparent) 70%, var(--paper));
+  background: linear-gradient(color-mix(in srgb, var(--ink) 18%, transparent), transparent 35%, var(--paper) 72%);
 }
 .detail__cover--empty {
   background:
@@ -141,6 +141,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   display: grid;
   gap: 6px;
   padding: 0 28px 4px;
+  background: var(--paper);
+  box-shadow: 0 -8px 0 var(--paper);
 }
 .detail__title {
   font-family: var(--font-display);
@@ -166,10 +168,14 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__price strong {
   font-family: var(--font-display);
   font-size: var(--fd-4);
-  font-weight: 500;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 .detail__price span:not(.badge) {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--ink-2);
   font-size: 14px;
 }
@@ -202,7 +208,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--fd-2);
-  font-weight: 500;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   line-height: 1.15;
   white-space: nowrap;
 }
@@ -212,6 +219,25 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__section {
   display: grid;
   gap: 14px;
+  padding-top: 40px;
+  border-top: 1px solid var(--line);
+}
+.detail__kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .2em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.detail__kicker::after {
+  content: '';
+  width: 36px;
+  height: 1px;
+  background: var(--line-2);
 }
 .detail__section-head {
   display: flex;
@@ -229,6 +255,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   font-size: 13px;
   letter-spacing: 0.06em;
   color: var(--ink-2);
+  -webkit-text-fill-color: var(--ink-2);
+  background: none;
 }
 
 #detail-walk {
@@ -264,22 +292,16 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__hour {
   display: grid;
   gap: 4px;
-  font-size: 13px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
   color: var(--ink-2);
 }
-.detail__hour span {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-.detail__hour input[type='range']::-webkit-slider-runnable-track {
-  background: linear-gradient(var(--ink), var(--ink)) 0 0 / var(--pct, 0%) 100% no-repeat, var(--line-2);
-}
-.detail__hour strong {
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: var(--fd-1);
-  font-weight: 500;
+.detail__hour input {
+  width: 100%;
+  margin: 0;
 }
 
 /* ---------- przyklejony pasek z ceną i wezwaniem ---------- */
@@ -295,13 +317,13 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   margin-top: 8px;
   padding: 14px 28px calc(14px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
-  background: rgb(239 235 227 / 0.92);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter: blur(12px);
   font-size: 14px;
   color: var(--ink-2);
   transition:
-    opacity 0.25s var(--ease),
-    transform 0.25s var(--ease),
+    opacity var(--hover) var(--ease-hover),
+    transform var(--hover) var(--ease-hover),
     visibility 0s;
 }
 .detail__dock-slot {
@@ -313,9 +335,9 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   pointer-events: none;
   visibility: hidden;
   transition:
-    opacity 0.25s var(--ease),
-    transform 0.25s var(--ease),
-    visibility 0s linear 0.25s;
+    opacity var(--hover) var(--ease-hover),
+    transform var(--hover) var(--ease-hover),
+    visibility 0s linear var(--hover);
 }
 @media (prefers-reduced-motion: reduce) {
   .detail__dock,
@@ -327,7 +349,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__dock strong {
   font-family: var(--font-display);
   font-size: var(--fd-1);
-  font-weight: 500;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
 

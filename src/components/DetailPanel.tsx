@@ -6,6 +6,7 @@ import {
   formatArea,
   formatHour,
   formatPrice,
+  formatPerM2,
   roomsLabel,
 } from '../domain/format'
 import { DAY_END, DAY_START, sunWindow } from '../domain/sun'
@@ -171,7 +172,7 @@ export function DetailPanel() {
 
           <div className="detail__price">
             <strong>{formatPrice(a.price)}</strong>
-            <span>{formatPrice(a.pricePerM2)} / m²</span>
+            <span>{formatPerM2(a.pricePerM2)}</span>
             <span className={`badge badge--${a.status}`}>{STATUS_LABEL[a.status]}</span>
           </div>
 
@@ -196,6 +197,7 @@ export function DetailPanel() {
           <p className="visually-hidden">{roomsLabel(a.rooms)}</p>
 
           <section className="detail__section" aria-labelledby="detail-walk">
+            <p className="detail__kicker" aria-hidden="true">01</p>
             <div className="detail__section-head">
               <h3 id="detail-walk">Spacer 360°</h3>
               <span className="detail__hint">przeciągnij, żeby się rozejrzeć</span>
@@ -204,6 +206,7 @@ export function DetailPanel() {
           </section>
 
           <section className="detail__section" aria-labelledby="detail-plan">
+            <p className="detail__kicker" aria-hidden="true">02</p>
             <div className="detail__section-head">
               <h3 id="detail-plan">Rzut</h3>
             </div>
@@ -211,15 +214,15 @@ export function DetailPanel() {
           </section>
 
           <section className="detail__section" aria-labelledby="detail-sun">
+            <p className="detail__kicker" aria-hidden="true">03</p>
             <div className="detail__section-head">
               <h3 id="detail-sun">Słońce w salonie</h3>
             </div>
-            <SunChart facade={a.facade} floor={a.floor} hour={hour} />
+            <SunChart facade={a.facade} floor={a.floor} hour={hour}>
             <label className="detail__hour">
-              <span>
-                Pora dnia <strong>{formatHour(hour)}</strong>
-              </span>
+              <span className="visually-hidden">Pora dnia</span>
               <input
+                className="range--sun"
                 type="range"
                 min={DAY_START}
                 max={DAY_END}
@@ -230,9 +233,11 @@ export function DetailPanel() {
                 onChange={(e) => dispatch({ type: 'setHour', hour: Number(e.target.value), byUser: true })}
               />
             </label>
+            </SunChart>
           </section>
 
           <section className="detail__section" aria-labelledby="detail-loan">
+            <p className="detail__kicker" aria-hidden="true">04</p>
             <div className="detail__section-head">
               <h3 id="detail-loan">Rata kredytu</h3>
             </div>
@@ -240,6 +245,7 @@ export function DetailPanel() {
           </section>
 
           <section className="detail__section" id="detail-ask-section" aria-labelledby="detail-ask">
+            <p className="detail__kicker" aria-hidden="true">05</p>
             <div className="detail__section-head">
               <h3 id="detail-ask">Zapytaj o to mieszkanie</h3>
             </div>

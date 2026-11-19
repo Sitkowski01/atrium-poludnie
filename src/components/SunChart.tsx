@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId, type ReactNode } from 'react'
 import { formatDuration, formatHour } from '../domain/format'
 import { DAY_END, DAY_START, SUN_THRESHOLD, directSun, sunProfile, sunWindow } from '../domain/sun'
 import type { Facade } from '../domain/types'
@@ -6,14 +6,14 @@ import './SunChart.css'
 
 const WIDTH = 360
 const HEIGHT = 150
-const LEFT = 12
-const RIGHT = WIDTH - 12
+const LEFT = 0
+const RIGHT = WIDTH
 const TOP = 38
 const BASE = 142
 const xAt = (hour: number) => LEFT + ((hour - DAY_START) / (DAY_END - DAY_START)) * (RIGHT - LEFT)
 const yAt = (value: number) => BASE - value * (BASE - TOP)
 
-export function SunChart({ facade, floor, hour }: { facade: Facade; floor: number; hour: number }) {
+export function SunChart({ facade, floor, hour, children }: { facade: Facade; floor: number; hour: number; children?: ReactNode }) {
   const gradientId = useId()
   const window = sunWindow(facade, floor)
   const currentHour = Math.max(DAY_START, Math.min(DAY_END, hour))
@@ -31,6 +31,16 @@ export function SunChart({ facade, floor, hour }: { facade: Facade; floor: numbe
     .filter((sample) => Math.abs(sample.hour - currentHour) > 1e-6)
   samples.push({ hour: currentHour, value })
   samples.sort((a, b) => a.hour - b.hour)
+  // Pomarańczowy ślad tylko nad osią: odcinki zerowe zostają neutralne.
+  const litLine = samples.map((sample, index) => {
+    const lit = plottedValue(sample.hour, sample.value) > 0
+    const previous = samples[index - 1]
+    const next = samples[index + 1]
+    const previousLit = previous && plottedValue(previous.hour, previous.value) > 0
+    const nextLit = next && plottedValue(next.hour, next.value) > 0
+    if (!lit && !previousLit && !nextLit) return ''
+    return `${previousLit || (lit && index > 0) ? 'L' : 'M'} ${xAt(sample.hour)} ${yAt(plottedValue(sample.hour, sample.value))}`
+  }).join(' ')
   const line = samples.map((sample, index) =>
     `${index === 0 ? 'M' : 'L'} ${xAt(sample.hour)} ${yAt(plottedValue(sample.hour, sample.value))}`,
   ).join(' ')
@@ -56,7 +66,7 @@ export function SunChart({ facade, floor, hour }: { facade: Facade; floor: numbe
           </linearGradient>
         </defs>
         <path d={`${line} L ${RIGHT} ${BASE} L ${LEFT} ${BASE} Z`} fill={`url(#${gradientId})`} />
-        <path className="sun-chart__curve" d={line} />
+        <path className="sun-chart__curve" d={litLine} />
         <path className="sun-chart__baseline" d={`M ${LEFT} ${BASE} H ${RIGHT}`} />
         {ticks.map((tick) => (
           <g key={tick}>
@@ -68,13 +78,18 @@ export function SunChart({ facade, floor, hour }: { facade: Facade; floor: numbe
         <rect className="sun-chart__label-background" x={labelX - 26} y="5" width="52" height="23" rx="6" />
         <text className="sun-chart__label" x={labelX} y="20">{formatHour(currentHour)}</text>
       </svg>
+      {children}
       <div className="sun-chart__axis" aria-hidden="true">
         {ticks.map((tick) => (
           <span key={tick} style={{ left: `${xAt(tick) / WIDTH * 100}%` }}>{formatHour(tick)}</span>
         ))}
       </div>
-      <p className="sun-chart__legend"><span aria-hidden="true" />słońce w salonie</p>
-      <p className="sun-chart__summary">{summary}</p>
+      <p className="sun-chart__summary">
+        {window ? <>
+          <span>{formatHour(window.from)}–{formatHour(window.to)}</span>
+          <span>łącznie {formatDuration(window.total)}</span>
+        </> : summary}
+      </p>
     </div>
   )
 }

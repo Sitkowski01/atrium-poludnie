@@ -8,6 +8,15 @@
   min-width: 0;
 }
 
+.inquiry .field__label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
 .inquiry .field input,
 .inquiry .field textarea {
   width: 100%;
@@ -32,7 +41,7 @@
 /* kolor błędu jak we wspólnym .field__error (ciepły koral) */
 .inquiry .field [aria-invalid='true'] {
   border-color: var(--danger);
-  background: rgb(179 38 30 / 0.05);
+  background: color-mix(in srgb, var(--danger) 5%, transparent);
 }
 
 /* fokus ma pierwszeństwo także na polu z błędem */

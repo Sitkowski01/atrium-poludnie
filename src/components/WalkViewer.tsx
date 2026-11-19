@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
+import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from 'react'
 import type { Apartment } from '../domain/types'
 import { SIDES, links, viewpoint } from '../domain/walk'
 import type { Link, Side } from '../domain/walk'
@@ -353,6 +353,7 @@ function MiniMap({
   return (
     <svg
       className="walk__map"
+      style={{ '--map-label-size': `${(maxX - minX + pad * 2) / 16}px` } as CSSProperties}
       viewBox={`${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`}
       // skrót dla myszy; klawiatura i czytniki mają tę samą nawigację w liście przejść pod kadrem
       aria-hidden="true"
@@ -371,6 +372,9 @@ function MiniMap({
             width={r.w}
             height={r.h}
           />
+          <text className="walk__initial" x={r.x + r.w / 2} y={r.y + r.h / 3} aria-hidden="true">
+            {r.label.slice(0, 1).toLocaleUpperCase('pl-PL')}
+          </text>
         </g>
       ))}
       <g
