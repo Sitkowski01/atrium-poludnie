@@ -357,6 +357,7 @@ input[type='range'] {
     opacity: 1;
   }
 }
+.stage:focus:not(:focus-visible),
 .stage__scene:focus:not(:focus-visible),
 .chapter:focus:not(:focus-visible) {
   outline: none;
@@ -421,60 +422,6 @@ input[type='range'] {
   padding: 18px 0 22px;
 }
 
-.hero {
-  display: grid;
-  gap: 26px;
-  padding-top: clamp(40px, 9vh, 110px);
-  padding-bottom: 12px;
-}
-.hero__title {
-  font-family: var(--font-display);
-  font-size: clamp(52px, 6.4vw, 98px);
-  font-weight: 500;
-  line-height: 0.92;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
-}
-.hero__title em {
-  font-style: italic;
-  color: var(--accent);
-}
-.hero__lead {
-  max-width: 44ch;
-  font-size: 18px;
-  line-height: 1.6;
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-.hero__stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 44px;
-  margin: 0;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-}
-.hero__stats div {
-  display: grid;
-  gap: 2px;
-}
-.hero__stats dt {
-  order: 2;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-2);
-}
-.hero__stats dd {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--fd-4);
-  font-weight: 500;
-  line-height: 1.05;
-  white-space: nowrap;
-}
-
 /* ---------- rozdziały strony: numer, duży tytuł, lead ----------
    Każda sekcja lewej kolumny opowiada jedną rzecz, a bryła po prawej na nią reaguje. */
 
@@ -532,15 +479,6 @@ input[type='range'] {
   }
 }
 
-.footer {
-  max-width: 1480px;
-  margin: 0 auto;
-  padding: 28px clamp(16px, 4vw, 56px) 40px;
-  border-top: 1px solid var(--line);
-  font-size: 13px;
-  color: var(--ink-2);
-}
-
 @media (max-width: 1080px) {
   .topbar__nav {
     display: none;
@@ -577,10 +515,6 @@ input[type='range'] {
     grid-column: 1;
     grid-row: auto;
   }
-  .hero {
-    padding-top: 28px;
-    gap: 18px;
-  }
   .stage__scene {
     position: relative;
     top: auto;
@@ -588,12 +522,6 @@ input[type='range'] {
     min-height: 0;
     max-height: none;
     padding: 0 0 8px;
-  }
-  .hero__stats {
-    gap: 8px 28px;
-  }
-  .hero__stats dd {
-    font-size: var(--fd-3);
   }
 }
 

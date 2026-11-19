@@ -46,7 +46,7 @@ export default function App() {
         </a>
       </header>
 
-      <main className="stage" id="top">
+      <main className="stage" id="top" tabIndex={-1}>
         <Hero />
         <section className="stage__scene" id="budynek" tabIndex={-1} aria-label="Bryła budynku i pora dnia">
           <Building />
