@@ -37,3 +37,10 @@ export const STATUS_LABEL: Record<Status, string> = {
   rezerwacja: 'rezerwacja',
   sprzedane: 'sprzedane',
 }
+
+/** 1 wolne, 2 wolne, 5 wolnych, 12 wolnych, 22 wolne */
+export function freeLabel(n: number): string {
+  const last = n % 10
+  const teen = n % 100 >= 12 && n % 100 <= 14
+  return n === 1 || (last >= 2 && last <= 4 && !teen) ? `${n} wolne` : `${n} wolnych`
+}

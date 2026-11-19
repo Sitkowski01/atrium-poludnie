@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FocusEvent } from 'react'
-import { formatArea, formatHour, formatPrice } from '../domain/format'
+import { formatArea, formatHour, formatPrice, freeLabel } from '../domain/format'
 import { sunWindow, type SunWindow } from '../domain/sun'
 import type { Facade } from '../domain/types'
 import { useStore, type Spotlight } from '../state/store'
@@ -59,13 +59,6 @@ interface TypeCard {
   priceFrom: number | null
   sun: SunWindow | null
   spot: Spotlight
-}
-
-/** 1 wolne, 2 wolne, 5 wolnych, 12 wolnych, 22 wolne */
-function freeLabel(n: number): string {
-  const last = n % 10
-  const teen = n % 100 >= 12 && n % 100 <= 14
-  return n === 1 || (last >= 2 && last <= 4 && !teen) ? `${n} wolne` : `${n} wolnych`
 }
 
 export function TypeGallery() {
