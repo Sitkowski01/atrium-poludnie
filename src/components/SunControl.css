@@ -1,4 +1,7 @@
 .sun-control {
+  /* układ według szerokości panelu, nie okna: przy 1024 px kolumna bryły ma ok. 490 px */
+  container-type: inline-size;
+  container-name: sun-control;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 22px;
@@ -127,13 +130,37 @@
   gap: 6px;
 }
 
-@media (max-width: 640px) {
-  .sun-control {
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 14px 16px;
+/* wąski panel: szybki wybór schodzi pod suwak, opis słońca dostaje całą szerokość.
+   Zapytanie nie zmienia siatki samego panelu (kontener), więc suwak i przyciski zajmują
+   kolumny 2–3, a trzecia kolumna zostaje pusta. */
+@container sun-control (max-width: 640px) {
+  .sun-control__play.btn {
+    grid-row: 1;
+    align-self: start;
+    margin-top: 2px;
+  }
+  .sun-control__slider,
+  .sun-control__presets {
+    grid-column: 2 / -1;
   }
   .sun-control__presets {
-    grid-column: 1 / -1;
     flex-wrap: wrap;
+    margin-top: -8px;
+  }
+}
+/* telefon: suwak na całą szerokość, pod nim odtwarzanie i szybki wybór w jednym rzędzie */
+@container sun-control (max-width: 420px) {
+  .sun-control__slider {
+    grid-row: 1;
+    grid-column: 1 / -1;
+  }
+  .sun-control__play.btn {
+    grid-row: 2;
+    align-self: center;
+    margin-top: 0;
+  }
+  .sun-control__presets {
+    grid-row: 2;
+    margin-top: 0;
   }
 }
