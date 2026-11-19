@@ -33,6 +33,28 @@ function currentSection(): Section {
  */
 export function TopNav() {
   const [active, setActive] = useState<Section>('budynek')
+  // poniżej 980 px linki chowają się pod przyciskiem „Menu”
+  const [open, setOpen] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
+  const menuBtn = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setOpen(false)
+      menuBtn.current?.focus()
+    }
+    const onDown = (e: PointerEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    document.addEventListener('pointerdown', onDown)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('pointerdown', onDown)
+    }
+  }, [open])
 
   const flashTimer = useRef(0)
   // po kliknięciu linku nasłuch przewijania nie zmienia podświetlenia, dopóki ruch się nie skończy
@@ -100,21 +122,38 @@ export function TopNav() {
     el.focus({ preventScroll: true })
     history.replaceState(null, '', `#${id}`)
     setActive(id)
+    setOpen(false)
   }
 
   return (
-    <nav className="topbar__nav" aria-label="Sekcje strony">
-      {LINKS.map(({ id, label }) => (
-        <a
-          key={id}
-          href={`#${id}`}
-          className={active === id ? 'is-active' : undefined}
-          aria-current={active === id ? 'location' : undefined}
-          onClick={go(id)}
-        >
-          {label}
-        </a>
-      ))}
+    <nav ref={navRef} className={`topbar__nav${open ? ' is-open' : ''}`} aria-label="Sekcje strony">
+      <button
+        ref={menuBtn}
+        type="button"
+        className="topbar__menu"
+        aria-expanded={open}
+        aria-controls="topbar-links"
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="topbar__menu-icon" aria-hidden="true" />
+        Menu
+      </button>
+      <div className="topbar__links" id="topbar-links">
+        {LINKS.map(({ id, label }, i) => (
+          <a
+            key={id}
+            href={`#${id}`}
+            className={active === id ? 'is-active' : undefined}
+            aria-current={active === id ? 'location' : undefined}
+            onClick={go(id)}
+          >
+            <span className="topbar__link-num" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            {label}
+          </a>
+        ))}
+      </div>
     </nav>
   )
 }

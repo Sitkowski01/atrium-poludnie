@@ -195,3 +195,8 @@
     transform: scale(1.15);
   }
 }
+
+/* wspólny suwak (app.css) maluje w Firefoksie postęp grafitem — tor pory dnia ma własny gradient */
+.sun-control__slider input[type='range']::-moz-range-progress {
+  background: transparent;
+}

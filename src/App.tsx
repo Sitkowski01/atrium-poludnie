@@ -58,7 +58,7 @@ export default function App() {
         </a>
         <TopNav />
         <a className="btn btn--outline topbar__cta" href="#mieszkania">
-          Wybierz <span className="topbar__cta-long">mieszkanie</span>
+          Wybierz mieszkanie
         </a>
       </header>
 
@@ -99,7 +99,7 @@ export default function App() {
             num="04"
             name="Mieszkania"
             title="Wszystkie mieszkania"
-            lead="Pasek przy każdym mieszkaniu to jego dzień od 5:00 do 21:00: złoty odcinek to słońce w salonie."
+            lead="Pasek przy każdym mieszkaniu to jego dzień od 5:00 do 21:00: pomarańczowy odcinek to słońce w salonie."
           >
             <FilterBar />
             <ApartmentList />

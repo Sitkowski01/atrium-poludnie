@@ -10,12 +10,13 @@ html {
 }
 
 body {
-  font-feature-settings: 'lnum' 1, 'tnum' 1;
   margin: 0;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-body);
-  font-variant-numeric: lining-nums tabular-nums;
+  /* cyfry proste; równej szerokości tylko tam, gdzie liczby stoją w kolumnach (niżej).
+     Globalne tabular-nums w Inter poszerzało też dywiz: „E - mail”, „atrium - poludnie” */
+  font-variant-numeric: lining-nums;
   font-size: 16px;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -56,11 +57,22 @@ textarea {
 
 /* ---------- wspólne klocki (używaj ich w komponentach) ---------- */
 
-/* w danych cyfry zawsze proste i równej szerokości */
+/* w danych cyfry proste i równej szerokości: ceny, godziny, metraże, liczniki, osie */
 svg text,
-.display {
+.display,
+[class*='price'],
+[class*='time'],
+[class*='hour'],
+[class*='count'],
+[class*='area'],
+[class*='__num'],
+[class*='__id'],
+[class*='axis'],
+[class*='ticks'],
+.timetable__hours,
+.timetable__clock,
+.sun-control__label strong {
   font-variant-numeric: lining-nums tabular-nums;
-  font-feature-settings: 'lnum' 1, 'tnum' 1;
 }
 
 .btn {
@@ -182,9 +194,9 @@ svg text,
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 8px;
-  border-radius: var(--radius-s);
+  gap: 7px;
+  padding: 0;
+  border-radius: 0;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -197,17 +209,24 @@ svg text,
   border-radius: 50%;
   background: currentColor;
 }
+/* status: sama kropka w kolorze i tekst w tonie strony — bez kolorowych plakietek */
 .badge--wolne {
-  background: var(--ok-soft);
-  color: var(--ok-ink);
+  color: var(--ink);
+}
+.badge--wolne::before {
+  background: var(--ok);
 }
 .badge--rezerwacja {
-  background: var(--hold-soft);
-  color: var(--hold-ink);
+  color: var(--ink);
+}
+.badge--rezerwacja::before {
+  background: var(--hold);
 }
 .badge--sprzedane {
-  background: var(--sold-soft);
-  color: var(--sold-ink);
+  color: var(--ink-2);
+}
+.badge--sprzedane::before {
+  background: var(--ink-3);
 }
 
 .field {
@@ -229,7 +248,7 @@ svg text,
   padding: 11px 14px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius-s);
-  background: var(--paper-2);
+  background: var(--card);
   color: var(--ink);
 }
 .field input::placeholder,
@@ -244,7 +263,7 @@ svg text,
 }
 
 select {
-  background-color: var(--paper-2);
+  background-color: var(--card);
   color: var(--ink);
 }
 .field input,
@@ -263,11 +282,68 @@ select {
   }
 }
 
+/* jeden suwak dla całej strony: cienki tor w kolorze linii, grafitowa tarcza z papierowym pierścieniem.
+   Suwak pory dnia (SunControl.css) nadpisuje tor gradientem dnia i tarczę słońcem. */
 input[type='range'] {
   width: 100%;
   min-height: 28px;
-  accent-color: var(--pick);
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
   cursor: pointer;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 2px;
+  background: var(--line-2);
+}
+input[type='range']::-moz-range-track {
+  height: 2px;
+  border-radius: 2px;
+  background: var(--line-2);
+}
+input[type='range']::-moz-range-progress {
+  height: 2px;
+  background: var(--ink);
+}
+input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -8px;
+  border: 2px solid var(--paper);
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+  transition: transform var(--hover) var(--ease-hover);
+}
+input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--paper);
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+  transition: transform var(--hover) var(--ease-hover);
+}
+@media (hover: hover) {
+  input[type='range']:hover::-webkit-slider-thumb {
+    transform: scale(1.15);
+  }
+  input[type='range']:hover::-moz-range-thumb {
+    transform: scale(1.15);
+  }
+}
+input[type='range']:focus-visible {
+  outline: none;
+}
+input[type='range']:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px var(--ink), 0 0 0 4px var(--paper), 0 0 0 6px var(--accent);
+}
+input[type='range']:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 1px var(--ink), 0 0 0 4px var(--paper), 0 0 0 6px var(--accent);
 }
 
 /* palec: pełne 44 px na pigułkach i suwakach */
@@ -329,9 +405,14 @@ input[type='range'] {
   font-style: normal;
   color: var(--accent);
 }
-.topbar__nav {
+.topbar__nav,
+.topbar__links {
   display: flex;
   gap: 26px;
+}
+.topbar__menu,
+.topbar__link-num {
+  display: none;
 }
 .topbar__nav a {
   color: var(--ink-2);
@@ -520,23 +601,126 @@ input[type='range'] {
   color: var(--ink-2);
   text-wrap: pretty;
 }
-@media (max-width: 1080px) {
-  .topbar__nav {
-    display: none;
+/* 981–1180 px: wszystkie linki zostają, tylko ciaśniej */
+@media (max-width: 1180px) {
+  .topbar__links {
+    gap: 18px;
+  }
+  .topbar__nav a {
+    letter-spacing: 0.1em;
   }
 }
+
+/* poniżej 980 px: przycisk „Menu” i lista rozdziałów pod paskiem */
+@media (max-width: 980px) {
+  .topbar__nav {
+    margin-left: auto;
+  }
+  .topbar__menu {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 4px;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  /* dwie kreski, które przy otwarciu składają się w krzyżyk */
+  .topbar__menu-icon {
+    position: relative;
+    width: 18px;
+    height: 8px;
+  }
+  .topbar__menu-icon::before,
+  .topbar__menu-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform var(--hover) var(--ease-hover), top var(--hover) var(--ease-hover);
+  }
+  .topbar__menu-icon::before {
+    top: 0;
+  }
+  .topbar__menu-icon::after {
+    top: 6.5px;
+  }
+  .is-open .topbar__menu-icon::before {
+    top: 3.25px;
+    transform: rotate(45deg);
+  }
+  .is-open .topbar__menu-icon::after {
+    top: 3.25px;
+    transform: rotate(-45deg);
+  }
+  .topbar__links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    padding: 4px clamp(16px, 4vw, 56px) 20px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    box-shadow: var(--shadow-m);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      opacity var(--hover) var(--ease-hover),
+      transform var(--hover) var(--ease-hover),
+      visibility 0s linear var(--hover);
+  }
+  .is-open .topbar__links {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--hover) var(--ease-hover),
+      transform var(--hover) var(--ease-hover),
+      visibility 0s;
+  }
+  .topbar__links a {
+    gap: 16px;
+    min-height: 52px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: var(--fd-2);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-transform: none;
+  }
+  .topbar__links a::after {
+    display: none;
+  }
+  .topbar__links a.is-active {
+    color: var(--accent);
+  }
+  .topbar__link-num {
+    display: inline;
+    min-width: 2ch;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+  }
+}
+/* telefon: „Wybierz mieszkanie” w pełnym brzmieniu nie mieści się obok menu — wezwanie prowadzi
+   z listy rozdziałów („Mieszkania”) i z hero, więc w pasku zostaje logo i menu */
 @media (max-width: 520px) {
   .topbar__cta {
-    padding: 0 14px;
-  }
-  /* ukryte wizualnie, ale zostaje w nazwie przycisku: „Wybierz mieszkanie” */
-  .topbar__cta-long {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    display: none;
   }
 }
 
