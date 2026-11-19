@@ -9,6 +9,27 @@ html {
   scroll-behavior: smooth;
 }
 
+/* światło dnia na papierze (DayLight.tsx): zarejestrowane liczby, więc kolor przechodzi płynnie
+   także przy skoku suwaka na „Rano” albo „Wieczór” */
+@property --day-r { syntax: '<number>'; inherits: true; initial-value: 255; }
+@property --day-g { syntax: '<number>'; inherits: true; initial-value: 214; }
+@property --day-b { syntax: '<number>'; inherits: true; initial-value: 170; }
+@property --day-a { syntax: '<number>'; inherits: true; initial-value: 0; }
+:root {
+  --day: rgb(var(--day-r) var(--day-g) var(--day-b) / var(--day-a));
+  transition: --day-r 1.2s var(--ease-hover), --day-g 1.2s var(--ease-hover), --day-b 1.2s var(--ease-hover),
+    --day-a 1.2s var(--ease-hover);
+}
+/* warstwa światła pod treścią: barwi papier strony, nie karty ani tekst */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--day);
+  pointer-events: none;
+}
+
 body {
   margin: 0;
   background: var(--paper);
@@ -384,7 +405,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
   gap: 24px;
   height: var(--header-h);
   padding: 0 clamp(16px, 4vw, 56px);
-  background: rgb(239 235 227 / 0.9);
+  background: linear-gradient(var(--day), var(--day)), rgb(239 235 227 / 0.9);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--line);
 }

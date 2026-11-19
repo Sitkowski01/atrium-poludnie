@@ -9,6 +9,7 @@ import { LightFinder } from './components/LightFinder'
 import { SunControl } from './components/SunControl'
 import { TopNav } from './components/TopNav'
 import { TypeGallery } from './components/TypeGallery'
+import { DayLight } from './components/DayLight'
 import { StoreProvider } from './state/store'
 
 /** Rozdział lewej kolumny: numer, tytuł, lead. Bryła po prawej reaguje na to, co się w nim dzieje. */
@@ -48,6 +49,7 @@ function Chapter({
 export default function App() {
   return (
     <StoreProvider>
+      <DayLight />
       {/* pierwszy przystanek Tab: bez niego do bryły dochodzi się przez całą stronę */}
       <a className="btn skip-link" href="#budynek">
         Przejdź do bryły budynku
