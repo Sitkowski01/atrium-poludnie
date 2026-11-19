@@ -58,8 +58,12 @@
   color: var(--ink-2);
 }
 .sun-control__sun {
-  font-size: 13px;
-  letter-spacing: 0.02em;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  /* jedna linia: opis pod suwakiem nie może przesuwać panelu przy każdej zmianie godziny */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--ink-2);
   font-variant-numeric: tabular-nums;
 }

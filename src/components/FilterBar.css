@@ -240,3 +240,11 @@
     width: 100%;
   }
 }
+
+/* wąska kolumna rozdziału (np. 1024 px obok bryły): jedna kolumna filtrów, pola pięter na pełną szerokość */
+@container chapter (max-width: 520px) {
+  .filter-bar__body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
