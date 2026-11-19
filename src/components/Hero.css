@@ -111,7 +111,7 @@
   column-gap: var(--tt-gap);
   row-gap: 6px;
   width: 100%;
-  padding: 14px 0;
+  padding: 12px 0;
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
@@ -217,13 +217,32 @@
   white-space: nowrap;
 }
 /* podziałka tylko pod kolumną paska */
+/* trzy kolumny 1fr / auto / 1fr: „13:00” stoi dokładnie nad środkiem paska, z kreską podziałki */
 .timetable__axis {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   margin: 8px calc(var(--tt-hours) + var(--tt-gap)) 0 calc(var(--tt-name) + var(--tt-gap));
   font-size: 13px;
   color: var(--ink-2);
   font-variant-numeric: tabular-nums;
+}
+
+.timetable__axis span::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 4px;
+  margin-bottom: 3px;
+  background: var(--line-2);
+}
+.timetable__axis span:nth-child(2)::before {
+  margin-inline: auto;
+}
+.timetable__axis span:last-child {
+  text-align: right;
+}
+.timetable__axis span:last-child::before {
+  margin-left: auto;
 }
 
 /* ---------- akcja i liczby: jedna linia jak opis na planie, bez kafli i przegródek ---------- */

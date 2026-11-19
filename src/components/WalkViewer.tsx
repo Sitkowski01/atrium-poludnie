@@ -306,11 +306,6 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
                     onClick={() => (door ? through(door) : jump(i))}
                   >
                     {r.label}
-                    {door && (
-                      <span className="walk__door" aria-hidden="true">
-                        →
-                      </span>
-                    )}
                     {door && <span className="visually-hidden"> (przejście obok)</span>}
                   </button>
                 </li>

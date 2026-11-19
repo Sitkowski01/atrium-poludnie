@@ -74,7 +74,7 @@ export default function App() {
             name="Typy"
             title={
               <>
-                Pięć układów, <em>jedno</em> światło
+                Pięć układów, jedno <em>światło</em>
               </>
             }
             lead="Każdy typ powtarza się na siedmiu piętrach. Wskaż kartę, a bryła pokaże, gdzie są te mieszkania; wybierz ją, żeby zobaczyć je w wyszukiwarce."
@@ -85,11 +85,7 @@ export default function App() {
             id="swiatlo"
             num="03"
             name="Światło"
-            title={
-              <>
-                Kiedy jesteś <em>w&nbsp;domu</em>?
-              </>
-            }
+            title="Kiedy jesteś w domu?"
             lead="Zaznacz pory, które spędzasz w mieszkaniu. Policzymy, w których salonach słońce jest właśnie wtedy — z orientacji okien, piętra i budynku obok."
           >
             <LightFinder />

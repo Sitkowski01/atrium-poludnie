@@ -198,11 +198,19 @@
 }
 /* w spoczynku tylko krótka podpowiedź: render bryły jest najmocniejszym elementem strony
    i karta nie może zasłaniać wejścia ani zieleni; pełna karta wraca po najechaniu na okno */
+/* w spoczynku to podpis, nie karta: zwykły tekst w pustym niebie w prawym górnym rogu,
+   nie zasłania podstawy budynku */
 .building__card:not(.is-on) {
+  top: 4px;
+  bottom: auto;
   width: auto;
   max-width: 70%;
   gap: 2px;
-  padding: 9px 14px 10px;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
 }
 .building__card:not(.is-on) .building__card-eyebrow,
 .building__card:not(.is-on) .building__card-meta {
@@ -213,7 +221,7 @@
   font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
-  color: var(--ink);
+  color: var(--ink-2);
 }
 .building__card-eyebrow {
   font-size: 12px;
@@ -315,27 +323,23 @@
 .building__legend-item--poza[aria-disabled='true'] {
   display: none;
 }
+/* ten sam znacznik statusu co w liście i panelu: kropka 8 px w kolorze statusu */
 .building__swatch {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  border: 1px solid var(--line-2);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
 }
 .building__swatch--wolne {
-  background: #8a857b;
+  background: var(--ok);
 }
 .building__swatch--rezerwacja {
-  width: 10px;
-  height: 10px;
-  border: 0;
-  border-radius: 50%;
   background: var(--hold);
 }
 .building__swatch--sprzedane {
-  background: linear-gradient(rgb(28 27 24 / 0.34), rgb(28 27 24 / 0.34)), #8a857b;
+  background: var(--ink-3);
 }
 .building__swatch--poza {
-  background: linear-gradient(rgb(239 235 227 / 0.74), rgb(239 235 227 / 0.74)), #8a857b;
+  box-shadow: inset 0 0 0 1.5px var(--ink-3);
 }
 
 /* podświetlenie z legendy i rozdziałów: wybrana grupa w ramce, reszta tonie we mgle papieru */
@@ -378,24 +382,24 @@
   .building__card,
   .building__card:not(.is-on) {
     position: relative;
+    top: auto;
+    bottom: auto;
     width: 100%;
     max-width: none;
-    min-height: 112px;
     margin-top: 8px;
     align-content: center;
+  }
+  .building__card.is-on {
+    min-height: 112px;
   }
   .building__card.is-top {
     top: auto;
     bottom: auto;
   }
-  /* karta ma tu stałą wysokość: w spoczynku pokazuje też nagłówek, żeby nie była pustym pudłem */
-  .building__card:not(.is-on) .building__card-eyebrow {
-    display: block;
-  }
-  .building__card:not(.is-on) .building__card-title {
-    font-family: var(--font-display);
-    font-size: var(--fd-2);
-    line-height: 1.15;
+  /* w spoczynku jedna linia podpisu pod bryłą */
+  .building__card:not(.is-on) {
+    margin-top: 0;
+    text-align: center;
   }
 }
 
@@ -437,5 +441,19 @@
   .building__card {
     gap: 2px;
     padding: 12px 16px 14px;
+  }
+}
+
+/* telefon: trzy grupy legendy w jednym rzędzie */
+@media (max-width: 520px) {
+  .building__legend {
+    flex-wrap: nowrap;
+  }
+  .building__legend-item {
+    flex: 1 1 auto;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 8px;
+    letter-spacing: 0;
   }
 }

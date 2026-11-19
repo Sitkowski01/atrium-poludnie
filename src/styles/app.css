@@ -204,8 +204,8 @@ svg text,
 }
 .badge::before {
   content: '';
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: currentColor;
 }
@@ -313,19 +313,19 @@ input[type='range']::-webkit-slider-thumb {
   width: 18px;
   height: 18px;
   margin-top: -8px;
-  border: 2px solid var(--paper);
+  border: 2px solid var(--ink);
   border-radius: 50%;
-  background: var(--ink);
-  box-shadow: 0 0 0 1px var(--ink);
+  background: var(--paper);
+  box-shadow: 0 0 0 3px var(--paper);
   transition: transform var(--hover) var(--ease-hover);
 }
 input[type='range']::-moz-range-thumb {
   width: 14px;
   height: 14px;
-  border: 2px solid var(--paper);
+  border: 2px solid var(--ink);
   border-radius: 50%;
-  background: var(--ink);
-  box-shadow: 0 0 0 1px var(--ink);
+  background: var(--paper);
+  box-shadow: 0 0 0 3px var(--paper);
   transition: transform var(--hover) var(--ease-hover);
 }
 @media (hover: hover) {
@@ -340,10 +340,10 @@ input[type='range']:focus-visible {
   outline: none;
 }
 input[type='range']:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 1px var(--ink), 0 0 0 4px var(--paper), 0 0 0 6px var(--accent);
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--accent);
 }
 input[type='range']:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 1px var(--ink), 0 0 0 4px var(--paper), 0 0 0 6px var(--accent);
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--accent);
 }
 
 /* palec: pełne 44 px na pigułkach i suwakach */
@@ -550,7 +550,8 @@ input[type='range']:focus-visible::-moz-range-thumb {
   container-name: chapter;
   display: grid;
   gap: 30px;
-  padding-top: clamp(56px, 8vh, 96px);
+  /* jeden rytm między rozdziałami */
+  padding-top: clamp(48px, 7vh, 80px);
 }
 .chapter__head {
   display: grid;
@@ -589,10 +590,11 @@ input[type='range']:focus-visible::-moz-range-thumb {
   letter-spacing: -0.03em;
   text-wrap: balance;
 }
-/* wyróżnienie w tytułach rozdziałów szarym tonem: pomarańcz zostaje dla słońca w tytule hero */
+/* jedna reguła wyróżnień w tytułach całej strony: pomarańczem tylko słowa o świetle
+   („słońce” w hero, „światło” w typach, „wchodzi” w kontakcie) */
 .chapter__title em {
   font-style: normal;
-  color: var(--ink-2);
+  color: var(--accent);
 }
 .chapter__lead {
   max-width: 50ch;

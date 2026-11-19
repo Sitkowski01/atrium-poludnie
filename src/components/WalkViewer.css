@@ -151,9 +151,8 @@
 }
 .walk__side {
   display: grid;
-  grid-template-rows: auto auto 1fr;
   gap: 12px;
-  align-self: stretch;
+  align-content: start;
   min-width: 0;
 }
 .walk__label {
@@ -178,22 +177,9 @@
   padding: 0;
   list-style: none;
 }
-.walk__room-chip {
-  gap: 8px;
-}
-.walk__door {
-  color: var(--accent);
-  transition: transform var(--hover) var(--ease-hover);
-}
-@media (hover: hover) {
-  .walk__room-chip:hover .walk__door {
-    transform: translateX(3px);
-  }
-}
 .walk__actions {
   display: flex;
   flex-wrap: wrap;
-  align-self: end;
   gap: 4px 20px;
 }
 /* akcje drugiego rzędu jako linki tekstowe: nie konkurują z pomieszczeniami */

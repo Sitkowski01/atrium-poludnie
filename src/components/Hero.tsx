@@ -199,7 +199,7 @@ export function Hero() {
             </dd>
           </div>
           <div>
-            <dt>metraże</dt>
+            <dt>metraż</dt>
             <dd>
               {limits.areaMin}–{limits.areaMax}&nbsp;m²
             </dd>

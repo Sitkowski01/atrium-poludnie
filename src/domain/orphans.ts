@@ -13,6 +13,8 @@ export function glueOrphans(text: string): string {
     .replace(ORPHAN, `$1$2${NBSP}`)
     .replace(ORPHAN, `$1$2${NBSP}`)
     .replace(UNIT, (m) => m.replace(' ', NBSP))
+    // separator „·” zostaje z poprzednim wyrazem, nigdy nie zaczyna ani nie kończy linii sam
+    .replace(/ ·/g, `${NBSP}·`)
 }
 
 /** Skleja sieroty w tekstach pod `root` i pilnuje ich przy każdej zmianie (React podmienia teksty). */
