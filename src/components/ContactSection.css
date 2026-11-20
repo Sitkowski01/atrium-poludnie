@@ -447,3 +447,8 @@
     display: none;
   }
 }
+
+.contact__lead strong {
+  font-weight: 600;
+  color: var(--ink);
+}

@@ -354,10 +354,13 @@
 
 /* telefon: pory w zwartej siatce 3 + 2 (glif, nazwa, godziny), bez opisów — wynik widać zaraz pod nimi */
 @container chapter (width < 520px) {
+  /* 3 + 2 bez pustej komórki: siatka 6 kolumn, górne kafle po 2, dolne po 3 */
   .light__moments {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 6px;
   }
+  .light__moments > .light__moment { grid-column: span 2; }
+  .light__moments > .light__moment:nth-of-type(n + 4) { grid-column: span 3; }
   .light__moment {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto auto auto;

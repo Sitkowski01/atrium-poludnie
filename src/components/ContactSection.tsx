@@ -1,4 +1,7 @@
 import type { MouseEvent } from 'react'
+import { formatHour } from '../domain/format'
+import { MOMENTS } from '../domain/light'
+import { useStore } from '../state/store'
 import './ContactSection.css'
 
 function prefersReducedMotion(): boolean {
@@ -37,6 +40,13 @@ const NAV = [
 
 
 export function ContactSection() {
+  // spacer o porze, którą użytkownik wskazał w „Kiedy jesteś w domu?” — obietnica z tytułu, konkretnie
+  const { state } = useStore()
+  const moments = MOMENTS.filter((m) => state.filters.home.includes(m.id))
+  const when = moments.map((m) => `${m.label.toLowerCase()} (${formatHour(m.from)}–${formatHour(m.to)})`).join(' albo ')
+  const subject = `Spacer po Atrium Południe${moments.length ? ` — ${moments.map((m) => m.label.toLowerCase()).join(', ')}` : ''}`
+  const body = moments.length ? `Dzień dobry, chcę zobaczyć mieszkanie o porze, o której bywam w domu: ${when}.` : ''
+  const mailto = `mailto:kontakt@atrium-poludnie.example?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`
   return (
     <>
     <section className="contact" id="kontakt" tabIndex={-1} aria-labelledby="kontakt-title">
@@ -51,14 +61,22 @@ export function ContactSection() {
               Przyjdź zobaczyć, jak światło <em>wchodzi</em> do mieszkania.
             </h2>
             <p className="contact__lead">
-              Pokażemy mieszkanie o tej porze dnia, o której będziesz w nim najczęściej. Umów się na spacer po budowie
-              albo zadaj pytanie przy wybranym mieszkaniu.
+              {moments.length ? (
+                <>
+                  Pokażemy mieszkanie o porze, o której bywasz w domu: <strong>{when}</strong>.
+                </>
+              ) : (
+                <>
+                  Pokażemy mieszkanie o tej porze dnia, o której będziesz w nim najczęściej. Umów się na spacer po
+                  budowie albo zadaj pytanie przy wybranym mieszkaniu.
+                </>
+              )}
             </p>
             <div className="contact__actions">
               {/* rozdział kończy się tym, o czym mówi: umówieniem spaceru */}
               <a
                 className="btn btn--primary"
-                href="mailto:kontakt@atrium-poludnie.example?subject=Spacer%20po%20Atrium%20Po%C5%82udnie"
+                href={mailto}
               >
                 Umów spacer
                 <span aria-hidden="true">→</span>

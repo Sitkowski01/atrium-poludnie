@@ -313,7 +313,7 @@ function TypeRow({ card, active, onActive, onPick }: TypeInteractionProps) {
         <SunBar sun={sunWindow(card.facade, 3)} className="typetable__bar" />
         {ground && <span className="typetable__note"><span className="typetable__range">{ground}</span></span>}
       </td>
-      <td className="typetable__price">{card.priceFrom == null ? price : `od ${price}`}</td>
+      <td className="typetable__price">{card.priceFrom == null ? price : `od ${THOUSANDS.format(Math.round(card.priceFrom / 1000))} tys. zł`}</td>
       {/* liczba wolnych jest w etykiecie dostępności; w tabeli była w każdym wierszu ta sama, więc nic nie mówiła */}
       <td className="typetable__mobile" colSpan={4}>
         <span>{formatArea(card.area)}</span> · {exposure}
