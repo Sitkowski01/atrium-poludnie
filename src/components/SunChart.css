@@ -17,6 +17,12 @@
 .sun-chart__plot {
   position: relative;
 }
+.sun-chart__y-label {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 12px;
+  line-height: 1.4;
+}
 
 .sun-chart__peak {
   position: absolute;

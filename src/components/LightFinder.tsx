@@ -1,13 +1,29 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
+import { STATUS_LABEL, floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
 import { MOMENTS, homeHours, matchMoments, onlySoldMatch, summarizeMatches, type Moment } from '../domain/light'
-import { sunAt, sunWindow } from '../domain/sun'
+import { DAY_START, DAY_END, sunAt, sunWindow } from '../domain/sun'
 import { useCountUp } from '../hooks/useCountUp'
 import { useStore, type Spotlight } from '../state/store'
-import { SunBar } from './SunBar'
+import './ApartmentList.css'
 import './LightFinder.css'
 
 const SHOWN = 5
+const position = (from: number, to: number) => ({
+  left: `${(from - DAY_START) / (DAY_END - DAY_START) * 100}%`,
+  width: `${(to - from) / (DAY_END - DAY_START) * 100}%`,
+})
+
+function MatchBar({ sun, moments }: { sun: ReturnType<typeof sunWindow>; moments: readonly Moment[] }) {
+  return <span className="light__flat-bar" aria-hidden="true">
+    {moments.map((m) => <span key={m.id} className="light__bar-home" style={position(m.from, m.to)} />)}
+    {sun && <span className="light__bar-sun" style={position(sun.from, sun.to)} />}
+    {sun && moments.map((m) => {
+      const from = Math.max(m.from, sun.from)
+      const to = Math.min(m.to, sun.to)
+      return to > from ? <span key={m.id} className="light__bar-overlap" style={position(from, to)} /> : null
+    })}
+  </span>
+}
 const hoursFormat = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 })
 const FACADE_NAMES = {
   S: { from: 'od południa', subject: 'Południe' },
@@ -75,7 +91,9 @@ export function LightFinder() {
         : `${FACADE_NAMES[missedFacade.facade].subject} ma słońce w salonie tylko do ${formatHour(missedWindow.to)}, więc przy tylu godzinach w domu odpada.`
   const shownCount = Math.round(useCountUp(matches.length, { duration: 700 }))
   const soldOnly = useMemo(() => onlySoldMatch(apartments, moments), [apartments, moments])
-  const wants = useMemo(() => moments.map((m) => [m.from, m.to] as const), [moments])
+  const shown = matches.slice(0, SHOWN)
+  const commonHours = shown.length > 0 && shown.every((m) => hoursText(m.share) === hoursText(shown[0].share))
+    ? hoursText(shown[0].share) : null
 
   // bryła reaguje tylko wtedy, gdy rozdział jest na ekranie; po wyjściu oddajemy ją innym
   const root = useRef<HTMLDivElement>(null)
@@ -176,6 +194,7 @@ export function LightFinder() {
                 {flats(shownCount)} {has(shownCount)} słońce w&nbsp;salonie przez większość czasu, kiedy jesteś w&nbsp;domu
               </span>
             </p>
+            {commonHours && <p className="light__common">każde {commonHours} h Twoich godzin w słońcu</p>}
             {matches.length > 0 && facadeName && (
               <p className="light__note">
                 Pasują wszystkie dostępne mieszkania {facadeName}. {comparison}
@@ -195,11 +214,11 @@ export function LightFinder() {
 
         {matches.length > 0 && (
           <ol className="light__list">
-            {matches.slice(0, SHOWN).map(({ apartment: a, share }) => (
+            {shown.map(({ apartment: a, share }) => (
               <li key={a.id}>
                 <button
                   type="button"
-                  className="light__flat"
+                  className="apt-list__main light__flat"
                   aria-haspopup="dialog"
                   onClick={() => dispatch({ type: 'select', id: a.id })}
                   onMouseEnter={() => dispatch({ type: 'hover', id: a.id })}
@@ -207,22 +226,25 @@ export function LightFinder() {
                   onFocus={() => dispatch({ type: 'hover', id: a.id })}
                   onBlur={() => dispatch({ type: 'hover', id: null })}
                 >
-                  <span className="light__flat-id">{a.id}</span>
-                  <span className="light__flat-facts">
-                    <span className="light__flat-facts-row">
-                      <span>{roomsLabel(a.rooms)}</span>
-                      <span>{formatArea(a.area)}</span>
-                    </span>
-                    <span className="light__flat-facts-row">{floorLabel(a.floor)}</span>
+                  <span className="apt-list__number">
+                    <span className="apt-list__id">{a.id}</span>
+                    <span className={`badge badge--${a.status}`}>{STATUS_LABEL[a.status]}</span>
+                  </span>
+                  <span className="apt-list__info">
+                  <span className="apt-list__facts">
+                    {[roomsLabel(a.rooms), formatArea(a.area), floorLabel(a.floor)].map((fact) =>
+                      <span className="apt-list__fact" key={fact}>{fact}</span>,
+                    )}
                   </span>
                   <span className="light__flat-timeline">
-                    <SunBar sun={sunWindow(a.facade, a.floor)} wants={wants} className="light__flat-bar" />
+                    <MatchBar sun={sunWindow(a.facade, a.floor)} moments={moments} />
                     <span className="light__flat-share">
-                      <span aria-hidden="true">{hoursText(share)} h</span>
+                      <span aria-hidden="true">{commonHours ? `słońce od ${formatHour(sunWindow(a.facade, a.floor)!.from)}` : `${hoursText(share)} h`}</span>
                       <span className="visually-hidden">{hoursText(share)} godzin w domu ze słońcem w salonie</span>
                     </span>
                   </span>
-                  <span className="light__flat-price">{formatPrice(a.price)}</span>
+                  </span>
+                  <span className="apt-list__price"><strong>{formatPrice(a.price)}</strong></span>
                 </button>
               </li>
             ))}
@@ -231,10 +253,10 @@ export function LightFinder() {
         {matches.length > 0 && (
           <p className="light__bar-legend">
             <span className="light__keys">
-              <span className="light__key"><span className="light__key-home" aria-hidden="true" />jesteś w domu</span>
-              <span className="light__key"><span className="light__key-sun" aria-hidden="true" />słońce w salonie</span>
+              <span className="light__key"><span className="light__key-overlap" aria-hidden="true" />jesteś w domu i w słońcu</span>
+              <span className="light__key"><span className="light__key-home" aria-hidden="true" />jesteś w domu bez słońca</span>
+              <span className="light__key"><span className="light__key-sun" aria-hidden="true" />słońce poza Twoimi godzinami</span>
             </span>
-            <span><strong>{hoursText(matches[0].share)} h</strong> — tyle z Twoich godzin w domu salon jest w słońcu</span>
           </p>
         )}
         {matches.length > SHOWN && (

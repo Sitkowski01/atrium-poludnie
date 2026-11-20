@@ -34,7 +34,7 @@
   gap: 4px;
   min-width: 0;
   min-height: 168px;
-  padding: 14px 11px;
+  padding: 14px 6px;
   border: 1.5px solid var(--line);
   border-radius: var(--radius);
   background: transparent;
@@ -96,8 +96,8 @@
   align-items: flex-end;
   min-height: 2.2em;
   font-family: var(--font-display);
-  /* pięć kafli w kolumnie ~590 px: 18 px mieści „Popołudnie” bez łamania słowa */
-  font-size: clamp(17px, 3.1cqi, var(--fd-1));
+  font-size: clamp(16px, 2.9cqi, 20px);
+  overflow-wrap: normal;
   font-weight: 500;
   line-height: 1.1;
 }
@@ -165,10 +165,6 @@
 }
 .light__flat {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) 112px;
-  grid-template-areas:
-    'id facts price'
-    'id timeline timeline';
   align-items: center;
   gap: 14px;
   width: 100%;
@@ -187,72 +183,68 @@
   .light__flat:hover {
     background: var(--pick-soft);
   }
-  .light__flat:hover .light__flat-id {
-    color: var(--accent);
-    transform: translateX(4px);
-  }
-}
-.light__flat-id {
-  grid-area: id;
-  transition: color var(--hover) var(--ease-hover), transform var(--hover) var(--ease-hover);
-  font-family: var(--font-display);
-  font-size: var(--fd-2);
-  line-height: 1;
-}
-.light__flat-facts {
-  grid-area: facts;
-  font-size: 13px;
-  color: var(--ink-2);
-}
-.light__flat-facts-row {
-  display: inline-block;
-  white-space: nowrap;
-}
-.light__flat-facts-row + .light__flat-facts-row::before,
-.light__flat-facts-row > span + span::before {
-  content: '·';
-  margin: 0 5px;
 }
 .light__flat-share {
-  grid-area: share;
   font-family: var(--font-display);
   font-size: 13px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  text-align: right;
-  white-space: nowrap;
-}
-.light__flat-price {
-  grid-area: price;
-  font-family: var(--font-display);
-  font-size: var(--fd-1);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
   text-align: right;
   white-space: nowrap;
 }
 
 .light__flat-bar {
-  grid-area: bar;
   min-width: 0;
   flex: 1;
 }
 
 .light__flat-timeline {
-  grid-area: timeline;
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
 }
 
-.light__flat .sunbar__want,
 .light__key-home {
   background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--ink) 28%, transparent) 0 2px, transparent 2px 4px);
   box-shadow: none;
   border: 0;
+}
+
+/* Wspólna typografia i kolumny z listą mieszkań; pasek pokazuje przecięcie godzin. */
+.light .light__flat {
+  grid-template-columns: 104px minmax(0, 1fr) auto;
+  grid-template-areas: none;
+  grid-template-rows: auto;
+  gap: 12px;
+  padding: 18px 8px;
+}
+.light__flat .apt-list__number { align-self: start; grid-area: auto; }
+.light__flat .apt-list__info { display: grid; gap: 8px; }
+.light__flat .apt-list__facts { grid-area: auto; flex-direction: row; font-size: 12px; }
+.light__flat .apt-list__price { grid-area: auto; justify-items: end; }
+.light__flat .apt-list__price strong { font-size: var(--fd-1); }
+.light__flat .light__flat-timeline { grid-area: auto; width: 100%; flex-wrap: wrap; gap: 6px; }
+.light__flat .light__flat-bar {
+  position: relative;
+  display: block;
+  flex: 1 0 100%;
+  height: 6px;
+  background: var(--track);
+}
+.light__flat-bar > span { position: absolute; inset-block: 0; }
+.light__bar-home {
+  background: repeating-linear-gradient(45deg, var(--ink-3) 0 1px, transparent 1px 3px);
+}
+.light__bar-sun { background: var(--sun); opacity: .3; }
+.light__bar-overlap, .light__key-overlap { background: var(--accent); }
+.light__common { margin: 0; font-size: var(--fd-1); font-family: var(--font-display); }
+.light__key-overlap { display: inline-block; width: 18px; height: 6px; }
+.light__key-sun { opacity: .3; }
+@container chapter (max-width: 400px) {
+  .light .light__flat { grid-template-columns: 104px minmax(0, 1fr); }
+  .light__flat .apt-list__number { grid-row: 1 / 3; }
+  .light__flat .apt-list__price { grid-column: 2; }
 }
 
 .light__bar-legend {
@@ -339,51 +331,6 @@
     gap: 8px;
   }
 }
-@container chapter (max-width: 619px) {
-  .light__flat {
-    grid-template-columns: 56px minmax(0, 1fr) 112px;
-    grid-template-areas:
-      'id facts price'
-      'id timeline timeline';
-    row-gap: 8px;
-    padding: 12px 4px;
-  }
-  .light__flat-id {
-    grid-area: id;
-  }
-  .light__flat-facts {
-    grid-area: facts;
-  }
-  .light__flat-facts-row {
-    display: block;
-  }
-  .light__flat-facts-row + .light__flat-facts-row::before {
-    content: none;
-  }
-  .light__flat-price {
-    grid-area: price;
-  }
-  .light__flat-bar {
-    grid-area: bar;
-  }
-  .light__flat-share {
-    grid-area: share;
-  }
-}
-
-@container chapter (max-width: 400px) {
-  .light__flat {
-    grid-template-columns: 56px minmax(0, 1fr) auto;
-    grid-template-areas:
-      'id facts facts'
-      'id price price'
-      'id timeline timeline';
-  }
-  .light__flat-price {
-    text-align: left;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .light__moment {
     transition: none;

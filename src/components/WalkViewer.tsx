@@ -229,15 +229,6 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
     onGo: () => through(l),
   }))
 
-  // Te same inicjały co na mapie; np. K może oznaczać kuchnię i korytarz.
-  const mapKey = new Map<string, Set<string>>()
-  for (const room of plan) {
-    const initial = room.label.slice(0, 1).toLocaleUpperCase('pl-PL')
-    const labels = mapKey.get(initial) ?? new Set<string>()
-    labels.add(room.label.toLocaleLowerCase('pl-PL'))
-    mapKey.set(initial, labels)
-  }
-
   return (
     <div ref={rootRef} className={`walk${expanded ? ' walk--expanded' : ''}`} onKeyDown={onKeyDown}>
       <div ref={frameRef} className="walk__frame" tabIndex={0} role="group" aria-label={`Spacer po mieszkaniu ${apartment.id}`}>
@@ -334,9 +325,6 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
               Od początku
             </button>
           </div>
-          <p className="walk__map-key">
-            {Array.from(mapKey, ([initial, labels]) => `${initial} ${Array.from(labels).join(' / ')}`).join(' · ')}
-          </p>
         </div>
         <MiniMap apartment={apartment} room={view.room} at={center} yaw={view.yaw} onPick={jump} />
       </div>
@@ -365,8 +353,30 @@ function MiniMap({
   const maxY = Math.max(...plan.map((r) => r.y + r.h))
   const room = plan[current]
   const unit = Math.min(0.5, Math.min(room.w, room.h) / 3)
-  // Cztery jednostki na mapie o szerokości 160, przeliczone na metry rzutu.
-  const labelInset = (maxX - minX + pad * 2) * 4 / 160
+  const passages = links(plan)
+  // Każda ściana jest rysowana osobno, z rzeczywistą przerwą w obu sąsiadujących komórkach.
+  const walls = (index: number) => {
+    const r = plan[index]
+    return SIDES.flatMap((side) => {
+      const vertical = side === 'left' || side === 'right'
+      const start = vertical ? r.y : r.x
+      const end = start + (vertical ? r.h : r.w)
+      const at = side === 'left' ? r.x : side === 'right' ? r.x + r.w : side === 'up' ? r.y : r.y + r.h
+      const gaps = passages.filter((l) => l.from === index && l.side === side)
+        .map((l) => ({ from: (l.start + l.end) / 2 - .4, to: (l.start + l.end) / 2 + .4 }))
+        .sort((a, b) => a.from - b.from)
+      let cursor = start
+      const segments: string[] = []
+      const segment = (from: number, to: number) => vertical
+        ? `M ${at} ${from} V ${to}` : `M ${from} ${at} H ${to}`
+      for (const gap of gaps) {
+        if (gap.from > cursor) segments.push(segment(cursor, gap.from))
+        cursor = Math.max(cursor, gap.to)
+      }
+      if (cursor < end) segments.push(segment(cursor, end))
+      return segments
+    }).join(' ')
+  }
 
   return (
     <svg
@@ -390,6 +400,7 @@ function MiniMap({
             width={r.w}
             height={r.h}
           />
+          <path className={`walk__wall${r.kind === 'balkon' ? ' walk__wall--balcony' : ''}`} d={walls(index)} />
         </g>
       ))}
       <g
@@ -401,7 +412,7 @@ function MiniMap({
         <circle className="walk__dot" r={unit * 0.45} />
       </g>
       {plan.map((r, index) => (
-        <text key={index} className="walk__initial" x={r.x + r.w - labelInset} y={r.y + r.h - labelInset} aria-hidden="true">
+        <text key={index} className="walk__initial" x={r.x + r.w / 2} y={r.y + r.h / 2} aria-hidden="true">
           {r.label.slice(0, 1).toLocaleUpperCase('pl-PL')}
         </text>
       ))}

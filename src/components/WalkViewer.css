@@ -196,13 +196,12 @@
   padding: 0;
   border: 0;
   background: none;
-  color: var(--ink-2);
-  font: inherit;
+  color: var(--ink);
+  font-family: var(--font-body);
   font-size: 13px;
   font-weight: 500;
-  text-decoration: underline;
-  text-decoration-color: var(--line-2);
-  text-underline-offset: 4px;
+  text-decoration: underline 1px;
+  text-underline-offset: 3px;
   cursor: pointer;
   transition: color var(--hover) var(--ease-hover), text-decoration-color var(--hover) var(--ease-hover);
 }
@@ -228,14 +227,6 @@
   height: auto;
 }
 
-.walk__map-key {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ink-2);
-  text-wrap: pretty;
-}
-
 @media (pointer: coarse) {
   .walk__room-hit {
     pointer-events: none;
@@ -247,17 +238,21 @@
 }
 .walk__room {
   fill: var(--card);
+  transition: fill var(--hover) var(--ease-hover);
+}
+.walk__wall {
+  fill: none;
   stroke: var(--ink-3);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
-  transition: fill var(--hover) var(--ease-hover);
 }
-.walk__room--balkon {
-  fill: var(--card);
+.walk__wall--balcony {
   stroke-dasharray: 4 3;
 }
 .walk__room--current {
   fill: var(--paper-2);
+}
+.walk__room--current + .walk__wall {
   stroke: var(--ink);
 }
 @media (hover: hover) {
@@ -282,8 +277,8 @@
   /* 12 px po przeliczeniu jednostek viewBox na szerokość mapy 160 px. */
   font-size: var(--map-label-size);
   font-weight: 600;
-  text-anchor: end;
-  dominant-baseline: auto;
+  text-anchor: middle;
+  dominant-baseline: central;
   paint-order: stroke fill;
   stroke: var(--paper);
   stroke-width: 3px;

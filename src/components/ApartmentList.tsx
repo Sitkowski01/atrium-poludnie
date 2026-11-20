@@ -10,6 +10,7 @@ import {
   roomsLabel,
 } from '../domain/format'
 import { sunWindow } from '../domain/sun'
+import { activeFilterChips } from '../domain/activeFilters'
 import type { SortKey } from '../domain/types'
 import { useStore } from '../state/store'
 import { ActiveFilters } from './ActiveFilters'
@@ -108,7 +109,8 @@ const flatsWord = (n: number) =>
   n === 1 ? 'mieszkanie' : n % 10 >= 2 && n % 10 <= 4 && !(n % 100 >= 12 && n % 100 <= 14) ? 'mieszkania' : 'mieszkań'
 
 export function ApartmentList() {
-  const { state, dispatch, visible } = useStore()
+  const { state, dispatch, visible, apartments, limits } = useStore()
+  const filtered = activeFilterChips(state.filters, limits).length > 0
   const { hoveredId, selectedId, favourites } = state
   const listRef = useRef<HTMLUListElement>(null)
   const pointerInside = useRef(false)
@@ -184,8 +186,8 @@ export function ApartmentList() {
     <section className="apt-list" aria-label="Lista mieszkań">
       <div className="apt-list__head">
         <p className="apt-list__count" aria-live="polite" ref={countRef} tabIndex={-1}>
-          <strong>{shown.length}</strong>
-          {shown.length < visible.length ? ` z ${visible.length} mieszkań` : ` ${flatsWord(visible.length)}`}
+          <strong>{visible.length}</strong>
+          {filtered ? ` z ${apartments.length} mieszkań` : ` ${flatsWord(visible.length)}${shown.length < visible.length ? ` · pokazano ${shown.length}` : ''}`}
         </p>
         <label className="apt-list__sort">
           <span className="apt-list__sort-label">Sortuj</span>

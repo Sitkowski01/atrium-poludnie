@@ -8,7 +8,7 @@ const WIDTH = 360
 const HEIGHT = 150
 const LEFT = 0
 const RIGHT = WIDTH
-const TOP = 38
+const TOP = 16
 const BASE = 142
 const xAt = (hour: number) => LEFT + ((hour - DAY_START) / (DAY_END - DAY_START)) * (RIGHT - LEFT)
 const yAt = (value: number) => BASE - value * (BASE - TOP)
@@ -27,17 +27,17 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
   const window = sunWindow(facade, floor)
   const currentHour = Math.max(DAY_START, Math.min(DAY_END, hour))
   const value = directSun(facade, floor, currentHour)
-  // Rampa 35 minut dotyczy wyłącznie rysunku; godziny i opis bierzemy z modelu.
+  // Półsinus z wejściem i zejściem po 20 minut; model godzin pozostaje bez zmian.
   const plottedValue = (h: number, raw: number) => {
     if (!window) return raw
-    const t = Math.max(0, Math.min(1, (h - window.from) / (35 / 60), (window.to - h) / (35 / 60)))
-    return raw * t * t * (3 - 2 * t)
+    const t = Math.max(0, Math.min(1, (h - window.from) / (20 / 60), (window.to - h) / (20 / 60)))
+    return raw * Math.sin(t * Math.PI / 2)
   }
   const markerX = xAt(currentHour)
   const labelX = Math.max(28, Math.min(plotWidth - 28, markerX / WIDTH * plotWidth))
   const markerY = yAt(plottedValue(currentHour, value))
   // Znacznik korzysta z tej samej rampy co krzywa, również między próbkami.
-  const profile = sunProfile(facade, floor, 1 / 12)
+  const profile = sunProfile(facade, floor, 1 / 60)
   const samples = profile.filter((sample) => Math.abs(sample.hour - currentHour) > 1e-6)
   samples.push({ hour: currentHour, value })
   samples.sort((a, b) => a.hour - b.hour)
@@ -67,6 +67,7 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
 
   return (
     <div className="sun-chart">
+      <p className="sun-chart__y-label">ile słońca w salonie</p>
       <div className="sun-chart__plot" ref={plotRef}>
       <svg
         className="sun-chart__svg"
