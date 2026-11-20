@@ -1,4 +1,5 @@
 import type { Apartment, Filters, Limits, SortKey } from './types'
+import { MOMENTS, matchMoments, type Moment } from './light'
 
 export function limitsOf(list: readonly Apartment[]): Limits {
   const areas = list.map((a) => a.area)
@@ -14,6 +15,7 @@ export function limitsOf(list: readonly Apartment[]): Limits {
 
 export function defaultFilters(l: Limits): Filters {
   return {
+    home: [],
     rooms: [],
     areaMin: l.areaMin,
     areaMax: l.areaMax,
@@ -31,8 +33,12 @@ export function applyFilters(
   f: Filters,
   favourites: readonly string[],
 ): Apartment[] {
+  const homeIds = f.home.length
+    ? new Set(matchMoments(list, MOMENTS.filter((m) => f.home.includes(m.id)), { includeSold: true }).map((m) => m.apartment.id))
+    : null
   return list.filter(
     (a) =>
+      (!homeIds || homeIds.has(a.id)) &&
       (f.rooms.length === 0 || f.rooms.includes(a.rooms)) &&
       a.area >= f.areaMin &&
       a.area <= f.areaMax &&
@@ -45,9 +51,15 @@ export function applyFilters(
   )
 }
 
-export function sortApartments(list: readonly Apartment[], key: SortKey): Apartment[] {
+export function sortApartments(list: readonly Apartment[], key: SortKey, home: readonly Moment[] = []): Apartment[] {
   const out = [...list]
   switch (key) {
+    case 'sun-home': {
+      if (home.length === 0) return sortApartments(list, 'price-asc')
+      const ranks = new Map(matchMoments(list, home, { includeSold: true }).map((m, i) => [m.apartment.id, i]))
+      // Sortowanie nie usuwa danych: niedopasowane trafiają za dopasowane, według ceny.
+      return out.sort((a, b) => (ranks.get(a.id) ?? Infinity) - (ranks.get(b.id) ?? Infinity) || a.price - b.price)
+    }
     case 'price-asc':
       return out.sort((a, b) => a.price - b.price)
     case 'price-desc':
@@ -63,6 +75,7 @@ export function sortApartments(list: readonly Apartment[], key: SortKey): Apartm
 export function countActive(f: Filters, l: Limits): number {
   const d = defaultFilters(l)
   let n = 0
+  if (f.home.length > 0) n++
   if (f.rooms.length > 0) n++
   if (f.areaMin !== d.areaMin || f.areaMax !== d.areaMax) n++
   if (f.priceMax !== d.priceMax) n++

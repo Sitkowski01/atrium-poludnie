@@ -1,4 +1,5 @@
 import { defaultFilters } from './filter'
+import { MOMENTS } from './light'
 import { floorLabel, roomsLabel } from './format'
 import type { Filters, Limits } from './types'
 
@@ -27,10 +28,18 @@ function floorsLabel(min: number, max: number, d: Filters): string {
   return `piętra ${min}–${max}`
 }
 
-/** Chipy aktywnych filtrów, w kolejności: pokoje, ekspozycja, cena, metraż, piętra, flagi. */
+/** Chipy aktywnych filtrów: pory w domu, pokoje, ekspozycja, cena, metraż, piętra, flagi. */
 export function activeFilterChips(f: Filters, limits: Limits): ActiveFilterChip[] {
   const d = defaultFilters(limits)
   const chips: ActiveFilterChip[] = []
+
+  if (f.home.length) {
+    chips.push({
+      id: 'home',
+      label: `w domu: ${MOMENTS.filter((m) => f.home.includes(m.id)).map((m) => m.label.toLowerCase()).join(', ')}`,
+      patch: { home: [] },
+    })
+  }
 
   for (const n of f.rooms) {
     chips.push({

@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { liveHour } from './tweenHour'
+import { MOMENTS } from '../domain/light'
 import { APARTMENTS } from '../domain/data'
 import { applyFilters, defaultFilters, limitsOf, sortApartments } from '../domain/filter'
 import type { Apartment, Filters, Limits, SortKey } from '../domain/types'
@@ -81,10 +82,17 @@ function loadFavourites(): string[] {
 
 function reducer(state: FullState, action: Action): FullState {
   switch (action.type) {
-    case 'setFilters':
-      return { ...state, filters: { ...state.filters, ...action.patch } }
+    case 'setFilters': {
+      const home = action.patch.home
+      const sort = home?.length === 0 && state.sort === 'sun-home'
+        ? 'price-asc'
+        : home && home.length > 0 && state.filters.home.length === 0 && state.sort === 'price-asc'
+          ? 'sun-home'
+          : state.sort
+      return { ...state, sort, filters: { ...state.filters, ...action.patch } }
+    }
     case 'resetFilters':
-      return { ...state, filters: defaultFilters(LIMITS) }
+      return { ...state, filters: defaultFilters(LIMITS), sort: state.sort === 'sun-home' ? 'price-asc' : state.sort }
     case 'setSort':
       return { ...state, sort: action.sort }
     case 'setHour': {
@@ -175,7 +183,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [state.favourites])
 
   const visible = useMemo(
-    () => sortApartments(applyFilters(APARTMENTS, state.filters, state.favourites), state.sort),
+    () => sortApartments(applyFilters(APARTMENTS, state.filters, state.favourites), state.sort,
+      MOMENTS.filter((m) => state.filters.home.includes(m.id))),
     [state.filters, state.favourites, state.sort],
   )
   const visibleIds = useMemo(() => new Set(visible.map((a) => a.id)), [visible])

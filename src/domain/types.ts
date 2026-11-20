@@ -45,6 +45,8 @@ export interface Apartment {
 }
 
 export interface Filters {
+  /** identyfikatory pór w domu; pusta tablica = brak kryterium */
+  home: string[]
   /** wybrane liczby pokoi; pusta tablica = wszystkie */
   rooms: number[]
   areaMin: number
@@ -58,7 +60,7 @@ export interface Filters {
   onlyFavourites: boolean
 }
 
-export type SortKey = 'price-asc' | 'price-desc' | 'area-desc' | 'floor-desc'
+export type SortKey = 'price-asc' | 'price-desc' | 'area-desc' | 'floor-desc' | 'sun-home'
 
 /** Zakresy wyliczone z danych — granice suwaków w filtrach. */
 export interface Limits {
