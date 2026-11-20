@@ -344,3 +344,10 @@
     padding-top: 28px;
   }
 }
+
+/* na szerokim ekranie zegar jest w panelu pory dnia obok — jeden zegar na ekranie; na telefonie panel jest daleko, więc zostaje */
+@media (min-width: 981px) {
+  .timetable__clock {
+    display: none;
+  }
+}

@@ -180,15 +180,16 @@
 .filter-bar__floors .field select {
   min-width: 0;
   min-height: 40px;
-  padding: 0 34px 0 12px;
+  /* ten sam szewron co w sortowaniu, węższy margines: „6. piętro” mieści się bez ucięcia */
+  padding: 0 26px 0 10px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius);
-  appearance: auto;
-  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
   color: var(--ink);
   font-size: 14px;
   cursor: pointer;
-  background-color: transparent;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%235b574f' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 9px center / 11px 7px;
 }
 
 .filter-bar__checks {

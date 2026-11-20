@@ -92,7 +92,6 @@
 
 .contact__office {
   min-width: 0;
-  max-width: 460px;
   padding: 18px 0 0;
   border-top: 1px solid var(--line);
 }
@@ -414,4 +413,14 @@
   .contact__actions > * {
     flex: 1 1 100%;
   }
+}
+
+/* 1024: kolumny tabliczki tak, żeby wartości nie łamały się w pół (adres, liczba kondygnacji) */
+@media (max-width: 1100px) and (min-width: 901px) {
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 0.55fr) minmax(0, 0.9fr);
+  }
+}
+.site-footer__spec dd {
+  white-space: nowrap;
 }

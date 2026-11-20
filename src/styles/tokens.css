@@ -45,9 +45,10 @@
   --ok: #2f8a57;
   --ok-ink: #1f6540;
   --ok-soft: #dbe9de;
-  --hold: #d08f1c;
-  --hold-ink: #855510;
-  --hold-soft: #f3e4c4;
+  /* rezerwacja: ciepły grafit, nie bursztyn — pomarańcz znaczy tylko słońce i główną akcję */
+  --hold: #6f6553;
+  --hold-ink: #4f4739;
+  --hold-soft: #e6e0d4;
   --sold: #8f897e;
   --sold-ink: #57534b;
   --sold-soft: #e3dfd6;

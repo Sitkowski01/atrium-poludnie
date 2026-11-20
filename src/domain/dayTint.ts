@@ -9,7 +9,7 @@ const KEYS: Key[] = [
   [4.5, [96, 100, 150], 0.08], // noc
   [5.6, [160, 130, 175], 0.07], // fiolet przed wschodem
   [6.6, [255, 175, 135], 0.06], // krótki brzoskwiniowy świt
-  [8, [196, 212, 232], 0.05], // poranek: chłodny, przejrzysty
+  [8, [190, 208, 232], 0.07], // poranek: chłodny, przejrzysty (wyraźnie inny niż południe)
   [12, [210, 220, 235], 0.02], // południe: prawie nic
   [14.5, [235, 222, 198], 0.02],
   [16.5, [245, 196, 120], 0.07], // złote popołudnie

@@ -106,7 +106,8 @@ svg text,
   padding: 0 20px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius-s);
-  background: var(--card);
+  /* przycisk drugorzędny: przezroczysty z obrysem, papier dopiero przy najechaniu */
+  background: transparent;
   color: var(--ink);
   font-size: 14px;
   font-weight: 500;

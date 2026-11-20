@@ -242,7 +242,8 @@
 
 /* Wspólna typografia i kolumny z listą mieszkań; pasek pokazuje przecięcie godzin. */
 .light .light__flat {
-  grid-template-columns: 104px minmax(0, 1fr) auto;
+  /* stała kolumna ceny: oś czasu kończy się w tym samym miejscu w każdym wierszu */
+  grid-template-columns: 104px minmax(0, 1fr) 11ch;
   grid-template-areas: none;
   grid-template-rows: auto;
   gap: 20px;

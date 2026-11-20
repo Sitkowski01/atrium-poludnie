@@ -270,7 +270,7 @@ export function LightFinder() {
         )}
         <div className="light__links">
         {matches.length > SHOWN && (
-          <button type="button" className="light__more" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(!expanded)}>
+          <button type="button" className="btn apt-list__more" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(!expanded)}>
             {expanded ? 'Zwiń listę' : `Pokaż wszystkie ${matches.length} →`}
           </button>
         )}
