@@ -72,7 +72,8 @@
 .filter-bar__ranges {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  /* uchwyty dwóch suwaków nie mogą się stykać, gdy pierwszy stoi na końcu, a drugi na początku */
+  gap: 40px;
 }
 .filter-bar__range { display: grid; min-width: 0; gap: 4px; }
 .filter-bar__label--row {

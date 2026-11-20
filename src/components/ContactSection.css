@@ -545,3 +545,8 @@
     padding: 20px 0 24px;
   }
 }
+
+/* telefon: linki rozdziałów w stopce jako pełne cele dotyku 44 px */
+@media (pointer: coarse), (max-width: 980px) {
+  .site-footer__nav a { min-height: 44px; }
+}
