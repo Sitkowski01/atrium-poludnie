@@ -11,6 +11,7 @@ import { TopNav } from './components/TopNav'
 import { TypeGallery } from './components/TypeGallery'
 import { DayLight } from './components/DayLight'
 import { StageRelease } from './components/StageRelease'
+import { MobileBuilding } from './components/MobileBuilding'
 import { StoreProvider } from './state/store'
 
 /** Rozdział lewej kolumny: numer, tytuł, lead. Bryła po prawej reaguje na to, co się w nim dzieje. */
@@ -52,6 +53,7 @@ export default function App() {
     <StoreProvider>
       <DayLight />
       <StageRelease />
+      <MobileBuilding />
       {/* pierwszy przystanek Tab: bez niego do bryły dochodzi się przez całą stronę */}
       <a className="btn skip-link" href="#budynek">
         Przejdź do bryły budynku
@@ -68,10 +70,12 @@ export default function App() {
 
       <main className="stage" id="top" tabIndex={-1}>
         <Hero />
-        <section className="stage__scene" id="budynek" tabIndex={-1} aria-label="Bryła budynku i pora dnia">
-          <Building />
-          <SunControl />
-        </section>
+        <div className="stage__slot">
+          <section className="stage__scene" id="budynek" tabIndex={-1} aria-label="Bryła budynku i pora dnia">
+            <Building />
+            <SunControl />
+          </section>
+        </div>
           <Chapter
             id="typy"
             num="02"
