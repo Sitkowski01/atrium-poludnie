@@ -136,7 +136,7 @@
 .light__num {
   font-family: var(--font-display);
   font-size: clamp(76px, 9vw, 124px);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 0.85;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;

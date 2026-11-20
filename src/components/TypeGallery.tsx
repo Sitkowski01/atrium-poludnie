@@ -54,7 +54,6 @@ const TYPE_INFO: Record<number, TypeInfo> = {
 }
 
 const ORDER = [2, 0, 1, 3, 4]
-const THOUSANDS = new Intl.NumberFormat('pl-PL', { useGrouping: 'always' } as Intl.NumberFormatOptions)
 const SHORT_NAMES: Record<number, string> = {
   2: 'Cztery pokoje', 0: 'Trzy pokoje', 1: 'Dwa pokoje, południe',
   3: 'Dwa pokoje, wschód', 4: 'Kawalerka',
@@ -280,9 +279,9 @@ function TypePlan({ card, active, onActive, onPick }: TypeInteractionProps) {
         <span className="typesheet__area">{formatArea(card.area)}</span>
         {/* rzut niesie swoje dane: cena i słońce w salonie (3. piętro) — bez osobnej tabeli obok */}
         <span className="typesheet__price">
-          {card.priceFrom == null ? 'wyprzedane' : `od ${THOUSANDS.format(Math.round(card.priceFrom / 1000))} tys. zł`}
+          {card.priceFrom == null ? 'wyprzedane' : `od ${formatPrice(card.priceFrom)}`}
         </span>
-        <SunBar sun={sunWindow(card.facade, 3)} className="typesheet__bar" />
+        <SunBar sun={sunWindow(card.facade, 3)} ticks className="typesheet__bar" />
         <span className="typesheet__sun">{presentation(card).sun} · 3. piętro</span>
       </span>
     </button>
@@ -313,7 +312,7 @@ function TypeRow({ card, active, onActive, onPick }: TypeInteractionProps) {
         <SunBar sun={sunWindow(card.facade, 3)} className="typetable__bar" />
         {ground && <span className="typetable__note"><span className="typetable__range">{ground}</span></span>}
       </td>
-      <td className="typetable__price">{card.priceFrom == null ? price : `od ${THOUSANDS.format(Math.round(card.priceFrom / 1000))} tys. zł`}</td>
+      <td className="typetable__price">{card.priceFrom == null ? price : `od ${price}`}</td>
       {/* liczba wolnych jest w etykiecie dostępności; w tabeli była w każdym wierszu ta sama, więc nic nie mówiła */}
       <td className="typetable__mobile" colSpan={4}>
         <span>{formatArea(card.area)}</span> · {exposure}
