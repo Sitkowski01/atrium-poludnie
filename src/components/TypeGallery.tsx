@@ -167,11 +167,10 @@ function TypeButton({
   // jedna opowieść o słońcu na całej stronie: tak jak w hero — 3. piętro jako odniesienie, parter jako różnica
   const ref = sunWindow(card.facade, 3)
   const low = sunWindow(card.facade, 0)
-  // zakres godzin nigdy nie łamie się w środku (łącznik bez przerwy wokół półpauzy)
-  const span = (w: { from: number; to: number }) => `${formatHour(w.from)}\u2060–\u2060${formatHour(w.to)}`
+  const span = (w: { from: number; to: number }) => `${formatHour(w.from)}–${formatHour(w.to)}`
   const lowDiffers = Boolean(ref && low && (Math.abs(ref.from - low.from) > 0.05 || Math.abs(ref.to - low.to) > 0.05))
   const sunText = ref
-    ? `salon\u00a0${span(ref)}\u00a0(3.\u00a0piętro)${lowDiffers && low ? ` · parter\u00a0${span(low)}` : ''}`
+    ? `salon ${span(ref)} (3. piętro)${lowDiffers && low ? ` · parter ${span(low)}` : ''}`
     : 'bez bezpośredniego słońca'
   const sunLabel = ref
     ? `słońce w salonie ${span(ref)} na 3. piętrze${lowDiffers && low ? `, na parterze ${span(low)}` : ''}`
