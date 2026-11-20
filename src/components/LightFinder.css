@@ -34,8 +34,8 @@
   gap: 4px;
   min-width: 0;
   min-height: 168px;
-  padding: 14px 12px;
-  border: 1.5px solid var(--line);
+  padding: 14px 8px;
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   background: transparent;
   color: var(--ink);
@@ -58,7 +58,6 @@
 .light__moment.is-on {
   border-color: var(--ink);
   background: var(--card);
-  box-shadow: inset 0 0 0 0.5px var(--ink);
   color: var(--ink);
 }
 .light__glyph {
@@ -86,6 +85,7 @@
   stroke-width: 1;
   transition: fill var(--hover) var(--ease-hover), stroke var(--hover) var(--ease-hover);
 }
+.light__moment.is-on .light__glyph { color: var(--sun); }
 .light__moment.is-on .light__glyph circle {
   fill: var(--sun);
   stroke: var(--sun);
@@ -96,7 +96,7 @@
   align-items: flex-end;
   min-height: 2.2em;
   font-family: var(--font-display);
-  font-size: clamp(15px, 2.7cqi, 19px);
+  font-size: clamp(14px, 2.6cqi, 18px);
   overflow-wrap: normal;
   font-weight: 500;
   line-height: 1.1;
@@ -107,6 +107,7 @@
   font-variant-numeric: tabular-nums;
 }
 .light__moment-note {
+  align-self: start;
   font-size: 12px;
   line-height: 1.35;
   color: var(--ink-2);
@@ -115,7 +116,7 @@
   color: var(--ink-2);
 }
 
-/* wynik: duża liczba, zdanie, lista najlepszych */
+/* wynik: duża liczba, zdanie i przejście do wyszukiwarki */
 .light__result {
   display: grid;
   align-content: start;
@@ -154,179 +155,14 @@
   line-height: 1.55;
   color: var(--ink-2);
 }
-.light__more {
-  justify-self: start;
-  min-height: 40px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: 13px;
-  text-decoration: underline 1px;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  transition: color var(--hover) var(--ease-hover);
-}
-.light__more:hover { color: var(--ink-2); }
-
-.light__list {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--line);
-}
-.light__flat {
-  position: relative;
-  display: grid;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  min-height: 56px;
-  padding: 8px 0;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background var(--hover) var(--ease-hover);
-}
-@media (hover: hover) {
-  .light__flat:hover {
-    background: var(--pick-soft);
-  }
-}
-.light__flat-share {
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0;
-  color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  white-space: nowrap;
-}
-.light__flat-reason {
-  font-size: 13px;
-  color: var(--ink-2);
-  font-variant-numeric: tabular-nums;
-}
-.light__building-link {
-  display: none;
-  justify-self: start;
-  align-items: center;
-  min-height: 44px;
-  color: var(--ink);
-  font-size: 14px;
-  text-underline-offset: 3px;
-  transition: color var(--hover) var(--ease-hover);
-}
-@media (hover: hover) {
-  .light__building-link:hover { color: var(--ink-2); }
-}
-
-.light__flat-bar {
-  min-width: 0;
-  flex: 1;
-}
-
-.light__flat-timeline {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-/* Wspólna typografia i kolumny z listą mieszkań; pasek pokazuje przecięcie godzin. */
-.light .light__flat {
-  /* stała kolumna ceny: oś czasu kończy się w tym samym miejscu w każdym wierszu */
-  grid-template-columns: 104px minmax(0, 1fr) 11ch;
-  grid-template-areas: none;
-  grid-template-rows: auto;
-  gap: 20px;
-  padding: 18px 0;
-}
-.light__flat .apt-list__number { align-self: start; grid-area: auto; }
-.light__flat .apt-list__info { display: grid; grid-area: auto; gap: 8px; }
-.light__flat .apt-list__facts { grid-area: auto; flex-direction: row; font-size: 12px; }
-.light__flat .apt-list__price { grid-area: auto; justify-items: end; font-variant-numeric: tabular-nums; }
-.light__flat .apt-list__price strong { font-size: var(--fd-1); }
-.light__flat .light__flat-timeline { display: grid; grid-template-columns: minmax(0, 1fr); grid-area: auto; width: 100%; gap: 6px; }
-.light__flat .light__flat-bar {
-  position: relative;
-  display: block;
-  flex: 1 0 100%;
-  height: 6px;
-  background: var(--track);
-}
-.light__flat-bar > span { position: absolute; }
-.light__bar-home {
-  top: 9px;
-  height: 2px;
-  border-bottom: 2px dashed var(--ink);
-}
-.light__bar-overlap { top: 9px; height: 2px; background: var(--ink); }
-.light__flat-bar { margin-bottom: 5px; }
 .light__common { margin: 0; font-size: 14px; line-height: 1.55; font-family: var(--font-body); color: var(--ink-2); }
-.light__order { margin: 0; font-size: 12px; color: var(--ink-2); }
-.light__links { display: flex; align-items: center; gap: 24px; }
-@media (max-width: 980px) {
-  .light__building-link { display: inline-flex; }
-  .light__more { min-height: 44px; }
-}
-@container chapter (max-width: 520px) {
-  .light .light__flat { grid-template-columns: minmax(0, 1fr) auto; }
-  .light__flat .apt-list__number { grid-column: 1; grid-row: 1; }
-  .light__flat .apt-list__price { grid-column: 2; grid-row: 1; }
-  .light__flat .apt-list__info { grid-column: 1 / -1; grid-row: 2; justify-items: stretch; }
-}
-
-.light__bar-legend {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  color: var(--ink-2);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.light__bar-legend strong {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.light__keys {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
-}
-.light__key {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-.light__key-home,
-.light__key-sun {
-  display: inline-block;
-  flex-shrink: 0;
-  width: 18px;
-}
-
-.light__key-home {
-  height: 2px;
-  background: var(--ink);
-}
-
-.light__key .light__key-sun {
-  position: static;
-  height: 6px;
+.light__search {
+  justify-self: start;
+  max-width: 100%;
+  min-height: 44px;
+  padding-block: 10px;
+  border-radius: var(--radius);
+  text-align: left;
 }
 
 /* wąsko: pory jako lista wierszy — znak, nazwa z notką, godziny po prawej */
@@ -368,23 +204,6 @@
   }
 }
 
-.light__flat::before {
-  content: '';
-  position: absolute;
-  inset-block: 0;
-  left: -12px;
-  width: 2px;
-  background: var(--pick);
-  transform: scaleY(0);
-  transition: transform var(--hover) var(--ease-hover);
-  pointer-events: none;
-}
-.light__flat:focus-visible::before {
-  transform: scaleY(1);
-}
-@media (hover: hover) {
-  .light__flat:hover::before { transform: scaleY(1); }
-}
 @media (prefers-reduced-motion: reduce) {
   .light__moment {
     transition: none;

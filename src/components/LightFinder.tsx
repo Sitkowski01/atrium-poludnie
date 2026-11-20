@@ -1,31 +1,12 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { STATUS_LABEL, floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { formatHour } from '../domain/format'
 import { MOMENTS, homeHours, matchMoments, onlySoldMatch, summarizeMatches, type Moment } from '../domain/light'
-import { DAY_START, DAY_END, sunAt, sunWindow } from '../domain/sun'
+import { sunAt, sunWindow } from '../domain/sun'
 import { useCountUp } from '../hooks/useCountUp'
 import { useStore, type Spotlight } from '../state/store'
-import './ApartmentList.css'
 import { tweenHour } from '../state/tweenHour'
 import './LightFinder.css'
-import './SunBar.css'
 
-const SHOWN = 5
-const position = (from: number, to: number) => ({
-  left: `${(from - DAY_START) / (DAY_END - DAY_START) * 100}%`,
-  width: `${(to - from) / (DAY_END - DAY_START) * 100}%`,
-})
-
-function MatchBar({ sun, moments }: { sun: ReturnType<typeof sunWindow>; moments: readonly Moment[] }) {
-  return <span className="sunbar__track light__flat-bar" aria-hidden="true">
-    {moments.map((m) => <span key={m.id} className="light__bar-home" style={position(m.from, m.to)} />)}
-    {sun && <span className="sunbar__sun" style={position(sun.from, sun.to)} />}
-    {sun && moments.map((m) => {
-      const from = Math.max(m.from, sun.from)
-      const to = Math.min(m.to, sun.to)
-      return to > from ? <span key={m.id} className="light__bar-overlap" style={position(from, to)} /> : null
-    })}
-  </span>
-}
 const hoursFormat = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 })
 const FACADE_NAMES = {
   S: { from: 'od południa', subject: 'Południe' },
@@ -72,8 +53,6 @@ function MomentGlyph({ m }: { m: Moment }) {
 export function LightFinder() {
   const { apartments, dispatch } = useStore()
   const [picked, setPicked] = useState<string[]>(['poranek', 'popoludnie'])
-  const [expanded, setExpanded] = useState(false)
-  const listId = useId()
   const moments = useMemo(() => MOMENTS.filter((m) => picked.includes(m.id)), [picked])
   const totalHours = homeHours(moments)
   const hoursText = (share: number) => `${hoursFormat.format(share * totalHours)} / ${hoursFormat.format(totalHours)} h w słońcu`
@@ -93,16 +72,11 @@ export function LightFinder() {
         : `${FACADE_NAMES[missedFacade.facade].subject} ma słońce w salonie tylko do ${formatHour(missedWindow.to)}, więc przy tylu godzinach w domu odpada.`
   const shownCount = Math.round(useCountUp(matches.length, { duration: 700 }))
   const soldOnly = useMemo(() => onlySoldMatch(apartments, moments), [apartments, moments])
-  // liczone dla wszystkich wyników, nie tylko pokazanych: rozwinięcie listy nie zmienia wyglądu wierszy (bez skoku)
+  // Wspólne podsumowanie dotyczy wszystkich dopasowanych mieszkań.
   const commonResult = matches.length > 1 && matches.every((match) =>
     hoursText(match.share) === hoursText(matches[0].share) &&
     formatHour(match.firstSunAt) === formatHour(matches[0].firstSunAt),
   )
-  // najpierw kolejność całej listy, potem przycięcie: pierwsze wiersze po rozwinięciu zostają na swoich miejscach
-  const ordered = commonResult
-    ? [...matches].sort((a, b) => b.apartment.floor - a.apartment.floor || a.apartment.price - b.apartment.price)
-    : matches
-  const orderedShown = expanded ? ordered : ordered.slice(0, SHOWN)
   const bestHours = matches.length ? hoursFormat.format(Math.max(...matches.map((m) => m.share)) * totalHours) : ''
 
   // bryła reaguje tylko wtedy, gdy rozdział jest na ekranie; po wyjściu oddajemy ją innym
@@ -144,7 +118,6 @@ export function LightFinder() {
   )
 
   const toggle = (m: Moment) => {
-    setExpanded(false)
     const on = picked.includes(m.id)
     setPicked((p) => (on ? p.filter((id) => id !== m.id) : [...p, m.id]))
     // bryła pokazuje światło w środku właśnie włączonej pory
@@ -152,6 +125,16 @@ export function LightFinder() {
       dispatch({ type: 'cancelIntro' })
       tweenHour(Math.round(((m.from + m.to) / 2) * 20) / 20, (h) => dispatch({ type: 'setHour', hour: h, byUser: true }))
     }
+  }
+
+  const goToSearch = () => {
+    dispatch({ type: 'resetFilters' })
+    dispatch({ type: 'setFilters', patch: { home: picked, onlyAvailable: true } })
+    dispatch({ type: 'setSort', sort: 'sun-home' })
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const target = document.getElementById('mieszkania')
+    target?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+    target?.focus({ preventScroll: true })
   }
 
   const evening = picked.length === 1 && picked[0] === 'wieczor'
@@ -225,78 +208,11 @@ export function LightFinder() {
           </>
         )}
 
-        {commonResult && <p className="light__order">kolejność: wyżej piętro, potem niższa cena</p>}
         {matches.length > 0 && (
-          <ol className="light__list" id={listId}>
-            {orderedShown.map(({ apartment: a, share, firstSunAt }) => (
-              <li key={a.id}>
-                <button
-                  type="button"
-                  className="apt-list__main light__flat"
-                  aria-haspopup="dialog"
-                  onClick={() => dispatch({ type: 'select', id: a.id })}
-                  onMouseEnter={() => dispatch({ type: 'hover', id: a.id })}
-                  onMouseLeave={() => dispatch({ type: 'hover', id: null })}
-                  onFocus={() => dispatch({ type: 'hover', id: a.id })}
-                  onBlur={() => dispatch({ type: 'hover', id: null })}
-                >
-                  <span className="apt-list__number">
-                    <span className="apt-list__id">{a.id}</span>
-                    <span className={`badge badge--${a.status}`}>{STATUS_LABEL[a.status]}</span>
-                  </span>
-                  <span className="apt-list__info">
-                  <span className="apt-list__facts">
-                    {[roomsLabel(a.rooms), formatArea(a.area), floorLabel(a.floor)].map((fact) =>
-                      <span className="apt-list__fact" key={fact}>{fact}</span>,
-                    )}
-                  </span>
-                  <span className="light__flat-timeline">
-                    <MatchBar sun={sunWindow(a.facade, a.floor)} moments={moments} />
-                    {!commonResult && <span className="light__flat-reason">
-                      słońce od {formatHour(firstSunAt)}
-                      <span className="visually-hidden"> w Twoich godzinach; przy remisie wcześniej znaczy wyżej</span>
-                    </span>}
-                  </span>
-                  </span>
-                  <span className="apt-list__price">
-                    {!commonResult && <span className="light__flat-share">
-                      {hoursText(share)}
-                    </span>}
-                    <strong>{formatPrice(a.price)}</strong>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ol>
-        )}
-        {matches.length > 0 && (
-          <p className="light__bar-legend">
-            <span className="light__keys">
-              <span className="light__key"><span className="sunbar__sun light__key-sun" aria-hidden="true" />słońce w salonie</span>
-              <span className="light__key"><span className="light__key-home" aria-hidden="true" />jesteś w domu</span>
-            </span>
-          </p>
-        )}
-        <div className="light__links">
-        {matches.length > SHOWN && (
-          <button type="button" className="btn apt-list__more" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(!expanded)}>
-            {expanded ? 'Zwiń listę' : `Pokaż wszystkie ${matches.length} →`}
+          <button type="button" className="btn btn--primary light__search" onClick={goToSearch}>
+            Pokaż {matches.length === 1 ? 'to' : 'te'} {matches.length} {flats(matches.length)} w wyszukiwarce →
           </button>
         )}
-        {matches.length > 0 && (
-          <a className="light__building-link" href="#budynek" onClick={(event) => {
-            const building = document.getElementById('budynek')
-            if (!building) return
-            event.preventDefault()
-            const reduce = typeof window.matchMedia === 'function' &&
-              window.matchMedia('(prefers-reduced-motion: reduce)').matches
-            building.scrollIntoView({ behavior: reduce ? 'instant' : 'smooth', block: 'start' })
-            building.focus({ preventScroll: true })
-          }}>
-            Zobacz na bryle ↑
-          </a>
-        )}
-        </div>
       </div>
     </div>
   )
