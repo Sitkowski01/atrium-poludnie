@@ -122,13 +122,27 @@ export function TypeGallery() {
     return () => io.disconnect()
   }, [])
   const [tick, setTick] = useState(0)
+  // po zejściu kursora z rzutu samoczynne podświetlanie wraca dopiero po chwili: przejście z jednego rzutu
+  // na drugi (16 px przerwy) nie może na mgnienie podświetlić na bryle innego typu
+  const [idle, setIdle] = useState(true)
   useEffect(() => {
-    if (!galInView || active !== null) return
+    if (active !== null) {
+      setIdle(false)
+      return
+    }
+    const id = window.setTimeout(() => setIdle(true), 1500)
+    return () => window.clearTimeout(id)
+  }, [active])
+  useEffect(() => {
+    if (!galInView || active !== null || !idle) return
     if (typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const id = window.setInterval(() => setTick((t) => t + 1), 2800)
     return () => window.clearInterval(id)
-  }, [galInView, active])
-  const autoSpot = galInView && active === null && cards.length ? cards[tick % cards.length].spot : null
+  }, [galInView, active, idle])
+  // własny obiekt (kopia), nie ten sam co przy najechaniu: zdjęcie podświetlenia samoczynnego
+  // nie może zdjąć podświetlenia od kursora (stos usuwa wpis po tożsamości obiektu)
+  const autoCard = galInView && active === null && idle && cards.length ? cards[tick % cards.length] : null
+  const autoSpot = useMemo<Spotlight | null>(() => (autoCard ? { ...autoCard.spot } : null), [autoCard])
   useEffect(() => {
     if (!autoSpot) return
     dispatch({ type: 'spotlight', spot: autoSpot })
