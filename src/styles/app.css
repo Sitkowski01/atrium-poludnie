@@ -565,7 +565,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
   row-gap: 28px;
   max-width: 1480px;
   margin: 0 auto;
-  padding: 0 clamp(16px, 4vw, 56px) 64px;
+  padding: 0 clamp(16px, 4vw, 56px) 24px;
 }
 .stage > * {
   grid-column: 1;
@@ -607,11 +607,10 @@ input[type='range']:focus-visible::-moz-range-thumb {
   .stage__scene {
     transition: opacity 0.3s var(--ease-hover), visibility 0s;
   }
+  /* koniec listy: bryła nie gaśnie (zostawiała pustą kolumnę obok ostatnich wierszy), tylko odjeżdża
+     w górę razem z końcem sceny, jak każdy przyklejony element; pasek nagłówka ją przykrywa */
   .stage__scene.is-released {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.3s var(--ease-hover), visibility 0s linear 0.3s;
+    opacity: 1;
   }
 }
 .stage__scene {

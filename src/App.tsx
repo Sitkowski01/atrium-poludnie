@@ -108,7 +108,7 @@ export default function App() {
             <FilterBar />
             <ApartmentList />
           </Chapter>
-          {/* koniec sceny: od tego miejsca przyklejona bryła gaśnie (StageRelease) */}
+          {/* koniec sceny: tu przyklejona bryła kończy się razem z listą i odjeżdża w górę */}
           <div className="stage__end" aria-hidden="true" />
       </main>
 
