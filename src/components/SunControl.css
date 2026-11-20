@@ -61,6 +61,8 @@
 /* kompas przed opisem słońca */
 .sun-control__compass {
   flex: none;
+  width: 20px;
+  height: 20px;
   color: var(--ink-2);
 }
 .sun-control__compass-n {

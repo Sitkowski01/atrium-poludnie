@@ -1,20 +1,33 @@
 import { useEffect } from 'react'
 
 /**
- * Koniec sceny: gdy kontakt wchodzi na ekran, przyklejona bryła gaśnie, zamiast wyjeżdżać pod pasek
- * ucięta w połowie. Działa tylko tam, gdzie scena jest przyklejona (szeroki ekran).
+ * Koniec sceny: przyklejona bryła gaśnie dokładnie wtedy, gdy koniec sceny (znacznik `.stage__end`)
+ * wchodzi w okno — zanim zacznie odjeżdżać ucięta pod pasek. Wygaszenie kończy się
+ * `visibility: hidden`, więc nie zostaje półprzezroczysty „znak wodny”.
+ * Nasłuch przewijania, nie IntersectionObserver: skok z dołu strony na górę nie przecina progu
+ * i obserwator nie zgłaszał zmiany (bryła zostawała ukryta).
  */
 export function StageRelease() {
   useEffect(() => {
-    const contact = document.getElementById('kontakt')
+    const end = document.querySelector<HTMLElement>('.stage__end')
     const scene = document.querySelector<HTMLElement>('.stage__scene')
-    if (!contact || !scene || typeof IntersectionObserver === 'undefined') return
-    const io = new IntersectionObserver(
-      ([e]) => scene.classList.toggle('is-released', e.isIntersecting),
-      { rootMargin: '0px 0px 20% 0px', threshold: 0 },
-    )
-    io.observe(contact)
-    return () => io.disconnect()
+    if (!end || !scene) return
+    let frame = 0
+    const update = () => {
+      frame = 0
+      scene.classList.toggle('is-released', end.getBoundingClientRect().top < window.innerHeight)
+    }
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
   return null
 }

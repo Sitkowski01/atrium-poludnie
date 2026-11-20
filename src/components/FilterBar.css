@@ -218,9 +218,10 @@
   width: 20px;
   height: 20px;
   margin: 0;
-  border: 1px solid var(--line-2);
+  /* wyraźny obrys jak inne kontrolki — beżowy kwadrat bez ramki wyglądał na nieaktywny */
+  border: 1.5px solid var(--ink-2);
   border-radius: var(--radius);
-  background: var(--paper-2);
+  background: var(--card);
   appearance: none;
   -webkit-appearance: none;
   cursor: pointer;

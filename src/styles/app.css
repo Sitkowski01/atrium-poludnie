@@ -594,12 +594,13 @@ input[type='range']:focus-visible::-moz-range-thumb {
 /* przy kontakcie przyklejona scena gaśnie (StageRelease.tsx) */
 @media (min-width: 981px) {
   .stage__scene {
-    transition: opacity 0.6s var(--ease-hover), transform 0.6s var(--ease-hover);
+    transition: opacity 0.3s var(--ease-hover), visibility 0s;
   }
   .stage__scene.is-released {
     opacity: 0;
-    transform: translateY(-16px);
+    visibility: hidden;
     pointer-events: none;
+    transition: opacity 0.3s var(--ease-hover), visibility 0s linear 0.3s;
   }
 }
 .stage__scene {
@@ -841,4 +842,9 @@ input[type='range']:focus-visible::-moz-range-thumb {
     animation: none;
     opacity: 1;
   }
+}
+
+/* znacznik końca sceny: zero wysokości, w pierwszej kolumnie */
+.stage__end {
+  height: 0;
 }

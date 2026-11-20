@@ -280,8 +280,8 @@
 /* wąska kolumna (1024 px obok bryły): nadal dwa wpisy w rzędzie, cena pod nazwą */
 @container chapter (max-width: 520px) {
   .typegal {
-    --sheet: calc((100cqi - 16px) / 2 * 0.75 * 1.08);
-    column-gap: 16px;
+    --sheet: calc((100cqi - 28px) / 2 * 0.75 * 1.08);
+    column-gap: 28px;
   }
   .typecard {
     grid-row: span 6;

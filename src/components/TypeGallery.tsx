@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FocusEvent } from 'react'
 import { formatArea, formatHour, formatPrice, freeLabel } from '../domain/format'
-import { sunRange, sunSteps } from '../domain/sun'
+import { sunRange, sunWindow } from '../domain/sun'
 import type { Facade } from '../domain/types'
 import { useStore, type Spotlight } from '../state/store'
 import { SunBar } from './SunBar'
@@ -150,7 +150,7 @@ function TypeButton({
   onActive: (on: boolean) => void
   onPick: () => void
 }) {
-  const { slot, info, area, free, priceFrom, sun } = card
+  const { slot, info, area, free, priceFrom } = card
   // żaluzje: undefined = jeszcze nie ruszane (bez animacji przy ładowaniu), 'in' / 'out' = kierunek
   const [blinds, setBlinds] = useState<'in' | 'out' | undefined>(undefined)
   const hover = useRef(false)
@@ -164,22 +164,16 @@ function TypeButton({
 
   const base = import.meta.env.BASE_URL
   const priceText = priceFrom == null ? 'wyprzedane' : `od ${formatPrice(priceFrom)}`
-  const steps = sunSteps(card.facade)
-  const ground = steps[0]
-  const last = steps[steps.length - 1]
-  const higher = last && ground && steps.length > 1
-    ? [
-        last.from !== ground.from ? `już od ${formatHour(last.from)}` : '',
-        last.to !== ground.to ? `do ${formatHour(last.to)}` : '',
-      ].filter(Boolean).join(' i ')
-    : ''
-  const groundHours = ground ? `${formatHour(ground.from)}–${formatHour(ground.to)}` : ''
-  const higherFloor = last?.floors[0] === 0 ? 'parter' : `od ${last?.floors[0]}. piętra`
-  const sunText = ground
-    ? `salon ${groundHours}${higher ? ` · ${higherFloor} ${higher}` : ''}`
+  // jedna opowieść o słońcu na całej stronie: tak jak w hero — 3. piętro jako odniesienie, parter jako różnica
+  const ref = sunWindow(card.facade, 3)
+  const low = sunWindow(card.facade, 0)
+  const span = (w: { from: number; to: number }) => `${formatHour(w.from)}–${formatHour(w.to)}`
+  const lowDiffers = Boolean(ref && low && (Math.abs(ref.from - low.from) > 0.05 || Math.abs(ref.to - low.to) > 0.05))
+  const sunText = ref
+    ? `salon ${span(ref)} (3. piętro)${lowDiffers && low ? ` · parter ${span(low)}` : ''}`
     : 'bez bezpośredniego słońca'
-  const sunLabel = ground
-    ? `słońce w salonie ${groundHours}, ${ground.floors[0] === 0 ? 'parter' : `od ${ground.floors[0]}. piętra`}${higher ? ` · ${higherFloor} ${higher}` : ''}`
+  const sunLabel = ref
+    ? `słońce w salonie ${span(ref)} na 3. piętrze${lowDiffers && low ? `, na parterze ${span(low)}` : ''}`
     : sunText
   const label = `${info.name}, ${info.note}, ${formatArea(area)}, ${priceText}${
     priceFrom == null ? '' : `, ${freeLabel(free)}`
@@ -264,11 +258,11 @@ function TypeButton({
         <span className="typecard__name">{info.name}</span>
         <span className="typecard__price">{priceText}</span>
         <span className="typecard__facts">
-          {formatArea(area)} · {info.note}
+          {info.note}
         </span>
         <span className="typecard__free">{priceFrom != null ? freeLabel(free) : ''}</span>
         <span className="typecard__sun">
-          <SunBar sun={sun ? { ...sun, total: sun.to - sun.from } : null} />
+          <SunBar sun={ref} />
           <span className="typecard__sun-label">
             {sunText}
           </span>
