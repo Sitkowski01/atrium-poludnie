@@ -4,6 +4,7 @@ import { MOMENTS } from '../domain/light'
 import { floorLabel, formatArea, formatPrice } from '../domain/format'
 import type { Facade } from '../domain/types'
 import { useStore } from '../state/store'
+import { SunMomentGlyph } from './SunControl'
 import './FilterBar.css'
 
 const ROOM_OPTIONS = [1, 2, 3, 4]
@@ -131,7 +132,7 @@ export function FilterBar() {
       <div className="filter-bar__home" role="group" aria-labelledby={`${panelId}-home`}>
         <span className="filter-bar__label" id={`${panelId}-home`}>W domu</span>
         <div className="filter-bar__chips filter-bar__home-chips">
-          {MOMENTS.map((m) => (
+          {MOMENTS.map((m, index) => (
             <button
               key={m.id}
               type="button"
@@ -143,12 +144,14 @@ export function FilterBar() {
                   : [...filters.home, m.id],
               } })}
             >
+              <SunMomentGlyph position={index} />
               {m.label}
             </button>
           ))}
         </div>
       </div>
-      <div className="filter-bar__group filter-bar__group--wide" role="group" aria-labelledby={`${panelId}-rooms`}>
+      <div className="filter-bar__pair">
+      <div className="filter-bar__group" role="group" aria-labelledby={`${panelId}-rooms`}>
         <span className="filter-bar__label" id={`${panelId}-rooms`}>Pokoje</span>
         <div className="filter-bar__chips">
           <button
@@ -167,7 +170,7 @@ export function FilterBar() {
               aria-pressed={filters.rooms.includes(n)}
               onClick={() => toggleRoom(n)}
             >
-              {n}
+              <span className="filter-bar__number">{n}</span>
             </button>
           ))}
         </div>
@@ -190,7 +193,12 @@ export function FilterBar() {
         </div>
       </div>
 
-      <label className="filter-bar__group">
+      </div>
+
+      <div className="filter-bar__row">
+        <span className="filter-bar__label">Cena i metraż</span>
+        <div className="filter-bar__ranges">
+      <label className="filter-bar__range">
         <span className="filter-bar__label filter-bar__label--row">
           Cena do <strong>{formatPrice(filters.priceMax)}</strong>
         </span>
@@ -208,7 +216,7 @@ export function FilterBar() {
         />
       </label>
 
-      <label className="filter-bar__group">
+      <label className="filter-bar__range">
         <span className="filter-bar__label filter-bar__label--row">
           Metraż od <strong>{formatArea(filters.areaMin)}</strong>
         </span>
@@ -225,9 +233,14 @@ export function FilterBar() {
           }
         />
       </label>
+        </div>
+      </div>
 
-      <div className="filter-bar__group" role="group" aria-labelledby={`${panelId}-floor`}>
-        <span className="filter-bar__label" id={`${panelId}-floor`}>Piętro</span>
+      <div className="filter-bar__row">
+        <span className="filter-bar__label">Piętro i pokaż</span>
+        <div className="filter-bar__last">
+      <div role="group" aria-labelledby={`${panelId}-floor`}>
+        <span className="visually-hidden" id={`${panelId}-floor`}>Piętro</span>
         <div className="filter-bar__floors">
           <label className="field">
             <span className="visually-hidden">Piętro od</span>
@@ -252,8 +265,8 @@ export function FilterBar() {
         </div>
       </div>
 
-      <div className="filter-bar__group filter-bar__checks" role="group" aria-labelledby={`${panelId}-show`}>
-        <span className="filter-bar__label" id={`${panelId}-show`}>Pokaż</span>
+      <div className="filter-bar__checks" role="group" aria-labelledby={`${panelId}-show`}>
+        <span className="visually-hidden" id={`${panelId}-show`}>Pokaż</span>
         <div className="filter-bar__check-options">
         <label className="filter-bar__check">
           <input
@@ -263,7 +276,7 @@ export function FilterBar() {
               dispatch({ type: 'setFilters', patch: { onlyAvailable: e.target.checked } })
             }
           />
-          Ukryj sprzedane
+          <span>Ukryj sprzedane</span>
         </label>
         <label className="filter-bar__check">
           <input
@@ -273,7 +286,7 @@ export function FilterBar() {
               dispatch({ type: 'setFilters', patch: { onlyFavourites: e.target.checked } })
             }
           />
-          Tylko ulubione ({favourites.length})
+          <span>Tylko ulubione ({favourites.length})</span>
         </label>
         </div>
       </div>
@@ -282,7 +295,7 @@ export function FilterBar() {
         <div className="filter-bar__reset">
           <button
             type="button"
-            className="btn btn--ghost"
+            className="filter-bar__reset-button"
             onClick={(e) => {
               // przycisk zaraz zniknie — fokus wraca na pierwszą kontrolkę filtrów
               e.currentTarget.closest('.filter-bar')?.querySelector<HTMLElement>('button')?.focus()
@@ -293,6 +306,8 @@ export function FilterBar() {
           </button>
         </div>
       )}
+        </div>
+      </div>
         </div>
       </div>
     </section>
