@@ -445,8 +445,8 @@ input[type='range']:focus-visible::-moz-range-thumb {
   gap: 24px;
   height: var(--header-h);
   padding: 0 clamp(16px, 4vw, 56px);
-  background: linear-gradient(var(--day), var(--day)), rgb(239 235 227 / 0.9);
-  backdrop-filter: blur(12px);
+  /* prawie pełny papier: rozmyta treść pod paskiem wyglądała jak plamy na arkuszu */
+  background: linear-gradient(var(--day), var(--day)), rgb(239 235 227 / 0.97);
   border-bottom: 1px solid var(--line);
 }
 .topbar__logo {

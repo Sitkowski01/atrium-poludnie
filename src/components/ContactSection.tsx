@@ -155,8 +155,8 @@ export function ContactSection() {
               <dd>35 mieszkań · 7 kondygnacji</dd>
             </div>
             <div>
-              <dt>Rendery</dt>
-              <dd>Blender Cycles</dd>
+              <dt>Rysunek</dt>
+              <dd>A-05 · listopad 2026</dd>
             </div>
           </dl>
         </div>

@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useRef, useState, type FocusEvent } from 'react'
 import { formatArea, formatHour, formatPrice, freeLabel } from '../domain/format'
-import { sunRange, sunWindow } from '../domain/sun'
+import { sunRange, sunSteps } from '../domain/sun'
 import type { Facade } from '../domain/types'
 import { useStore, type Spotlight } from '../state/store'
 import { SunBar } from './SunBar'
 import './TypeGallery.css'
+
+/** największy typ (cztery pokoje) wyznacza skalę arkusza */
+const MAX_AREA = 86.9
 
 interface TypeInfo {
   name: string
@@ -157,19 +160,22 @@ function TypeButton({
 
   const base = import.meta.env.BASE_URL
   const priceText = priceFrom == null ? 'wyprzedane' : `od ${formatPrice(priceFrom)}`
-  const ground = sunWindow(card.facade, 0)
-  const higher = sun && ground
+  const steps = sunSteps(card.facade)
+  const ground = steps[0]
+  const last = steps[steps.length - 1]
+  const higher = last && ground && steps.length > 1
     ? [
-        formatHour(sun.from) !== formatHour(ground.from) ? `od ${formatHour(sun.from)}` : '',
-        formatHour(sun.to) !== formatHour(ground.to) ? `do ${formatHour(sun.to)}` : '',
+        last.from !== ground.from ? `już od ${formatHour(last.from)}` : '',
+        last.to !== ground.to ? `do ${formatHour(last.to)}` : '',
       ].filter(Boolean).join(' i ')
     : ''
-  const groundHours = ground ? `od ${formatHour(ground.from)} do ${formatHour(ground.to)}` : ''
+  const groundHours = ground ? `${formatHour(ground.from)}–${formatHour(ground.to)}` : ''
+  const higherFloor = last?.floors[0] === 0 ? 'parter' : `od ${last?.floors[0]}. piętra`
   const sunText = ground
-    ? `słońce ${groundHours}${higher ? `, wyżej ${higher}` : ''}`
+    ? `salon ${groundHours}${higher ? ` · ${higherFloor} ${higher}` : ''}`
     : 'bez bezpośredniego słońca'
   const sunLabel = ground
-    ? `słońce w salonie ${groundHours} na parterze${higher ? `, na wyższych piętrach ${higher}` : ''}`
+    ? `słońce w salonie ${groundHours}, ${ground.floors[0] === 0 ? 'parter' : `od ${ground.floors[0]}. piętra`}${higher ? ` · ${higherFloor} ${higher}` : ''}`
     : sunText
   const label = `${info.name}, ${info.note}, ${formatArea(area)}, ${priceText}${
     priceFrom == null ? '' : `, ${freeLabel(free)}`
@@ -208,7 +214,16 @@ function TypeButton({
         onPick()
       }}
     >
-      <span className="typecard__media">
+      {/* rzuty w jednej skali: kawalerka jest na arkuszu mniejsza niż cztery pokoje (skala ~ √metrażu) */}
+      <span className="typecard__media" style={{ ['--plan' as string]: Math.sqrt(area / MAX_AREA).toFixed(3) }}>
+        {featured && (
+          <span className="typecard__sheet" aria-hidden="true">
+            rzuty w jednej skali
+          </span>
+        )}
+        <span className="typecard__area" aria-hidden="true">
+          {formatArea(area)}
+        </span>
         {/* najpierw układ (makiety różnią się między typami), żaluzje odsłaniają światło we wnętrzu */}
         <img
           className="typecard__img typecard__img--base"

@@ -46,7 +46,8 @@
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius);
-  background: var(--paper-2);
+  background: var(--card);
+  box-shadow: inset 0 0 0 1px var(--line);
 }
 .typecard--featured .typecard__media {
   aspect-ratio: 16 / 9;
@@ -58,10 +59,43 @@
   height: 100%;
   object-fit: cover;
 }
-/* makieta z góry: kwadratowa, w kadrze 4:3 ucinamy tylko trochę zieleni u góry i u dołu */
+/* rzut leży na arkuszu: cały widoczny, w skali wspólnej dla typów, z oddechem papieru dookoła */
+.typecard__img.typecard__img--base {
+  inset: 3% 0;
+  height: 94%;
+  object-fit: contain;
+  transform: scale(var(--plan, 1));
+}
+.typecard__sheet,
+.typecard__area {
+  position: absolute;
+  z-index: 1;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  pointer-events: none;
+  transition: opacity var(--hover) var(--ease-hover);
+}
+.typecard__sheet {
+  top: 10px;
+  left: 12px;
+}
+.typecard__area {
+  left: 12px;
+  bottom: 10px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+/* gdy żaluzje odsłaniają wnętrze, podpisy arkusza znikają */
+.typecard[data-blinds='in'] .typecard__sheet,
+.typecard[data-blinds='in'] .typecard__area {
+  opacity: 0;
+}
+/* makieta z góry: płynne powiększenie przy najechaniu (skala arkusza niżej) */
 .typecard__img--base {
   object-position: 50% 50%;
-  transform: scale(1.02);
   transition: transform 0.9s var(--ease-hover);
 }
 .typecard__img--reveal {
@@ -191,7 +225,7 @@
 }
 @media (hover: hover) {
   .typecard:hover .typecard__img--base {
-    transform: scale(1.05);
+    transform: scale(calc(var(--plan, 1) * 1.05));
   }
   .typecard:hover .typecard__name::after {
     opacity: 1;
@@ -212,11 +246,38 @@
   background-size: 100% 100%;
 }
 
-@container chapter (max-width: 479px) {
+/* wąska kolumna (1024 px obok bryły): nadal dwa wpisy w rzędzie, cena pod nazwą */
+@container chapter (max-width: 520px) {
+  .typegal {
+    column-gap: 16px;
+  }
+  .typecard {
+    grid-row: span 6;
+    grid-template-areas:
+      'media media'
+      'num num'
+      'name name'
+      'price free'
+      'facts facts'
+      'sun sun';
+  }
+  .typecard__name {
+    font-size: var(--fd-1);
+  }
+  .typecard--featured .typecard__name {
+    font-size: var(--fd-2);
+  }
+  .typecard__free {
+    justify-self: end;
+  }
+}
+/* telefon: jeden wpis w rzędzie */
+@container chapter (max-width: 360px) {
   .typegal {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .typecard[data-blinds] .typecard__blinds span {
@@ -244,4 +305,9 @@
     border: 1px solid var(--pick-line);
     border-radius: var(--radius-s);
   }
+}
+
+/* ostatni rząd wpisów nie dokłada odstępu przed następnym rozdziałem */
+.typecard:nth-last-child(-n + 2):not(.typecard--featured) .typecard__sun {
+  margin-bottom: 0;
 }
