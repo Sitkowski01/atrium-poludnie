@@ -144,12 +144,12 @@ export function ContactSection() {
           </p>
           {/* podpis autora: strona jest pracą do portfolio, kontakt prowadzi do prawdziwego wykonawcy */}
           <p className="site-footer__credit">
-            Projekt i wykonanie: Mikołaj Sitek,{' '}
-            <a href="https://swndevelopment.pl" target="_blank" rel="noopener">
-              SWN Development
+            Projekt i wykonanie:{' '}
+            <a href="https://sitekmikolaj.pl" target="_blank" rel="noopener">
+              Mikołaj Sitek
             </a>
             <br />
-            <a href="mailto:mikolaj@swndevelopment.pl">mikolaj@swndevelopment.pl</a>
+            <a href="mailto:sitekmikolaj01@gmail.com">sitekmikolaj01@gmail.com</a>
           </p>
         </div>
         <nav className="site-footer__cell" aria-label="Stopka">
