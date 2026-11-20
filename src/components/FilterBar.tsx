@@ -127,7 +127,7 @@ export function FilterBar() {
         inert={collapsed}
       >
         <div className="filter-bar__body">
-      <fieldset className="filter-bar__group">
+      <fieldset className="filter-bar__group filter-bar__group--wide">
         <legend className="filter-bar__label">Pokoje</legend>
         <div className="filter-bar__chips">
           <button

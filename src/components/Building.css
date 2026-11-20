@@ -52,6 +52,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* krawędzie ramki wygaszone maską: poświata nigdy nie kończy się prostą linią */
+  mask-image: radial-gradient(closest-side, #000 70%, transparent);
   background: radial-gradient(
     ellipse 62% 56% at 50% 38%,
     rgb(var(--sky) / var(--sky-a)) 0%,
@@ -147,6 +149,14 @@
   stroke: var(--paper);
   stroke-width: 7px;
   stroke-linejoin: round;
+}
+.building__floor-chip {
+  fill: var(--paper);
+  fill-opacity: 0.88;
+  /* rośnie razem z napisem (ok. 16 px na ekranie przy każdym rozmiarze rysunku) */
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(max(1, var(--svg-k, 1)));
 }
 .building__compass {
   font-family: var(--font-body);

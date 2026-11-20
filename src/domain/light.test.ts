@@ -45,7 +45,7 @@ describe('matchMoments', () => {
     expect(all.length).toBeGreaterThan(open.length)
   })
 
-  it('sortuje wg udziału, czasu słońca, piętra i ceny', () => {
+  it('sortuje wg udziału, początku słońca w domu, czasu słońca, piętra i ceny', () => {
     const res = matchMoments(APARTMENTS, pick('poranek', 'popoludnie'))
     for (let i = 1; i < res.length; i++) {
       const a = res[i - 1]
@@ -53,6 +53,8 @@ describe('matchMoments', () => {
       if (Math.abs(a.share - b.share) >= 0.005) {
         expect(a.share).toBeGreaterThan(b.share)
       } else {
+        expect(a.firstSunAt).toBeLessThanOrEqual(b.firstSunAt)
+        if (a.firstSunAt !== b.firstSunAt) continue
         const durationA = sunWindow(a.apartment.facade, a.apartment.floor)?.total ?? 0
         const durationB = sunWindow(b.apartment.facade, b.apartment.floor)?.total ?? 0
         expect(durationA).toBeGreaterThanOrEqual(durationB)
@@ -64,6 +66,33 @@ describe('matchMoments', () => {
         }
       }
     }
+  })
+
+  it('przy równym udziale wygrywa wcześniejsze słońce w godzinach w domu, nie dłuższy dzień', () => {
+    const base = APARTMENTS[0]
+    const east = { ...base, id: 'E', facade: 'E' as const, floor: 6, status: 'wolne' as const }
+    const south = { ...east, id: 'S', facade: 'S' as const }
+    const moments = [
+      { id: 'late', label: '', note: '', from: 16, to: 17 },
+      { id: 'early', label: '', note: '', from: 6, to: 7 },
+      { id: 'shared', label: '', note: '', from: 10, to: 11 },
+    ]
+    const result = matchMoments([south, east], moments)
+    expect(result.map((m) => m.apartment.id)).toEqual(['E', 'S'])
+    expect(result[0].share).toBeCloseTo(result[1].share, 10)
+    expect(result.map((m) => m.firstSunAt)).toEqual([6, 10])
+    expect(sunWindow('S', 6)!.total).toBeGreaterThan(sunWindow('E', 6)!.total)
+    expect(matchMoments([east, south], [...moments].reverse())).toEqual(result)
+  })
+
+  it('początek słońca ogranicza do wybranych godzin, pomijając pory bez słońca', () => {
+    const apartment = { ...APARTMENTS[0], facade: 'S' as const, floor: 6, status: 'wolne' as const }
+    const result = matchMoments([apartment], [
+      { id: 'night', label: '', note: '', from: 4, to: 5 },
+      { id: 'day', label: '', note: '', from: 10, to: 12 },
+    ])
+    expect(result).toHaveLength(1)
+    expect(result[0].firstSunAt).toBe(10)
   })
 
   it('dla wszystkich pór zaczyna od wyższych pięter od południa', () => {

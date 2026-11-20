@@ -21,7 +21,8 @@ function currentSection(): Section {
   let active: Section = 'budynek'
   for (const id of CHAPTERS) {
     const el = document.getElementById(id)
-    if (el && el.getBoundingClientRect().top <= header + 120) active = id
+    // rozdział jest aktywny, gdy jego nagłówek minie 40% wysokości okna (wcześniej: tuż pod paskiem — za późno)
+    if (el && el.getBoundingClientRect().top <= Math.max(header + 120, window.innerHeight * 0.4)) active = id
   }
   return active
 }

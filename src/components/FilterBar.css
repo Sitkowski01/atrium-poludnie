@@ -281,3 +281,8 @@
   min-width: 40px;
   padding: 0 12px;
 }
+
+/* „Dowolne 1 2 3 4” zawsze w jednym rzędzie: grupa pokoi na całą szerokość panelu filtrów */
+.filter-bar__group--wide {
+  grid-column: 1 / -1;
+}

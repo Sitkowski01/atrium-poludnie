@@ -232,9 +232,13 @@ export function Building() {
               {Array.from({ length: FLOORS }, (_, f) => {
                 const p = pt('S', LEN.S, f * HF + HF / 2)
                 return (
-                  <text key={f} className="building__floor" x={p[0] - 28} y={p[1] + 4} textAnchor="end">
-                    {f === 0 ? 'P' : f}
-                  </text>
+                  <g key={f}>
+                    {/* papierowa plakietka pod numerem: czytelny także na koronie drzewa */}
+                    <rect className="building__floor-chip" x={p[0] - 41} y={p[1] - 8} width={16} height={16} rx={2} />
+                    <text className="building__floor" x={p[0] - 33} y={p[1] + 4} textAnchor="middle">
+                      {f === 0 ? 'P' : f}
+                    </text>
+                  </g>
                 )
               })}
               <text

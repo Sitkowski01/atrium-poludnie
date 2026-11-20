@@ -16,6 +16,7 @@
 
 .sun-chart__plot {
   position: relative;
+  margin-top: 24px;
 }
 
 .sun-chart__peak {
@@ -108,7 +109,7 @@
 }
 
 .sun-chart__summary {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 13px;
   line-height: 1.4;
   color: var(--ink-2);

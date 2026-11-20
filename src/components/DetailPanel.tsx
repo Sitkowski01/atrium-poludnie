@@ -19,20 +19,7 @@ import { MortgageCalculator } from './MortgageCalculator'
 import { SunChart } from './SunChart'
 import { WalkViewer } from './WalkViewer'
 
-/** katalog renderów danego układu mieszkania (ten sam podział co panoramy) */
-const variant = (a: Apartment) => `s${a.slot}${a.balcony ? '' : 'n'}`
-const asset = (dir: string, a: Apartment) => `${import.meta.env.BASE_URL}${dir}/${variant(a)}.webp`
 const PLAN_SCALE: Record<number, number> = { 0: 0.835, 1: 0.727, 2: 1, 3: 0.744, 4: 0.653 }
-
-function Cover({ apartment }: { apartment: Apartment }) {
-  const [ok, setOk] = useState(true)
-  if (!ok) return <div className="detail__cover detail__cover--empty" aria-hidden="true" />
-  return (
-    <div className="detail__cover">
-      <img src={asset('okladki', apartment)} alt="" onError={() => setOk(false)} />
-    </div>
-  )
-}
 
 function Plan({ apartment }: { apartment: Apartment }) {
   const [mode, setMode] = useState<'2d' | '3d'>('3d')
@@ -143,7 +130,6 @@ export function DetailPanel() {
       {a && (
         <div className="detail__body" key={a.id}>
           <header className="detail__head">
-            <Cover apartment={a} />
             <div className="detail__head-top">
               <button
                 type="button"

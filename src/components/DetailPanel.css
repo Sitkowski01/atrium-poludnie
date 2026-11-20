@@ -3,6 +3,7 @@ html:has(dialog.detail[open]) {
 }
 
 dialog.detail {
+  --panel-gap: 48px;
   position: fixed;
   inset: 0 0 0 auto;
   width: min(620px, 100vw);
@@ -67,37 +68,13 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   }
 }
 
-/* ---------- nagłówek z okładką ---------- */
+/* ---------- nagłówek ---------- */
 
 .detail__head {
   position: relative;
   display: grid;
   align-content: end;
   overflow: hidden;
-}
-.detail__cover {
-  position: relative;
-  height: 160px;
-  border-bottom: 1px solid var(--line);
-  overflow: hidden;
-}
-.detail__cover img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 62%;
-  animation: detail-cover 1.2s var(--ease) backwards;
-}
-@keyframes detail-cover {
-  from {
-    transform: scale(1.06);
-  }
-}
-.detail__cover--empty {
-  background:
-    radial-gradient(500px 260px at 70% 20%, var(--card), transparent 70%),
-    var(--paper-2);
 }
 .detail__head-top {
   position: absolute;
@@ -149,7 +126,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 
 .detail__head-copy .eyebrow {
   justify-self: start;
-  padding: 2px 0;
+  min-height: 36px;
+  padding: 2px 92px 2px 0;
   background: color-mix(in srgb, var(--paper) 85%, transparent);
 }
 
@@ -174,6 +152,11 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   font-variant-numeric: tabular-nums;
   color: var(--ink-2);
   font-size: 13px;
+}
+.detail__price .badge {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
 .detail__facts {
@@ -215,7 +198,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__section {
   display: grid;
   gap: 14px;
-  padding-top: 40px;
+  padding-top: var(--panel-gap);
   border-top: 1px solid var(--line);
 }
 .detail__section:has(#detail-walk) {
@@ -285,7 +268,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 }
 .detail__plan3d {
   position: relative;
-  aspect-ratio: 1;
+  /* pasek 48 px u góry na podziałkę: nic nie leży na rzucie */
+  aspect-ratio: 1 / 1.12;
   margin: 0;
   box-shadow: inset 0 0 0 1px var(--line);
   border-radius: var(--radius);
@@ -294,10 +278,10 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 }
 .detail__plan3d img {
   position: absolute;
-  inset: 0;
+  inset: 48px 0 0;
   display: block;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 48px);
   object-fit: contain;
 }
 .detail__plan-area {
@@ -310,7 +294,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__scalebar {
   position: absolute;
   right: 14px;
-  bottom: 12px;
+  top: 12px;
   display: grid;
   grid-template-columns: auto auto;
   justify-content: space-between;
@@ -428,11 +412,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   .detail__body {
     gap: 16px;
   }
-  .detail__cover {
-    height: 120px;
-  }
   .detail__section:has(#detail-walk) {
-    padding-top: 16px;
     gap: 8px;
   }
   .detail__facts div {

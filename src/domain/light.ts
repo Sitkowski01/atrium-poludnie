@@ -26,6 +26,8 @@ export interface Match {
   apartment: Apartment
   /** jaka część czasu w domu ma słońce w salonie (0..1), ważona długością pór */
   share: number
+  /** Drugi klucz kolejności: najwcześniejsze słońce w wybranych godzinach w domu. */
+  firstSunAt: number
 }
 
 /** Łączna długość wybranych pór w domu, w godzinach. */
@@ -35,7 +37,8 @@ export function homeHours(moments: readonly Moment[]): number {
 
 /**
  * Mieszkania, w których słońce wpada do salonu przez większość czasu, gdy użytkownik jest w domu.
- * Sprzedane pomijamy. Kolejność: udział, całodzienne słońce, piętro, cena.
+ * Sprzedane pomijamy. Kolejność: udział, najwcześniejsze słońce w domu,
+ * całodzienne słońce, piętro, cena, identyfikator.
  * Różnicę udziału poniżej 0.005 traktujemy jako remis. Brak pór = brak wyników.
  */
 export function matchMoments(
@@ -47,16 +50,27 @@ export function matchMoments(
   if (total <= 0) return []
   return apartments
     .filter((a) => opts.includeSold || a.status !== 'sprzedane')
-    .map((a) => ({
-      apartment: a,
-      share: moments.reduce((s, m) => s + sunShare(a.facade, a.floor, m.from, m.to) * (m.to - m.from), 0) / total,
-    }))
+    .map((a) => {
+      const sun = sunWindow(a.facade, a.floor)
+      const firstSunAt = moments.reduce((earliest, moment) => {
+        if (!sun) return earliest
+        const from = Math.max(moment.from, sun.from)
+        const to = Math.min(moment.to, sun.to)
+        return from < to ? Math.min(earliest, from) : earliest
+      }, Infinity)
+      return {
+        apartment: a,
+        share: moments.reduce((s, m) => s + sunShare(a.facade, a.floor, m.from, m.to) * (m.to - m.from), 0) / total,
+        firstSunAt,
+      }
+    })
     .filter((m) => m.share >= MATCH_FROM)
     .sort((x, y) => {
       if (Math.abs(y.share - x.share) >= 0.005) return y.share - x.share
       const a = x.apartment
       const b = y.apartment
       return (
+        x.firstSunAt - y.firstSunAt ||
         (sunWindow(b.facade, b.floor)?.total ?? 0) - (sunWindow(a.facade, a.floor)?.total ?? 0) ||
         b.floor - a.floor ||
         a.price - b.price ||

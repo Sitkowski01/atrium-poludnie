@@ -19,9 +19,9 @@
 }
 .contact__main {
   min-width: 0;
-  /* ta sama gruba kreska co nad biurem: obie kolumny zaczynają się na jednej linii */
+  /* ta sama kreska co nad biurem i nad rozdziałami (1 px); 2 px ma tylko tabliczka w stopce */
   padding-top: 18px;
-  border-top: 2px solid var(--ink);
+  border-top: 1px solid var(--line);
 }
 
 /* ten sam znacznik rozdziału co w hero: numer, kreska, nazwa */
@@ -93,7 +93,7 @@
 .contact__office {
   min-width: 0;
   padding: 18px 0 0;
-  border-top: 2px solid var(--ink);
+  border-top: 1px solid var(--line);
 }
 .contact__office-title {
   margin: 0 0 14px;

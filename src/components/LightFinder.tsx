@@ -212,7 +212,7 @@ export function LightFinder() {
 
         {matches.length > 0 && (
           <ol className="light__list" id={listId}>
-            {shown.map(({ apartment: a, share }) => (
+            {shown.map(({ apartment: a, share, firstSunAt }) => (
               <li key={a.id}>
                 <button
                   type="button"
@@ -236,13 +236,19 @@ export function LightFinder() {
                   </span>
                   <span className="light__flat-timeline">
                     <MatchBar sun={sunWindow(a.facade, a.floor)} moments={moments} />
-                    <span className="light__flat-share">
-                      <span aria-hidden="true">{commonHours ? `słońce od ${formatHour(sunWindow(a.facade, a.floor)!.from)}` : `${hoursText(share)} h`}</span>
-                      <span className="visually-hidden">{hoursText(share)} godzin w domu ze słońcem w salonie</span>
+                    <span className="light__flat-reason">
+                      słońce od {formatHour(firstSunAt)}
+                      <span className="visually-hidden"> w Twoich godzinach; przy remisie wcześniej znaczy wyżej</span>
                     </span>
                   </span>
                   </span>
-                  <span className="apt-list__price"><strong>{formatPrice(a.price)}</strong></span>
+                  <span className="apt-list__price">
+                    <span className="light__flat-share">
+                      <span aria-hidden="true">{hoursText(share)} h</span>
+                      <span className="visually-hidden">{hoursText(share)} godzin w domu ze słońcem w salonie</span>
+                    </span>
+                    <strong>{formatPrice(a.price)}</strong>
+                  </span>
                 </button>
               </li>
             ))}
@@ -261,6 +267,19 @@ export function LightFinder() {
           <button type="button" className="light__more" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(!expanded)}>
             {expanded ? 'Zwiń listę' : `Pokaż wszystkie ${matches.length} →`}
           </button>
+        )}
+        {matches.length > 0 && (
+          <a className="light__building-link" href="#budynek" onClick={(event) => {
+            const building = document.getElementById('budynek')
+            if (!building) return
+            event.preventDefault()
+            const reduce = typeof window.matchMedia === 'function' &&
+              window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            building.scrollIntoView({ behavior: reduce ? 'instant' : 'smooth', block: 'start' })
+            building.focus({ preventScroll: true })
+          }}>
+            Zobacz na bryle ↑
+          </a>
         )}
       </div>
     </div>

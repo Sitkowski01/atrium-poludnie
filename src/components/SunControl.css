@@ -13,12 +13,13 @@
 /* okrągły przycisk ze złotym obrysem; podpis tylko dla czytników i szerokich ekranów */
 .sun-control__play.btn {
   flex: none;
-  width: 52px;
-  height: 52px;
-  min-height: 52px;
+  /* ten sam kształt i wysokość co przyciski pór obok */
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
   padding: 0;
   border-color: var(--accent);
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: transparent;
   color: var(--accent);
 }

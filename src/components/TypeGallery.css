@@ -99,8 +99,9 @@
 .typecard__scalebar {
   position: absolute;
   z-index: 1;
+  /* w pustym prawym górnym rogu arkusza: nigdy na rzucie ani balkonie */
   right: 14px;
-  bottom: 12px;
+  top: 12px;
   display: grid;
   grid-template-columns: auto auto;
   justify-content: space-between;
