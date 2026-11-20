@@ -94,7 +94,7 @@ export function LightFinder() {
   const spot = useMemo<Spotlight | null>(
     () =>
       matches.length
-        ? { ids: matches.map((m) => m.apartment.id), label: `Słońce, kiedy jesteś w domu: ${moments.map((m) => m.label.toLowerCase()).join(', ')}` }
+        ? { ids: matches.map((m) => m.apartment.id), label: `W domu: ${moments.map((m) => m.label.toLowerCase()).join(', ')}` }
         : null,
     [matches, moments],
   )

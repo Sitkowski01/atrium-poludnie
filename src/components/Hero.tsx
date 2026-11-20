@@ -200,7 +200,7 @@ export function Hero() {
               <span className="hero__facts-long">cena </span>od
             </dt>
             <dd>
-              <span aria-hidden="true">{thousands.format(priceShown)} tys. zł</span>
+              <span aria-hidden="true">{thousands.format(priceShown * 1000)} zł</span>
               <span className="visually-hidden">{thousands.format(cheapest)} zł</span>
             </dd>
           </div>

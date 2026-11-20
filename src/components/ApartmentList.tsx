@@ -11,6 +11,7 @@ import {
 } from '../domain/format'
 import { sunWindow } from '../domain/sun'
 import { MOMENTS, homeHours, matchMoments } from '../domain/light'
+import { applyFilters } from '../domain/filter'
 import { activeFilterChips } from '../domain/activeFilters'
 import type { SortKey } from '../domain/types'
 import { useStore, type Spotlight } from '../state/store'
@@ -93,6 +94,12 @@ export function ApartmentList() {
   const filtered = activeFilterChips(state.filters, limits).length > 0
   const { hoveredId, selectedId, favourites } = state
   const moments = useMemo(() => MOMENTS.filter((m) => state.filters.home.includes(m.id)), [state.filters.home])
+  // pusty wynik przez pory w domu: bez nich byłyby mieszkania → podpowiadamy porę ze słońcem (popołudnie, potem przedpołudnie)
+  const homeBlocks =
+    visible.length === 0 &&
+    state.filters.home.length > 0 &&
+    applyFilters(apartments, { ...state.filters, home: [] }, state.favourites).length > 0
+  const suggestId = ['popoludnie', 'przedpoludnie', 'poranek', 'poludnie'].find((id) => !state.filters.home.includes(id)) ?? 'popoludnie'
   const home = useMemo(() => moments.map((m) => [m.from, m.to] as const), [moments])
   const totalHours = homeHours(moments)
   const shares = useMemo(() => new Map(matchMoments(visible, moments, { includeSold: true })
@@ -250,18 +257,40 @@ export function ApartmentList() {
         <div className="apt-list__empty">
           <EmptyArt />
           <h3 className="apt-list__empty-title">Nic tu nie pasuje</h3>
-          <p>Żadne mieszkanie nie spełnia tych filtrów. Poluzuj cenę albo metraż.</p>
-          <button
-            type="button"
-            className="btn btn--primary"
-            onClick={() => {
-              // przycisk zaraz zniknie — fokus przechodzi na licznik wyników
-              countRef.current?.focus()
-              dispatch({ type: 'resetFilters' })
-            }}
-          >
-            Wyczyść filtry
-          </button>
+          {homeBlocks ? (
+            <>
+              {/* blokuje filtr pór w domu, nie cena ani metraż: mówimy to wprost i proponujemy porę ze słońcem */}
+              <p>
+                Gdy jesteś w domu ({moments.map((m) => m.label.toLowerCase()).join(', ')}), słońce nie wpada do żadnego
+                wolnego salonu. Dodaj porę, w której salony mają słońce.
+              </p>
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={() => {
+                  countRef.current?.focus()
+                  dispatch({ type: 'setFilters', patch: { home: MOMENTS.map((m) => m.id).filter((id) => id === suggestId || state.filters.home.includes(id)) } })
+                }}
+              >
+                Dodaj {MOMENTS.find((m) => m.id === suggestId)?.label.toLowerCase()}
+              </button>
+            </>
+          ) : (
+            <>
+              <p>Żadne mieszkanie nie spełnia tych filtrów. Poluzuj cenę albo metraż.</p>
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={() => {
+                  // przycisk zaraz zniknie — fokus przechodzi na licznik wyników
+                  countRef.current?.focus()
+                  dispatch({ type: 'resetFilters' })
+                }}
+              >
+                Wyczyść filtry
+              </button>
+            </>
+          )}
         </div>
       ) : (
         <>
