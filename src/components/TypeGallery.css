@@ -88,9 +88,36 @@
   letter-spacing: 0.04em;
   text-transform: none;
 }
+/* podziałka: 5 m w skali arkusza (43,6% boku rzutu; duży wpis: rzut zajmuje 85% wysokości kadru 16:9) */
+.typecard__scalebar {
+  position: absolute;
+  z-index: 1;
+  right: 14px;
+  bottom: 12px;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: space-between;
+  width: calc(0.436 * 0.85 * 56.25%);
+  row-gap: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  transition: opacity var(--hover) var(--ease-hover);
+}
+.typecard__scalebar-bar {
+  grid-column: 1 / -1;
+  height: 6px;
+  border: 1px solid var(--ink);
+  border-top: 0;
+  /* naprzemienne pola co metr, jak na podziałce rysunku */
+  background: repeating-linear-gradient(90deg, var(--ink) 0 20%, transparent 20% 40%);
+}
 /* gdy żaluzje odsłaniają wnętrze, podpisy arkusza znikają */
 .typecard[data-blinds='in'] .typecard__sheet,
-.typecard[data-blinds='in'] .typecard__area {
+.typecard[data-blinds='in'] .typecard__area,
+.typecard[data-blinds='in'] .typecard__scalebar {
   opacity: 0;
 }
 /* makieta z góry: płynne powiększenie przy najechaniu (skala arkusza niżej) */

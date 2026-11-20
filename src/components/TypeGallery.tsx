@@ -6,8 +6,12 @@ import { useStore, type Spotlight } from '../state/store'
 import { SunBar } from './SunBar'
 import './TypeGallery.css'
 
-/** największy typ (cztery pokoje) wyznacza skalę arkusza */
-const MAX_AREA = 86.9
+/**
+ * Skala arkusza: rendery rzutów są kadrowane każdy osobno, więc mają różną liczbę pikseli na metr
+ * (zmierzone na wyciętych rzutach: 96–147 px/m). Mnożnik sprowadza wszystkie do skali największego typu;
+ * wtedy 5 m to zawsze ok. 43,6% boku rzutu i podziałka na arkuszu jest prawdziwa.
+ */
+const PLAN_SCALE: Record<number, number> = { 0: 0.835, 1: 0.727, 2: 1, 3: 0.744, 4: 0.653 }
 
 interface TypeInfo {
   name: string
@@ -215,11 +219,18 @@ function TypeButton({
       }}
     >
       {/* rzuty w jednej skali: kawalerka jest na arkuszu mniejsza niż cztery pokoje (skala ~ √metrażu) */}
-      <span className="typecard__media" style={{ ['--plan' as string]: Math.sqrt(area / MAX_AREA).toFixed(3) }}>
+      <span className="typecard__media" style={{ ['--plan' as string]: String(PLAN_SCALE[slot] ?? 1) }}>
         {featured && (
-          <span className="typecard__sheet" aria-hidden="true">
-            rzuty w jednej skali
-          </span>
+          <>
+            <span className="typecard__sheet" aria-hidden="true">
+              rzuty w jednej skali
+            </span>
+            <span className="typecard__scalebar" aria-hidden="true">
+              <span className="typecard__scalebar-bar" />
+              <span className="typecard__scalebar-label">0</span>
+              <span className="typecard__scalebar-label">5 m</span>
+            </span>
+          </>
         )}
         <span className="typecard__area" aria-hidden="true">
           {formatArea(area)}
@@ -227,7 +238,7 @@ function TypeButton({
         {/* najpierw układ (makiety różnią się między typami), żaluzje odsłaniają światło we wnętrzu */}
         <img
           className="typecard__img typecard__img--base"
-          src={`${base}rzut3d/s${slot}.webp`}
+          src={`${base}rzut3d/s${slot}-arkusz.webp`}
           alt=""
           loading="lazy"
           decoding="async"
