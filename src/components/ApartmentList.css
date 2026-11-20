@@ -549,3 +549,13 @@
     gap: 10px;
   }
 }
+
+/* słońce w wierszu: czytelny tekst, godziny wyróżnione */
+.apt-list__sun-text strong {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.apt-list__sun-icon { width: 13px; height: 13px; }

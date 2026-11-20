@@ -16,7 +16,6 @@ import { activeFilterChips } from '../domain/activeFilters'
 import type { SortKey } from '../domain/types'
 import { useStore, type Spotlight } from '../state/store'
 import { ActiveFilters } from './ActiveFilters'
-import { SunBar } from './SunBar'
 import './ApartmentList.css'
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
@@ -125,16 +124,6 @@ export function ApartmentList() {
   const collapsedRows = COLLAPSED_ROWS
   const collapsible = visible.length > collapsedRows
   const shown = collapsible && !expanded ? visible.slice(0, collapsedRows) : visible
-  // grupy: kolejne wiersze z tym samym słońcem (i tym samym wynikiem w domu) dostają JEDEN pasek nad sobą;
-  // pojedyncze mieszkanie ma pasek w wierszu. Grupy rosną tylko w dół, więc rozwinięcie listy nic nad wzrokiem nie przesuwa
-  const sunKey = (x: (typeof shown)[number]) => {
-    const w = sunWindow(x.facade, x.floor)
-    const h = home.length ? hoursFormat.format((shares.get(x.id) ?? 0) * totalHours) : ''
-    return w ? `${formatHour(w.from)}-${formatHour(w.to)}|${h}` : `brak|${h}`
-  }
-  const keys = shown.map(sunKey)
-  const runLen = keys.map((k, i) => (i > 0 && keys[i - 1] === k ? 0 : keys.slice(i).findIndex((x) => x !== k) === -1 ? keys.length - i : keys.slice(i).findIndex((x) => x !== k)))
-  const inGroup = keys.map((k, i) => (i > 0 && keys[i - 1] === k) || runLen[i] > 1)
 
   // bryła towarzyszy liście: gdy rozdział jest na ekranie, podświetla mieszkania pokazane w wierszach
   // (najechany wiersz i tak wygrywa — ma własną kartę na bryle)
@@ -311,25 +300,8 @@ export function ApartmentList() {
             ]
               .filter(Boolean)
               .join(' ')
-            const header = runLen[index] > 1 && sun
             return (
               <Fragment key={a.id}>
-              {header && (
-                <li className="apt-list__group" aria-hidden="true">
-                  <SunBar sun={sun} home={home} ticks className="apt-list__group-bar" />
-                  <span className="apt-list__group-text">
-                    słońce w salonie {formatHour(sun.from)}–{formatHour(sun.to)}
-                    {home.length > 0 && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
-                    {` · ${runLen[index]} ${flatsWord(runLen[index])}`}
-                  </span>
-                  {home.length > 0 && (
-                    <span className="apt-list__group-key">
-                      <span className="apt-list__group-key-sun" /> słońce w salonie
-                      <span className="apt-list__group-key-home" /> jesteś w domu
-                    </span>
-                  )}
-                </li>
-              )}
               <li
                 className={cls}
                 style={{ '--i': Math.min(index, 8) } as CSSProperties}
@@ -370,12 +342,18 @@ export function ApartmentList() {
                       ))}
                     </span>
                     {/* słońce w wierszu tekstem (czytelne), pasek tylko w nagłówku grupy z osią godzin */}
-                    {!inGroup[index] && (
+                    {(
                       <span className="apt-list__sun-text">
                         <svg className="apt-list__sun-icon" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
                           <circle cx="6" cy="6" r="3.2" />
                         </svg>
-                        {sun ? `słońce ${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez bezpośredniego słońca'}
+                        {sun ? (
+                          <>
+                            słońce <strong>{formatHour(sun.from)}–{formatHour(sun.to)}</strong>
+                          </>
+                        ) : (
+                          'bez bezpośredniego słońca'
+                        )}
                         {home.length > 0 && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
                       </span>
                     )}
