@@ -106,7 +106,7 @@
 /* wąski panel: szybki wybór schodzi pod suwak, opis słońca dostaje całą szerokość.
    Zapytanie nie zmienia siatki samego panelu (kontener), więc suwak i przyciski zajmują
    kolumny 2–3, a trzecia kolumna zostaje pusta. */
-@container sun-control (max-width: 640px) {
+@container sun-control (width < 560px) {
   .sun-control__play.btn {
     grid-row: 1;
     align-self: start;
@@ -117,12 +117,15 @@
     grid-column: 2 / -1;
   }
   .sun-control__presets {
-    flex-wrap: wrap;
+    grid-row: 2;
+    flex-wrap: nowrap;
     margin-top: -8px;
   }
+  .sun-control__presets .chip { flex: 1; min-height: 44px; }
+  .sun-control__play.btn { width: 44px; height: 44px; min-height: 44px; }
 }
 /* telefon: suwak na całą szerokość, pod nim odtwarzanie i szybki wybór w jednym rzędzie */
-@container sun-control (max-width: 420px) {
+@container sun-control (width < 420px) {
   .sun-control__slider {
     grid-row: 1;
     grid-column: 1 / -1;
@@ -176,7 +179,7 @@
 }
 
 /* telefon: odtwarzanie i trzy pory w jednej równej siatce, do prawej krawędzi */
-@container sun-control (max-width: 420px) {
+@container sun-control (width < 420px) {
   .sun-control__presets {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

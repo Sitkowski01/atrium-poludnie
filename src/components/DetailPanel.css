@@ -202,36 +202,27 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   padding-top: calc(var(--panel-gap) - var(--body-gap));
   border-top: 1px solid var(--line);
 }
-.detail__section:has(#detail-walk) {
-  border-top: 0;
-}
-.detail__kicker {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .2em;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  text-transform: uppercase;
-}
-.detail__kicker > span + span::before {
-  content: '';
-  display: inline-block;
-  width: 36px;
-  height: 1px;
-  margin-right: 14px;
-  vertical-align: middle;
-  background: var(--line-2);
-}
 .detail__loan { display: block; }
-.detail__loan summary { position: relative; display: grid; gap: 14px; min-height: 44px; padding-right: 32px; cursor: pointer; list-style: none; }
+.detail__loan summary { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; min-height: 44px; padding-right: 32px; cursor: pointer; list-style: none; }
 .detail__loan summary::-webkit-details-marker { display: none; }
 .detail__loan summary::after { content: '+'; position: absolute; right: 0; bottom: 0; font-size: 24px; }
 .detail__loan[open] summary::after { content: '−'; }
 .detail__loan .mortgage { margin-top: 20px; }
+
+/* Wysokość rzędu wyznaczają pomieszczenia, nie proporcje mini-mapy. */
+@media (min-width: 601px) {
+  .detail .walk:not(.walk--expanded) .walk__bar { align-items: start; }
+  .detail .walk:not(.walk--expanded) .walk__map-wrap {
+    contain: size;
+    align-self: stretch;
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: 0;
+  }
+  .detail .walk:not(.walk--expanded) .walk__map {
+    height: 100%;
+    max-height: 100%;
+  }
+}
 .detail__section-head {
   display: flex;
   align-items: baseline;
@@ -249,6 +240,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   line-height: 1.1;
 }
 .detail__hint {
+  text-align: right;
   font-size: 13px;
   letter-spacing: 0.06em;
   color: var(--ink-2);
@@ -258,14 +250,6 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 
 #detail-walk {
   white-space: nowrap;
-}
-
-@media (max-width: 560px) {
-  .detail__section-head:has(#detail-walk) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
 }
 
 .detail__switch {

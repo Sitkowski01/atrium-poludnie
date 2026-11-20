@@ -21,7 +21,12 @@ export function MortgageCalculator({ price }: { price: number }) {
   const interestShown = Math.round(useCountUp(res.totalInterest, { duration: 350 }))
 
   return (
-    <section className="mortgage" aria-label="Kalkulator raty">
+    <details className="detail__section detail__loan" aria-labelledby="detail-loan">
+      <summary>
+        <h3 id="detail-loan">Rata kredytu</h3>
+        <span className="mortgage__preview">ok. {formatPrice(monthlyFinal)} / mies.</span>
+      </summary>
+      <section className="mortgage" aria-label="Kalkulator raty">
 
       <label className="mortgage__slider">
         <span className="mortgage__label">
@@ -121,6 +126,7 @@ export function MortgageCalculator({ price }: { price: number }) {
       </div>
 
       <p className="mortgage__note">Symulacja poglądowa. Nie stanowi oferty kredytowej.</p>
-    </section>
+      </section>
+    </details>
   )
 }
