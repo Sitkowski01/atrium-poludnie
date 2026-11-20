@@ -49,7 +49,8 @@ export function ContactSection() {
   const body = moments.length ? `Dzień dobry, chcę zobaczyć mieszkanie o porze, o której bywam w domu: ${when}.` : ''
   const mailto = `mailto:kontakt@atrium-poludnie.example?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`
   return (
-    <>
+    // zakończenie strony ma co najmniej wysokość ekranu: na samym dole nie wystaje nad nim koniec listy ani bryła
+    <div className="closing">
     <section className="contact" id="kontakt" tabIndex={-1} aria-labelledby="kontakt-title">
       <div className="contact__inner">
         <div className="contact__grid">
@@ -190,6 +191,6 @@ export function ContactSection() {
         </div>
       </div>
     </footer>
-    </>
+    </div>
   )
 }
