@@ -10,7 +10,7 @@
 
 .inquiry .field__label {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: .16em;
   text-transform: uppercase;
@@ -65,7 +65,7 @@
   padding: 10px 12px;
   border: 1px solid transparent;
   border-radius: var(--radius-s);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -81,7 +81,7 @@
 
 .inquiry__counter {
   justify-self: end;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--ink-2);
 }
 
@@ -96,7 +96,7 @@
   gap: 10px;
   min-height: 44px;
   padding: 6px 0;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--ink);
   cursor: pointer;
 }

@@ -18,7 +18,7 @@
   border-radius: var(--radius);
   background: var(--pick-soft);
   color: var(--ink);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   white-space: normal;
   text-align: left;
@@ -28,7 +28,7 @@
 }
 
 .active-filters__x {
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1;
   color: var(--ink-2);
 }
@@ -45,7 +45,7 @@
   border: 0;
   background: transparent;
   color: var(--ink-2);
-  font-size: 13px;
+  font-size: 0.8125rem;
   text-decoration: underline;
   text-underline-offset: 0.2em;
   cursor: pointer;
@@ -66,7 +66,7 @@
   }
 }
 
-@media (pointer: coarse), (max-width: 980px) {
+@media (pointer: coarse), (max-width: 61.25em) {
   .active-filters__chip,
   .active-filters__clear {
     min-height: 44px;
@@ -86,7 +86,7 @@
   gap: 10px;
 }
 .active-filters__change {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--ink-2);
   text-decoration: underline;
   text-underline-offset: 3px;

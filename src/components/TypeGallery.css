@@ -20,7 +20,7 @@
   padding-bottom: 12px;
   border-bottom: 1px solid var(--line);
   color: var(--ink-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: .2em;
 }
@@ -69,19 +69,19 @@
 .typesheet__title { display: block; line-height: 1.25; white-space: nowrap; }
 .typesheet__number {
   color: var(--ink-2);
-  font: 600 12px var(--font-display);
+  font: 600 0.75rem var(--font-display);
   letter-spacing: .08em;
   white-space: nowrap;
 }
 .typesheet__name {
-  font: 600 15px/1.25 var(--font-display);
+  font: 600 0.9375rem/1.25 var(--font-display);
   transition: color var(--hover) var(--ease-hover);
 }
 .typesheet__area {
   display: block;
   margin-top: 4px;
   color: var(--ink-2);
-  font: 400 15px/1.4 var(--font-display);
+  font: 400 0.9375rem/1.4 var(--font-display);
   font-variant-numeric: tabular-nums;
 }
 .typesheet[data-active='true'] .typesheet__plan:not([data-active='true']) { opacity: .55; }
@@ -101,7 +101,7 @@
   min-width: 0;
   max-width: 100%;
   color: var(--ink-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.4;
 }
 .typesheet__scale {
@@ -124,14 +124,14 @@
   margin-top: 18px;
   border-collapse: collapse;
   color: var(--ink);
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: left;
 }
 .typetable th {
   padding: 0 8px 10px;
   border-bottom: 1px solid var(--ink);
   color: var(--ink-2);
-  font: 500 12px/1.4 var(--font-display);
+  font: 500 0.75rem/1.4 var(--font-display);
   text-transform: uppercase;
   letter-spacing: .16em;
 }
@@ -158,13 +158,13 @@
   border-radius: var(--radius);
   background: none;
   color: var(--ink);
-  font: 600 16px/1.3 var(--font-display);
+  font: 600 1rem/1.3 var(--font-display);
   text-align: left;
   cursor: pointer;
 }
 .typetable button::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius); }
 .typetable button:focus-visible { outline: none; }
-.typetable__note { display: block; margin-top: 3px; color: var(--ink-2); font: 400 12px/1.4 var(--font-body); }
+.typetable__note { display: block; margin-top: 3px; color: var(--ink-2); font: 400 0.75rem/1.4 var(--font-body); }
 .typetable__arrow {
   position: absolute;
   right: 3px;
@@ -181,7 +181,7 @@
   /* wąsko: pod rzutem tylko „T3 · 42,0 m²” w jednej linii; nazwa stoi w tabeli tuż niżej */
   .typesheet__caption { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; }
   .typesheet__name { display: none; }
-  .typesheet__area { margin-top: 0; font-size: 14px; }
+  .typesheet__area { margin-top: 0; font-size: 0.875rem; }
   .typetable, .typetable tbody { display: block; }
   .typetable thead { display: none; }
   .typetable tbody tr {
@@ -195,12 +195,12 @@
   .typetable td { padding: 0; min-width: 0; }
   .typetable__type .typetable__note,
   .typetable .typetable__area, .typetable .typetable__sun, .typetable .typetable__free { display: none; }
-  .typetable__price { align-self: start; font-size: 15px; }
+  .typetable__price { align-self: start; font-size: 0.9375rem; }
   .typetable .typetable__mobile {
     display: block;
     grid-column: 1 / -1;
     color: var(--ink-2);
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 1.5;
   }
   .typetable__mobile > span { font-family: var(--font-display); font-variant-numeric: tabular-nums; }
@@ -260,7 +260,7 @@
     padding-bottom: 10px;
     border-bottom: 1px solid var(--line);
     color: var(--ink-2);
-    font-size: 12px;
+    font-size: 0.75rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
   }
@@ -306,7 +306,7 @@
 .typesheet__price {
   display: block;
   margin-top: 2px;
-  font: 500 15px/1.35 var(--font-display);
+  font: 500 0.9375rem/1.35 var(--font-display);
   font-variant-numeric: tabular-nums;
   color: var(--ink);
   white-space: nowrap;
@@ -320,7 +320,7 @@
 .typesheet__sun {
   display: block;
   margin-top: 4px;
-  font: 400 12px var(--font-body);
+  font: 400 0.75rem var(--font-body);
   color: var(--ink-2);
   white-space: nowrap;
 }
@@ -338,7 +338,7 @@
   }
   .typetable .typetable__thumb { grid-row: 1 / span 3; }
   .typetable .typetable__type { grid-column: 2; }
-  .typetable .typetable__price { grid-column: 2; justify-self: start; text-align: left; font-size: 15px; }
+  .typetable .typetable__price { grid-column: 2; justify-self: start; text-align: left; font-size: 0.9375rem; }
   .typetable .typetable__mobile { grid-column: 2; }
   .typetable__sunline { display: block; white-space: nowrap; }
 }

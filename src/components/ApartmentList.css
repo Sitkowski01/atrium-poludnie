@@ -14,7 +14,7 @@
 }
 
 .apt-list__count {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--ink-2);
 }
 
@@ -46,7 +46,7 @@
 }
 
 .apt-list__sort-label {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -60,7 +60,7 @@
   border-radius: var(--radius);
   background-color: transparent;
   color: var(--ink);
-  font-size: 14px;
+  font-size: 0.875rem;
   /* własny szewron z oddechem od krawędzi zamiast natywnej strzałki */
   appearance: none;
   -webkit-appearance: none;
@@ -166,7 +166,7 @@
   white-space: nowrap;
 }
 .apt-list__number .badge {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .apt-list__id {
@@ -202,7 +202,7 @@
   min-width: 0;
   margin-left: -14px;
   clip-path: inset(0 0 0 14px);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--ink-2);
 }
@@ -246,7 +246,7 @@
 }
 
 .apt-list__sun-hours {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--ink-2);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -273,7 +273,7 @@
 }
 
 .apt-list__ppm {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--ink-2);
   font-variant-numeric: tabular-nums;
 }
@@ -388,7 +388,7 @@
   }
   .apt-list__number .badge {
     padding-inline: 4px;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .apt-list__fav {
     justify-self: end;
@@ -397,7 +397,7 @@
   }
   .apt-list__facts {
     flex-direction: row;
-    font-size: 12px;
+    font-size: 0.75rem;
     line-height: 1.5;
   }
   .apt-list__facts-row:first-child {
@@ -413,7 +413,7 @@
     gap: 10px;
   }
   .apt-list__sun-hours {
-    font-size: 12px;
+    font-size: 0.75rem;
     white-space: nowrap;
   }
   .apt-list__sunbar {
@@ -430,10 +430,10 @@
     gap: 2px;
   }
   .apt-list__price strong {
-    font-size: 22px;
+    font-size: 1.375rem;
   }
   .apt-list__ppm {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 }
 
@@ -464,7 +464,7 @@
 }
 .apt-list__common p {
   margin: 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--ink-2);
 }
 .apt-list__common strong {
@@ -493,7 +493,7 @@
 .apt-list__group-bar { max-width: 420px; }
 .apt-list__group-text {
   min-width: 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--ink-2);
   /* lista ma nowrap w wierszach; nagłówek grupy musi się zawijać na telefonie */
   white-space: normal;
@@ -515,7 +515,7 @@
   align-items: center;
   gap: 6px;
   margin-top: 3px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--ink-2);
   white-space: nowrap;
 }
@@ -526,7 +526,7 @@
   align-items: center;
   gap: 6px 14px;
   flex-wrap: wrap;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--ink-2);
 }
 .apt-list__group-key-sun,
@@ -539,7 +539,7 @@
 .apt-list__group-key-sun { height: 6px; background: linear-gradient(90deg, #e8792a, #f4a94e 50%, #e8792a); }
 .apt-list__group-key-home { height: 3px; background: var(--ink); opacity: .55; }
 .apt-list__group-bar .sunbar__track { height: 10px; }
-.apt-list__group-bar .sunbar__ticks { font-size: 12px; }
+.apt-list__group-bar .sunbar__ticks { font-size: 0.75rem; }
 
 /* telefon: status obok numeru (jedna linia mniej w każdym wierszu) */
 @container chapter (max-width: 560px) {
@@ -553,7 +553,7 @@
 /* słońce w wierszu: czytelny tekst, godziny wyróżnione */
 .apt-list__sun-text strong {
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: var(--ink);
   font-variant-numeric: tabular-nums;

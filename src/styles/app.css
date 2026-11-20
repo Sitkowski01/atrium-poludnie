@@ -41,7 +41,7 @@ body {
   /* cyfry proste; równej szerokości tylko tam, gdzie liczby stoją w kolumnach (niżej).
      Globalne tabular-nums w Inter poszerzało też dywiz: „E - mail”, „atrium - poludnie” */
   font-variant-numeric: lining-nums;
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
@@ -112,7 +112,7 @@ svg text,
   /* przycisk drugorzędny: przezroczysty z obrysem, papier dopiero przy najechaniu */
   background: transparent;
   color: var(--ink);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -178,7 +178,7 @@ svg text,
   background: transparent;
   border-color: var(--pick-line);
   color: var(--ink);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -192,7 +192,7 @@ svg text,
   border-radius: var(--radius-s);
   background: transparent;
   color: var(--ink-2);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -222,7 +222,7 @@ svg text,
   gap: 7px;
   padding: 0;
   border-radius: 0;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -257,7 +257,7 @@ svg text,
 .field {
   display: grid;
   gap: 6px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .field__label {
   font-weight: 500;
@@ -283,7 +283,7 @@ svg text,
 }
 .field__error {
   color: var(--danger);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
 }
 
@@ -412,7 +412,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
 }
 
 /* palec: pełne 44 px na pigułkach i suwakach */
-@media (pointer: coarse), (max-width: 980px) {
+@media (pointer: coarse), (max-width: 61.25em) {
   .chip {
     min-width: 44px;
     min-height: 44px;
@@ -424,7 +424,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
 }
 
 .eyebrow {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -481,7 +481,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
 }
 .topbar__nav a {
   color: var(--ink-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -604,7 +604,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
   align-self: start;
 }
 /* przy kontakcie przyklejona scena gaśnie (StageRelease.tsx) */
-@media (min-width: 981px) {
+@media (min-width: 61.3125em) {
   .stage__scene {
     transition: opacity 0.3s var(--ease-hover), visibility 0s;
   }
@@ -648,7 +648,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
   display: flex;
   align-items: center;
   gap: 14px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -682,7 +682,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
 }
 .chapter__lead {
   max-width: 50ch;
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.6;
   color: var(--ink-2);
   text-wrap: pretty;
@@ -698,7 +698,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
 }
 
 /* poniżej 980 px: przycisk „Menu” i lista rozdziałów pod paskiem */
-@media (max-width: 980px) {
+@media (max-width: 61.25em) {
   .topbar__nav {
     margin-left: auto;
   }
@@ -711,7 +711,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
     border: 0;
     background: none;
     color: var(--ink);
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.16em;
     text-transform: uppercase;
@@ -796,7 +796,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
     display: inline;
     min-width: 2ch;
     font-family: var(--font-body);
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     color: var(--ink-3);
@@ -810,7 +810,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
   }
 }
 
-@media (max-width: 980px) {
+@media (max-width: 61.25em) {
   :root {
     --header-h: 64px;
   }
@@ -878,3 +878,6 @@ input[type='range']:focus-visible::-moz-range-thumb {
 .stage__end {
   height: 0;
 }
+
+/* powiększony tekst: przycisk w nagłówku nie rozpycha strony w bok (skraca się do „Spacer”) */
+.topbar__cta { white-space: nowrap; }

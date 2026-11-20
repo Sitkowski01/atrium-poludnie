@@ -63,11 +63,11 @@
 
   --font-display: 'Barlow Semi Condensed', 'Bahnschrift', 'DIN Alternate', 'Arial Narrow', sans-serif;
   /* skala kroju nagłówków poza clamp tytułów */
-  --fd-1: 20px;
-  --fd-2: 24px;
-  --fd-3: 30px;
-  --fd-4: 36px;
-  --fd-5: 40px;
+  --fd-1: 1.25rem;
+  --fd-2: 1.5rem;
+  --fd-3: 1.875rem;
+  --fd-4: 2.25rem;
+  --fd-5: 2.5rem;
   --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
 
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);

@@ -1,6 +1,6 @@
 .mobile-building__chip { display: none; }
 
-@media (max-width: 980px) {
+@media (max-width: 61.25em) {
   /* w pasku nagłówka, przed „Menu”: nic nie zasłania; poza zakresem rozdziałów 02–04 znika, ale trzyma miejsce */
   .topbar > .mobile-building__chip {
     order: 1;
@@ -17,7 +17,7 @@
     border-radius: var(--radius);
     background: transparent;
     color: var(--ink);
-    font: 600 13px var(--font-body);
+    font: 600 0.8125rem var(--font-body);
     white-space: nowrap;
     cursor: pointer;
     opacity: 0;
@@ -50,7 +50,7 @@
     border-radius: 999px;
     background: var(--sun);
     color: var(--ink);
-    font: 600 12px/1 var(--font-body);
+    font: 600 0.75rem/1 var(--font-body);
   }
   .mobile-building__scrim {
     position: fixed;
@@ -91,8 +91,8 @@
     justify-content: space-between;
     gap: 12px;
   }
-  .mobile-building__head h2 { margin: 0; font: 600 18px var(--font-display); }
-  .mobile-building__head p { margin: 4px 0 0; color: var(--ink-2); font-size: 12px; }
+  .mobile-building__head h2 { margin: 0; font: 600 1.125rem var(--font-display); }
+  .mobile-building__head p { margin: 4px 0 0; color: var(--ink-2); font-size: 0.75rem; }
   .mobile-building__close {
     display: grid;
     place-items: center;
@@ -119,6 +119,6 @@
 }
 
 /* cel dotyku 44 px dla przycisku „Bryła” w pasku nagłówka */
-@media (max-width: 980px) {
+@media (max-width: 61.25em) {
   .topbar > .mobile-building__chip { min-height: 44px; }
 }

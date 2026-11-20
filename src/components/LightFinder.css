@@ -20,7 +20,7 @@
   grid-column: 1 / -1;
   margin-bottom: 12px;
   padding: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -104,13 +104,13 @@
   line-height: 1.1;
 }
 .light__moment-time {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 .light__moment-note {
   align-self: start;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.35;
   color: var(--ink-2);
 }
@@ -153,11 +153,11 @@
 .light__empty {
   margin: 0;
   max-width: 52ch;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.55;
   color: var(--ink-2);
 }
-.light__common { margin: 0; font-size: 14px; line-height: 1.55; font-family: var(--font-body); color: var(--ink-2); }
+.light__common { margin: 0; font-size: 0.875rem; line-height: 1.55; font-family: var(--font-body); color: var(--ink-2); }
 .light__search {
   justify-self: start;
   max-width: 100%;
@@ -255,7 +255,7 @@
 .light__example-id {
   grid-area: id;
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   transition: color var(--hover) var(--ease-hover);
@@ -265,7 +265,7 @@
   min-width: 0;
   /* zawija się zamiast ucinać (powiększony tekst, wąska kolumna) */
   white-space: normal;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--ink-2);
 }
 .light__example-bar {
@@ -274,7 +274,7 @@
 .light__example-share {
   grid-area: share;
   justify-self: end;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--ink-2);
   white-space: nowrap;
 }
@@ -282,7 +282,7 @@
   grid-area: price;
   justify-self: end;
   font-family: var(--font-display);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -311,7 +311,7 @@
 .light__example-note {
   display: block;
   padding-top: 10px;
-  font-size: 12px;
+  font-size: 0.75rem;
   letter-spacing: 0.04em;
   color: var(--ink-2);
 }
@@ -329,7 +329,7 @@
   flex-wrap: wrap;
   gap: 6px 20px;
   margin: 4px 0 -4px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--ink-2);
 }
 .light__key {
@@ -374,7 +374,7 @@
   }
   .light__moment-label {
     min-height: 0;
-    font-size: 15px;
+    font-size: 0.9375rem;
   }
   .light__moment-note {
     display: none;

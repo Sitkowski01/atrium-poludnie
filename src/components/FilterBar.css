@@ -24,13 +24,13 @@
   gap: 20px;
 }
 .filter-bar__label {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--ink-2);
 }
-.filter-bar__number { font-family: var(--font-display); font-size: 15px; }
+.filter-bar__number { font-family: var(--font-display); font-size: 0.9375rem; }
 .filter-bar__chips {
   display: flex;
   min-width: 0;
@@ -52,7 +52,7 @@
   border-radius: 0;
   background: transparent;
   color: var(--ink-2);
-  font: 400 13px var(--font-body);
+  font: 400 0.8125rem var(--font-body);
   transition: color var(--hover) var(--ease-hover), background-color var(--hover) var(--ease-hover), box-shadow var(--hover) var(--ease-hover);
 }
 .filter-bar__chips .chip + .chip { border-left: 1px solid var(--line); }
@@ -86,7 +86,7 @@
 .filter-bar__label--row strong {
   margin-left: auto;
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
@@ -128,7 +128,7 @@
   appearance: none;
   background: transparent;
   color: var(--ink);
-  font: 400 14px var(--font-body);
+  font: 400 0.875rem var(--font-body);
   cursor: pointer;
 }
 .filter-bar__check-options { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -149,7 +149,7 @@
   border: 1px solid var(--line-2);
   border-radius: var(--radius);
   color: var(--ink-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   transition: color var(--hover) var(--ease-hover), background-color var(--hover) var(--ease-hover), box-shadow var(--hover) var(--ease-hover);
 }
 .filter-bar__check input:checked + span {
@@ -171,7 +171,7 @@
   border-radius: var(--radius);
   background: transparent;
   color: var(--ink-2);
-  font: 400 12px var(--font-body);
+  font: 400 0.75rem var(--font-body);
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
@@ -201,10 +201,10 @@
   border-radius: 999px;
   background: var(--sun);
   color: var(--ink);
-  font: 600 12px/1 var(--font-body);
+  font: 600 0.75rem/1 var(--font-body);
 }
 .filter-bar__clear { flex: none; padding: 0 14px; }
-@media (max-width: 980px) {
+@media (max-width: 61.25em) {
   .filter-bar__panel {
     display: grid;
     grid-template-rows: 0fr;
@@ -226,7 +226,7 @@
   .filter-bar__pair .filter-bar__group { border-top: 1px solid var(--line); padding: 12px 0; }
   .filter-bar__ranges { grid-template-columns: minmax(0, 1fr); gap: 12px; }
 }
-@media (pointer: coarse), (max-width: 980px) {
+@media (pointer: coarse), (max-width: 61.25em) {
   .filter-bar__chips .chip { min-width: 44px; }
   .filter-bar__chips .chip,
   .filter-bar__floors .field select,
@@ -240,6 +240,10 @@
 }
 
 /* dotyk: przełączniki filtrów jako pełne cele 44 px */
-@media (pointer: coarse), (max-width: 980px) {
+@media (pointer: coarse), (max-width: 61.25em) {
   .filter-bar__chips .chip { min-height: 44px; min-width: 44px; }
 }
+
+/* powiększony tekst (ustawienie przeglądarki): segmenty zawijają się do drugiej linii, zamiast nachodzić na siebie */
+.filter-bar__chips { flex-wrap: wrap; }
+.filter-bar__chips .chip { white-space: nowrap; }

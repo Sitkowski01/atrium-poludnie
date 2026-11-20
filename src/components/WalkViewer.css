@@ -47,7 +47,7 @@
   background: var(--scrim);
   /* nakładka na zdjęciu zostaje ciemna, więc tekst jasny i pełny (--card ma krycie .55 → kontrast 3:1) */
   color: var(--paper);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -68,7 +68,7 @@
   background: var(--scrim);
   /* nakładka na zdjęciu zostaje ciemna, więc tekst jasny i pełny (--card ma krycie .55 → kontrast 3:1) */
   color: var(--paper);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.2;
   cursor: pointer;
@@ -137,7 +137,7 @@
   border-radius: 999px;
   background: var(--paper);
   color: var(--ink-2);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   white-space: nowrap;
   pointer-events: none;
@@ -181,7 +181,7 @@
   display: flex;
   align-items: baseline;
   gap: 10px;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--ink-2);
 }
@@ -207,7 +207,7 @@
   height: 40px;
   min-height: 40px;
   padding: 0 6px;
-  font-size: 12px;
+  font-size: 0.75rem;
   white-space: normal;
 }
 /* akcje drugiego rzędu jako linki tekstowe: nie konkurują z pomieszczeniami */
@@ -218,7 +218,7 @@
   background: none;
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   text-decoration: underline 1px;
   text-underline-offset: 3px;
@@ -250,7 +250,7 @@
   white-space: nowrap;
   margin: 0;
   color: var(--ink-2);
-  font-size: 12px;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: .14em;
 }
@@ -377,7 +377,7 @@
   }
   .walk__badge {
     max-width: calc(100% - 140px);
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 }
 
