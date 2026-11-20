@@ -227,7 +227,8 @@ function TypeButton({
           className="typecard__img typecard__img--base"
           src={`${base}rzut3d/s${slot}-arkusz.webp`}
           alt=""
-          loading="lazy"
+          // rzuty (razem ok. 370 kB) pobierają się od razu, z niskim priorytetem: skok z menu do „Typów” nie trafia na puste arkusze
+          fetchPriority="low"
           decoding="async"
         />
         <img

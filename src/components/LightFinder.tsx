@@ -93,14 +93,16 @@ export function LightFinder() {
         : `${FACADE_NAMES[missedFacade.facade].subject} ma słońce w salonie tylko do ${formatHour(missedWindow.to)}, więc przy tylu godzinach w domu odpada.`
   const shownCount = Math.round(useCountUp(matches.length, { duration: 700 }))
   const soldOnly = useMemo(() => onlySoldMatch(apartments, moments), [apartments, moments])
-  const shown = expanded ? matches : matches.slice(0, SHOWN)
-  const commonResult = shown.length > 1 && shown.every((match) =>
-    hoursText(match.share) === hoursText(shown[0].share) &&
-    formatHour(match.firstSunAt) === formatHour(shown[0].firstSunAt),
+  // liczone dla wszystkich wyników, nie tylko pokazanych: rozwinięcie listy nie zmienia wyglądu wierszy (bez skoku)
+  const commonResult = matches.length > 1 && matches.every((match) =>
+    hoursText(match.share) === hoursText(matches[0].share) &&
+    formatHour(match.firstSunAt) === formatHour(matches[0].firstSunAt),
   )
-  const orderedShown = commonResult
-    ? [...shown].sort((a, b) => b.apartment.floor - a.apartment.floor || a.apartment.price - b.apartment.price)
-    : shown
+  // najpierw kolejność całej listy, potem przycięcie: pierwsze wiersze po rozwinięciu zostają na swoich miejscach
+  const ordered = commonResult
+    ? [...matches].sort((a, b) => b.apartment.floor - a.apartment.floor || a.apartment.price - b.apartment.price)
+    : matches
+  const orderedShown = expanded ? ordered : ordered.slice(0, SHOWN)
   const bestHours = matches.length ? hoursFormat.format(Math.max(...matches.map((m) => m.share)) * totalHours) : ''
 
   // bryła reaguje tylko wtedy, gdy rozdział jest na ekranie; po wyjściu oddajemy ją innym
@@ -123,6 +125,9 @@ export function LightFinder() {
   const ours = useRef<Spotlight | null>(null)
   useEffect(() => {
     if (inView && spot) {
+      // nowy wybór pór zastępuje poprzedni wpis zamiast odkładać go na stosie (inaczej po wyjściu z rozdziału
+      // bryła wracała do starego wyboru)
+      if (ours.current && ours.current !== spot) dispatch({ type: 'spotlight', spot: null, owner: ours.current })
       ours.current = spot
       dispatch({ type: 'spotlight', spot })
     } else if (ours.current) {
@@ -200,7 +205,7 @@ export function LightFinder() {
             </p>
             {matches.length > 0 && <p className="light__common">
               {commonResult
-                ? `Pokazane mieszkania: ${hoursText(shown[0].share)}; słońce od ${formatHour(shown[0].firstSunAt)} w Twoich godzinach.`
+                ? `Każde z nich: ${hoursText(matches[0].share)}; słońce od ${formatHour(matches[0].firstSunAt)} w Twoich godzinach.`
                 : `Najwięcej: ${bestHours} z ${hoursFormat.format(totalHours)} godzin w domu przy słońcu.`}
             </p>}
             {matches.length > 0 && facadeName && (
