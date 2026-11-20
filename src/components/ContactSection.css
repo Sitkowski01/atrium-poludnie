@@ -550,3 +550,21 @@
 @media (pointer: coarse), (max-width: 61.25em) {
   .site-footer__nav a { min-height: 44px; }
 }
+
+/* podpis autora w ciemnej stopce: jasny tekst, linki podkreślone, słońce przy najechaniu */
+.site-footer__credit {
+  margin-top: 18px;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--f-soft);
+}
+.site-footer__credit a {
+  color: var(--paper);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--f-line);
+  transition: color var(--hover) var(--ease-hover), text-decoration-color var(--hover) var(--ease-hover);
+}
+@media (hover: hover) {
+  .site-footer__credit a:hover { color: var(--sun); text-decoration-color: var(--sun); }
+}

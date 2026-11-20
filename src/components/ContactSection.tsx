@@ -142,6 +142,15 @@ export function ContactSection() {
             Inwestycja fikcyjna. Strona jest demonstracją wyszukiwarki mieszkań: ceny, dostępność, wnętrza
             i nasłonecznienie są przykładowe.
           </p>
+          {/* podpis autora: strona jest pracą do portfolio, kontakt prowadzi do prawdziwego wykonawcy */}
+          <p className="site-footer__credit">
+            Projekt i wykonanie: Mikołaj Sitek,{' '}
+            <a href="https://swndevelopment.pl" target="_blank" rel="noopener">
+              SWN Development
+            </a>
+            <br />
+            <a href="mailto:hello@swndevelopment.pl">hello@swndevelopment.pl</a>
+          </p>
         </div>
         <nav className="site-footer__cell" aria-label="Stopka">
           <p className="site-footer__label" aria-hidden="true">
