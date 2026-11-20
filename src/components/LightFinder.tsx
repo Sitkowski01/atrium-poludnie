@@ -51,8 +51,15 @@ function MomentGlyph({ m }: { m: Moment }) {
  * Bryła po prawej podświetla dopasowane mieszkania i przestawia porę dnia na wybraną porę.
  */
 export function LightFinder() {
-  const { apartments, dispatch } = useStore()
-  const [picked, setPicked] = useState<string[]>(['poranek', 'popoludnie'])
+  const { apartments, state, dispatch } = useStore()
+  const storeHome = state.filters.home
+  const [picked, setPicked] = useState<string[]>(() => (storeHome.length ? [...storeHome] : ['poranek', 'popoludnie']))
+  // jeden wybór pór na stronie: gdy filtr „W domu” w wyszukiwarce jest używany, kafle pokazują to samo
+  // (zmiana w filtrach przestawia kafle, zmiana kafli przestawia filtr)
+  const homeKey = storeHome.join(',')
+  useEffect(() => {
+    if (homeKey) setPicked(homeKey.split(','))
+  }, [homeKey])
   const moments = useMemo(() => MOMENTS.filter((m) => picked.includes(m.id)), [picked])
   const totalHours = homeHours(moments)
   const hoursText = (share: number) => `${hoursFormat.format(share * totalHours)} / ${hoursFormat.format(totalHours)} h w słońcu`
@@ -119,7 +126,13 @@ export function LightFinder() {
 
   const toggle = (m: Moment) => {
     const on = picked.includes(m.id)
-    setPicked((p) => (on ? p.filter((id) => id !== m.id) : [...p, m.id]))
+    const next = on ? picked.filter((id) => id !== m.id) : [...picked, m.id]
+    setPicked(next)
+    // filtr w wyszukiwarce już działa: przestawiamy go razem z kaflami (kolejność jak w MOMENTS)
+    if (storeHome.length) {
+      const home = MOMENTS.map((x) => x.id).filter((id) => next.includes(id))
+      dispatch({ type: 'setFilters', patch: { home } })
+    }
     // bryła pokazuje światło w środku właśnie włączonej pory
     if (!on) {
       dispatch({ type: 'cancelIntro' })
