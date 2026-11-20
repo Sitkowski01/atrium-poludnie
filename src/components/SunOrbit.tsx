@@ -93,6 +93,15 @@ export function SunOrbit({ hour, layer, cx, horizon, rx, ry }: Props) {
 
   return (
     <g className={`sunpath sunpath--${layer}`} aria-hidden="true">
+      {layer === 'back' && (
+        <defs>
+          <radialGradient id="sun-halo-back">
+            <stop offset="0" stopColor="#ffd98a" stopOpacity="0.85" />
+            <stop offset="0.45" stopColor="#f0b23a" stopOpacity="0.32" />
+            <stop offset="1" stopColor="#f0b23a" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+      )}
       {layer === 'front' && (
         <defs>
           <radialGradient id="sun-halo">
@@ -106,12 +115,9 @@ export function SunOrbit({ hour, layer, cx, horizon, rx, ry }: Props) {
         <path key={`t${i}`} className="sunpath__track" d={d(t)} />
       ))}
       {passed.map((t, i) => t.length > 1 && <path key={`p${i}`} className="sunpath__passed" d={d(t)} />)}
-      {/* słońce za budynkiem: na pierwszym planie tylko przerywany kontur — widać, gdzie jest, i że zasłania je bryła */}
-      {layer === 'front' && sun.behind && sun.elevation > -1 && (
-        <g className="sunpath__behind">
-          <circle cx={sx} cy={sy} r="40" fill="url(#sun-halo)" opacity="0.7" />
-          <circle className="sunpath__ghost" cx={sx} cy={sy} r="13" />
-        </g>
+      {/* słońce za budynkiem: szeroka poświata pod renderami wychodzi zza krawędzi bryły jak światło zza dachu */}
+      {layer === 'back' && sun.behind && sun.elevation > -1 && (
+        <circle cx={sx} cy={sy} r="120" fill="url(#sun-halo-back)" />
       )}
       {showDisc && (
         <g style={{ opacity: glow }}>

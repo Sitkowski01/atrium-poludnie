@@ -341,8 +341,12 @@
 }
 
 @media (max-width: 980px) {
-  .hero {
+  .hero--intro {
     padding-top: 28px;
+  }
+  /* tablica pod bryłą: mały odstęp od legendy */
+  .hero--board {
+    padding-top: 12px;
   }
 }
 

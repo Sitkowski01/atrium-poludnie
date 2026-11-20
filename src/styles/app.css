@@ -830,6 +830,8 @@ input[type='range']:focus-visible::-moz-range-thumb {
   .stage > .hero--intro { order: 0; }
   .stage > .stage__slot { order: 1; }
   .stage > .hero--board { order: 2; margin-top: 0; }
+  /* tablica zaraz pod legendą bryły, bez pustego pasa */
+  .stage > .hero--board > .timetable { margin-top: 0; }
   .stage > .chapter,
   .stage > .stage__end { order: 3; }
   .stage__scene {
