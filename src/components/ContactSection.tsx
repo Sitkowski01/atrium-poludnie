@@ -43,7 +43,8 @@ export function ContactSection() {
   // spacer o porze, którą użytkownik wskazał w „Kiedy jesteś w domu?” — obietnica z tytułu, konkretnie
   const { state } = useStore()
   const moments = MOMENTS.filter((m) => state.filters.home.includes(m.id))
-  const when = moments.map((m) => `${m.label.toLowerCase()} (${formatHour(m.from)}–${formatHour(m.to)})`).join(' albo ')
+  // zakres godzin nie może się łamać w środku: łączniki niełamliwe wokół półpauzy
+  const when = moments.map((m) => `${m.label.toLowerCase()} (${formatHour(m.from)}⁠–⁠${formatHour(m.to)})`).join(' albo ')
   const subject = `Spacer po Atrium Południe${moments.length ? ` — ${moments.map((m) => m.label.toLowerCase()).join(', ')}` : ''}`
   const body = moments.length ? `Dzień dobry, chcę zobaczyć mieszkanie o porze, o której bywam w domu: ${when}.` : ''
   const mailto = `mailto:kontakt@atrium-poludnie.example?subject=${encodeURIComponent(subject)}${body ? `&body=${encodeURIComponent(body)}` : ''}`

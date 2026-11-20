@@ -27,7 +27,8 @@ export function MobileBuilding() {
     const update = () => {
       frame = 0
       const mobile = window.innerWidth <= 980
-      setVisible(mobile && slot.getBoundingClientRect().bottom <= 0 && end.getBoundingClientRect().top > window.innerHeight)
+      // widoczny przez całą listę mieszkań, aż jej koniec zniknie pod nagłówkiem
+      setVisible(mobile && slot.getBoundingClientRect().bottom <= 0 && end.getBoundingClientRect().top > 64)
       if (!mobile) setPhase('closed')
     }
     const schedule = () => {

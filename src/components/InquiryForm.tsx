@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import type { Apartment } from '../domain/types'
+import { formatHour } from '../domain/format'
+import { MOMENTS } from '../domain/light'
+import { useStore } from '../state/store'
 import './InquiryForm.css'
 
 const MAX_MESSAGE = 600
@@ -35,7 +38,13 @@ function validate(v: Values): Errors {
 }
 
 export function InquiryForm({ apartment }: { apartment: Apartment }) {
-  const defaultMessage = `Dzień dobry, proszę o kontakt w sprawie mieszkania ${apartment.id}.`
+  // wątek „Kiedy jesteś w domu?” do samego końca: wiadomość prosi o spacer w tych porach
+  const { state } = useStore()
+  const homeMoments = MOMENTS.filter((m) => state.filters.home.includes(m.id))
+  const homeText = homeMoments.map((m) => `${m.label.toLowerCase()} (${formatHour(m.from)}–${formatHour(m.to)})`).join(', ')
+  const defaultMessage = `Dzień dobry, proszę o kontakt w sprawie mieszkania ${apartment.id}.${
+    homeText ? ` Chcę je zobaczyć o porze, o której bywam w domu: ${homeText}.` : ''
+  }`
   const [values, setValues] = useState<Values>({
     name: '',
     email: '',

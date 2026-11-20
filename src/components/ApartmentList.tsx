@@ -120,7 +120,8 @@ export function ApartmentList() {
   const shown = collapsible && !expanded ? visible.slice(0, collapsedRows) : visible
   const sameShare =
     shown.length > 1 &&
-    shown.every((a) => hoursFormat.format(shares.get(a.id) ?? 0) === hoursFormat.format(shares.get(shown[0].id) ?? 0))
+    // porównujemy godziny tak, jak je wypisujemy (4,4 h vs 4,3 h), nie zaokrąglony ułamek
+    shown.every((a) => hoursFormat.format((shares.get(a.id) ?? 0) * totalHours) === hoursFormat.format((shares.get(shown[0].id) ?? 0) * totalHours))
   // wszystkie pokazane wiersze mają to samo słońce (np. wyższe piętra od południa): pasek mówimy raz nad listą,
   // a wiersze zostają zwarte i różnią się tym, co naprawdę się różni — piętrem, metrażem, ceną
   const sunOf = (x: (typeof shown)[number]) => sunWindow(x.facade, x.floor)
@@ -266,7 +267,7 @@ export function ApartmentList() {
         <>
           {commonSun && (
             <div className="apt-list__common">
-              <SunBar sun={commonSun} home={home} className="apt-list__common-bar" />
+              <SunBar sun={commonSun} home={home} ticks className="apt-list__common-bar" />
               <p>
                 <strong>Każde z pokazanych:</strong> słońce w salonie {formatHour(commonSun.from)}–{formatHour(commonSun.to)}
                 {home.length > 0 &&
