@@ -11,18 +11,20 @@ html {
 
 /* światło dnia na papierze (DayLight.tsx): zarejestrowane liczby, więc kolor przechodzi płynnie
    także przy skoku suwaka na „Rano” albo „Wieczór” */
-@property --day-r { syntax: '<number>'; inherits: true; initial-value: 255; }
-@property --day-g { syntax: '<number>'; inherits: true; initial-value: 214; }
-@property --day-b { syntax: '<number>'; inherits: true; initial-value: 170; }
-@property --day-a { syntax: '<number>'; inherits: true; initial-value: 0; }
-:root {
+@property --day-r { syntax: '<number>'; inherits: false; initial-value: 255; }
+@property --day-g { syntax: '<number>'; inherits: false; initial-value: 214; }
+@property --day-b { syntax: '<number>'; inherits: false; initial-value: 170; }
+@property --day-a { syntax: '<number>'; inherits: false; initial-value: 0; }
+/* zmienne żyją tylko na dwóch elementach, które ich używają (warstwa światła i pasek), i się nie dziedziczą:
+   wcześniej siedziały na <html>, więc każda klatka przejścia przeliczała style całej strony (~70 ms na telefonie) */
+.daylight,
+.topbar {
   --day: rgb(var(--day-r) var(--day-g) var(--day-b) / var(--day-a));
   transition: --day-r 1.2s var(--ease-hover), --day-g 1.2s var(--ease-hover), --day-b 1.2s var(--ease-hover),
     --day-a 1.2s var(--ease-hover);
 }
 /* warstwa światła pod treścią: barwi papier strony, nie karty ani tekst */
-body::before {
-  content: '';
+.daylight {
   position: fixed;
   inset: 0;
   z-index: -1;
