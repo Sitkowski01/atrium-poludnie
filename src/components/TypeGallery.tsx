@@ -162,6 +162,11 @@ export function TypeGallery() {
         </div>
         </div>
       </figure>
+      {/* telefon: zamiast osobnego arkusza rzut stoi w wierszu typu; skala ta sama, podziałka raz nad listą */}
+      <div className="typetable__scalehead" aria-hidden="true">
+        <span>Rzuty w jednej skali</span>
+        <span className="typetable__scale"><span className="typesheet__scale-bar" /><span>0</span><span>5 m</span></span>
+      </div>
       <table className="typetable" aria-label="Porównanie typów mieszkań">
         <thead><tr>
           <th scope="col">Typ</th><th scope="col">Metraż</th>
@@ -258,6 +263,10 @@ function TypeRow({ card, active, onActive, onPick }: TypeInteractionProps) {
   const exposure = card.slot === 2 ? 'południe i wschód' : card.slot < 2 ? 'południe' : 'wschód'
   return (
     <tr data-active={active} onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
+      <td className="typetable__thumb" aria-hidden="true">
+        <img src={`${import.meta.env.BASE_URL}rzut3d/s${card.slot}-arkusz.webp`} width={1100} height={1100} alt=""
+          style={{ ['--plan' as string]: PLAN_SCALE[card.slot] }} fetchPriority="low" decoding="async" />
+      </td>
       <td className="typetable__type">
         <button type="button" aria-label={label} {...buttonHandlers}>
           <span className="typesheet__number">T{ORDER.indexOf(card.slot) + 1}</span>{' '}

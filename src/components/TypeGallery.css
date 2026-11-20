@@ -237,3 +237,61 @@
     align-self: flex-end;
   }
 }
+
+/* rzut w wierszu i podziałka nad listą: tylko na telefonie (na szerokim ekranie rzuty są na arkuszu) */
+.typetable__thumb,
+.typetable__scalehead { display: none; }
+@container typegallery (width < 520px) {
+  /* jeden wiersz na typ: rzut obok nazwy, ceny i słońca — bez dopasowywania arkusza do tabeli */
+  .typesheet { display: none; }
+  /* rozmiar miniatur na tabeli i podziałce (nie na .typegal: kontener nie widzi własnych reguł @container) */
+  .typetable, .typetable__scalehead { --tb: 108px; }
+  .typetable__scalehead {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-2);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .typetable__scale {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 0;
+    /* 5 m w skali miniatur: ten sam przelicznik co na arkuszu (0,436 boku największego rzutu) */
+    width: calc(var(--tb) * 0.436);
+    font-family: var(--font-display);
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
+  }
+  .typetable__scale .typesheet__scale-bar { grid-column: 1 / -1; }
+  .typetable { margin-top: 0; }
+  .typetable tbody tr {
+    grid-template-columns: var(--tb) minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    column-gap: 14px;
+    padding: 14px 0;
+  }
+  .typetable .typetable__thumb {
+    display: flex;
+    grid-row: span 2;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: var(--tb);
+    min-height: calc(var(--tb) * 0.6);
+    align-self: start;
+  }
+  .typetable__thumb img {
+    display: block;
+    width: calc(var(--tb) * var(--plan));
+    height: calc(var(--tb) * var(--plan));
+    object-fit: contain;
+  }
+  .typetable .typetable__mobile { grid-column: 2 / -1; }
+}
