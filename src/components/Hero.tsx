@@ -161,7 +161,10 @@ export function Hero() {
   }
 
   return (
-    <header className="hero">
+    <>
+    {/* dwie części: wstęp i tablica. Na telefonie bryła staje między nimi (app.css, order),
+        żeby budynek i słońce były na pierwszym ekranie; na komputerze stoją jedna pod drugą */}
+    <header className="hero hero--intro">
       <p className="hero__kicker">
         <span className="hero__kicker-num">01</span>
         <span>Budynek</span>
@@ -174,7 +177,9 @@ export function Hero() {
         {apartments.length} mieszkań od południa i wschodu. Przesuń porę dnia pod bryłą i zobacz, do których salonów
         wchodzi światło — potem przejdź się po wnętrzu w 360°.
       </p>
+    </header>
 
+    <div className="hero hero--board">
       <SunTimetable lines={lines} />
 
       <div className="hero__foot">
@@ -207,6 +212,7 @@ export function Hero() {
           </div>
         </dl>
       </div>
-    </header>
+    </div>
+    </>
   )
 }

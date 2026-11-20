@@ -6,7 +6,11 @@
   container-type: inline-size;
   container-name: hero;
   display: grid;
+}
+.hero--intro {
   padding-top: clamp(28px, 5vh, 60px);
+}
+.hero--board {
   padding-bottom: 8px;
 }
 
@@ -181,12 +185,9 @@
   font-variant-numeric: lining-nums tabular-nums;
   white-space: nowrap;
 }
+/* zakres godzin zapisany jak wszędzie na stronie: „7:40–18:20”, bez odstępów */
 .timetable__arrow {
-  margin: 0 0.3em;
-  color: var(--ink-3);
-  font-family: var(--font-body);
-  font-size: 0.6em;
-  vertical-align: 0.15em;
+  margin: 0 0.04em;
 }
 .timetable__bar {
   grid-area: bar;

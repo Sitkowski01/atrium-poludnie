@@ -559,7 +559,8 @@ input[type='range']:focus-visible::-moz-range-thumb {
 .stage {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-  grid-template-rows: repeat(4, auto);
+  /* wstęp, tablica słońca, typy, światło, mieszkania: bryła po prawej trwa przez wszystkie pięć */
+  grid-template-rows: repeat(5, auto);
   column-gap: clamp(24px, 3vw, 48px);
   row-gap: 28px;
   max-width: 1480px;
@@ -569,6 +570,10 @@ input[type='range']:focus-visible::-moz-range-thumb {
 .stage > * {
   grid-column: 1;
   min-width: 0;
+}
+/* wstęp i tablica hero to jedna całość: bez odstępu siatki między nimi */
+.stage > .hero--board {
+  margin-top: -28px;
 }
 .chapter,
 #budynek {
@@ -822,6 +827,12 @@ input[type='range']:focus-visible::-moz-range-thumb {
     grid-column: 1;
     grid-row: auto;
   }
+  /* telefon: bryła zaraz pod tytułem (pierwszy ekran), tablica słońca pod bryłą */
+  .stage > .hero--intro { order: 0; }
+  .stage > .stage__slot { order: 1; }
+  .stage > .hero--board { order: 2; margin-top: 0; }
+  .stage > .chapter,
+  .stage > .stage__end { order: 3; }
   .stage__scene {
     position: relative;
     top: auto;
