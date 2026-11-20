@@ -57,7 +57,7 @@ function framesFor(hour: number): { a: number; b: number; t: number } {
 type Spot = 'wolne' | 'rezerwacja' | 'sprzedane' | 'poza'
 const SPOTS: { key: Spot; label: string }[] = [
   { key: 'wolne', label: 'wolne' },
-  { key: 'rezerwacja', label: 'rezerwacja' },
+  { key: 'rezerwacja', label: 'zarezerwowane' },
   { key: 'sprzedane', label: 'sprzedane' },
   { key: 'poza', label: 'poza filtrami' },
 ]

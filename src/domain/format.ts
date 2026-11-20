@@ -38,7 +38,7 @@ export const FACADE_LABEL: Record<Facade, string> = { S: 'południe', E: 'wschó
 
 export const STATUS_LABEL: Record<Status, string> = {
   wolne: 'wolne',
-  rezerwacja: 'rezerwacja',
+  rezerwacja: 'zarezerwowane',
   sprzedane: 'sprzedane',
 }
 

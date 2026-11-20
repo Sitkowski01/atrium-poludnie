@@ -13,7 +13,7 @@ import { sunWindow } from '../domain/sun'
 import { MOMENTS, homeHours, matchMoments } from '../domain/light'
 import { activeFilterChips } from '../domain/activeFilters'
 import type { SortKey } from '../domain/types'
-import { useStore } from '../state/store'
+import { useStore, type Spotlight } from '../state/store'
 import { ActiveFilters } from './ActiveFilters'
 import { SunBar } from './SunBar'
 import './ApartmentList.css'
@@ -117,6 +117,43 @@ export function ApartmentList() {
   const collapsedRows = COLLAPSED_ROWS
   const collapsible = visible.length > collapsedRows
   const shown = collapsible && !expanded ? visible.slice(0, collapsedRows) : visible
+
+  // bryła towarzyszy liście: gdy rozdział jest na ekranie, podświetla mieszkania pokazane w wierszach
+  // (najechany wiersz i tak wygrywa — ma własną kartę na bryle)
+  const sectionRef = useRef<HTMLElement>(null)
+  const [listInView, setListInView] = useState(false)
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(([e]) => setListInView(e.isIntersecting), { rootMargin: '-35% 0px -35% 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  const shownKey = shown.map((a) => a.id).join(',')
+  const listSpot = useMemo<Spotlight | null>(
+    () =>
+      shownKey
+        ? { ids: shownKey.split(','), label: `Na liście: ${shownKey.split(',').length} ${flatsWord(shownKey.split(',').length)}` }
+        : null,
+    [shownKey],
+  )
+  const ownListSpot = useRef<Spotlight | null>(null)
+  useEffect(() => {
+    if (ownListSpot.current && ownListSpot.current !== listSpot) {
+      dispatch({ type: 'spotlight', spot: null, owner: ownListSpot.current })
+      ownListSpot.current = null
+    }
+    if (listInView && listSpot) {
+      ownListSpot.current = listSpot
+      dispatch({ type: 'spotlight', spot: listSpot })
+    }
+  }, [listInView, listSpot, dispatch])
+  useEffect(
+    () => () => {
+      if (ownListSpot.current) dispatch({ type: 'spotlight', spot: null, owner: ownListSpot.current })
+    },
+    [dispatch],
+  )
   const hiddenHovered = !expanded && visible.findIndex((a) => a.id === hoveredId) >= collapsedRows
 
   useEffect(() => {
@@ -167,7 +204,7 @@ export function ApartmentList() {
   }, [isEmpty])
 
   return (
-    <section className="apt-list" aria-label="Lista mieszkań">
+    <section ref={sectionRef} className="apt-list" aria-label="Lista mieszkań">
       <div className="apt-list__head">
         <p className="apt-list__count" aria-live="polite" ref={countRef} tabIndex={-1}>
           <strong>{visible.length}</strong>

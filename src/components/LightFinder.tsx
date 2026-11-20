@@ -104,6 +104,16 @@ export function LightFinder() {
         : null,
     [matches, moments],
   )
+  // jeden zegar na stronie: wejście w rozdział przestawia porę dnia na pierwszą zaznaczoną porę w domu
+  // (suwak pod bryłą nie stoi na 10:00, kiedy kafle mówią „poranek”)
+  const pickedRef = useRef(picked)
+  pickedRef.current = picked
+  useEffect(() => {
+    if (!inView) return
+    const first = MOMENTS.find((m) => pickedRef.current.includes(m.id))
+    if (!first) return
+    tweenHour(Math.round(((first.from + first.to) / 2) * 20) / 20, (h) => dispatch({ type: 'setHour', hour: h, byUser: true }))
+  }, [inView, dispatch])
   const ours = useRef<Spotlight | null>(null)
   useEffect(() => {
     if (inView && spot) {
