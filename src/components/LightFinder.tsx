@@ -252,9 +252,9 @@ export function LightFinder() {
             <span className="light__key"><span className="light__key-sun" />słońce w salonie</span>
             <span className="light__key"><span className="light__key-home" />jesteś w domu</span>
           </p>
-          <ul className="light__examples" aria-label="Przykładowe mieszkania">
-            {examples.map(({ apartment: a, share, miss }) => (
-              <li key={a.id} className={miss ? 'light__example-miss' : undefined}>
+          <ul className="light__examples" aria-label="Przykładowe mieszkania" key={picked.join(',')}>
+            {examples.map(({ apartment: a, share, miss }, i) => (
+              <li key={a.id} className={miss ? 'light__example-miss' : undefined} style={{ ['--i' as string]: i }}>
                 {miss && (
                   <span className="light__example-note">
                     dla porównania — odpada

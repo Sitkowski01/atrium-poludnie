@@ -70,3 +70,15 @@
   width: 1px;
   background: var(--ink-3);
 }
+
+/* zmiana pór albo piętra: słońce i godziny w domu przesuwają się po pasku, zamiast przeskakiwać */
+.sunbar__sun,
+.sunbar__home {
+  transition: left 0.5s var(--ease-hover), right 0.5s var(--ease-hover);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sunbar__sun,
+  .sunbar__home {
+    transition: none;
+  }
+}

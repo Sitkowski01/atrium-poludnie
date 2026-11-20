@@ -381,3 +381,20 @@
     display: none;
   }
 }
+
+/* po zmianie pór przykłady wchodzą kaskadą: widać, że wynik przeliczył się dla nowych godzin */
+.light__examples li {
+  animation: light-example-in 0.45s var(--ease-hover) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes light-example-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .light__examples li {
+    animation: none;
+  }
+}
