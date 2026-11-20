@@ -1,5 +1,7 @@
 .building {
   display: grid;
+  /* kolumna nie może urosnąć od treści (długi podpis rozpychał bryłę na telefonie) */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
   gap: 10px;
   min-height: 0;
@@ -496,10 +498,11 @@
   }
 }
 
-/* telefon: trzy grupy legendy w jednym rzędzie */
+/* telefon: trzy grupy legendy w jednym rzędzie; czwarta („poza filtrami”) schodzi do drugiego, nie poza ekran */
 @media (max-width: 520px) {
   .building__legend {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
+    column-gap: 0;
   }
   .building__legend-item {
     flex: 1 1 auto;
@@ -526,4 +529,37 @@
   .building__legend-hint {
     display: none;
   }
+}
+
+/* legenda i podpis w jednej komórce: wysokość wiersza = wyższy z nich, zmiana tylko przenika */
+.building__foot {
+  display: grid;
+  min-width: 0;
+}
+.building__foot > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--hover) var(--ease-hover), visibility 0s linear var(--hover);
+}
+.building__foot > [data-on] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--hover) var(--ease-hover), visibility 0s;
+}
+/* podpis w jednej linii: długi opis kończy się wielokropkiem, liczba mieszkań zostaje */
+.building__foot .building__spotnote {
+  flex-wrap: nowrap;
+  align-self: start;
+}
+.building__foot .building__spotnote-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.building__foot .building__spotnote-count {
+  flex: none;
+  white-space: nowrap;
 }

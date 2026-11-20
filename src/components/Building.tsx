@@ -207,6 +207,10 @@ export function Building() {
   const spotIds = useMemo(() => (storeSpot ? new Set(storeSpot.ids) : null), [storeSpot])
   const isSpot = (a: Apartment, dim: boolean) => (spotIds ? spotIds.has(a.id) : spot ? inSpot(a, spot, dim) : false)
   const spotting = Boolean(spotIds || spot)
+  // ostatnie podświetlenie z rozdziału: podpis gaśnie z tym opisem zamiast pustego
+  const lastSpot = useRef(storeSpot)
+  if (storeSpot) lastSpot.current = storeSpot
+  const noteSpot = storeSpot ?? lastSpot.current
   // karta nie może zasłaniać mieszkania, o którym mówi: dla niskich pięter idzie do nieba u góry.
   // Podświetlenie grupy z rozdziału zostaje na dole: u góry zakrywało słońce i dach, czyli to, o czym mówi strona
   const cardTop = focus ? focus.floor <= 3 : false
@@ -393,14 +397,21 @@ export function Building() {
 
       {/* podświetlenie z rozdziału (typ, pory w domu) opisuje się w miejscu legendy, nie kartą na rysunku;
           legenda wraca, gdy rozdział oddaje bryłę */}
-      {storeSpot ? (
-        <p className="building__spotnote">
+      {/* legenda i podpis leżą w jednej komórce i przenikają się: wiersz ma stałą wysokość, bryła nie skacze */}
+      <div className="building__foot">
+        <p className="building__spotnote" aria-hidden={!storeSpot} data-on={storeSpot ? '' : undefined}>
           <span className="building__spotnote-mark" aria-hidden="true" />
-          <span className="building__spotnote-label">{storeSpot.label}</span>
-          <span className="building__spotnote-count">{flatsLabel(storeSpot.ids.length)}</span>
+          {/* przy wygaszaniu zostaje ostatni opis, żeby podpis nie znikał pusty */}
+          <span className="building__spotnote-label">{noteSpot?.label}</span>
+          <span className="building__spotnote-count">{noteSpot ? flatsLabel(noteSpot.ids.length) : ''}</span>
         </p>
-      ) : (
-      <div className="building__legend" role="group" aria-label="Legenda: pokaż na bryle">
+      <div
+        className="building__legend"
+        role="group"
+        aria-label="Legenda: pokaż na bryle"
+        data-on={storeSpot ? undefined : ''}
+        inert={storeSpot ? true : undefined}
+      >
         {SPOTS.map(({ key, label }) => {
           const count = apartments.filter((a) => inSpot(a, key, !visibleIds.has(a.id))).length
           // rozdział strony przejął bryłę: legenda nie pokazuje stanu, który teraz nic nie robi
@@ -430,7 +441,7 @@ export function Building() {
           Najedź na okno, kliknij, żeby wejść
         </span>
       </div>
-      )}
+      </div>
     </div>
   )
 }
