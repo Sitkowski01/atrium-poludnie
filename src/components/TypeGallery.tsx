@@ -3,6 +3,7 @@ import { formatArea, formatHour, formatPrice, freeLabel } from '../domain/format
 import { sunRange, sunWindow } from '../domain/sun'
 import type { Facade } from '../domain/types'
 import { useStore, type Spotlight } from '../state/store'
+import { SunBar } from './SunBar'
 import './TypeGallery.css'
 
 /**
@@ -148,6 +149,7 @@ export function TypeGallery() {
         <figcaption className="typesheet__heading">
           <span>Rzuty w jednej skali</span><span>Arkusz A-02</span>
         </figcaption>
+        <div className="typesheet__plans">
         <div className="typesheet__row">{cards.filter((card) => ORDER.indexOf(card.slot) < 3).map(plan)}</div>
         <div className="typesheet__row">
           {cards.filter((card) => ORDER.indexOf(card.slot) >= 3).map(plan)}
@@ -157,6 +159,7 @@ export function TypeGallery() {
               <span>0</span><span>5 m</span>
             </div>
           </div>
+        </div>
         </div>
       </figure>
       <table className="typetable" aria-label="Porównanie typów mieszkań">
@@ -266,12 +269,14 @@ function TypeRow({ card, active, onActive, onPick }: TypeInteractionProps) {
       <td className="typetable__area">{formatArea(card.area)}</td>
       <td className="typetable__sun">
         <span className="typetable__range">{sun}</span>
+        <SunBar sun={sunWindow(card.facade, 3)} className="typetable__bar" />
         {ground && <span className="typetable__note"><span className="typetable__range">{ground}</span></span>}
       </td>
       <td className="typetable__price">{price}</td>
       {/* liczba wolnych jest w etykiecie dostępności; w tabeli była w każdym wierszu ta sama, więc nic nie mówiła */}
       <td className="typetable__mobile" colSpan={4}>
         <span>{formatArea(card.area)}</span> · {exposure} · <span className="typetable__range">słońce {sun}</span>
+        <SunBar sun={sunWindow(card.facade, 3)} className="typetable__bar" />
       </td>
     </tr>
   )

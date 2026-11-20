@@ -207,3 +207,33 @@
 }
 
 .typetable__range { white-space: nowrap; }
+
+/* pasek słońca przy typie: ten sam co w hero i na liście, salon na 3. piętrze */
+.typetable__bar {
+  display: block;
+  width: 120px;
+  margin-top: 6px;
+}
+.typetable__mobile .typetable__bar {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* wąsko: rzuty w rzędach 2–2–1 (ta sama wspólna skala), dzięki temu ok. 1,5× większe niż w układzie 3–2 */
+@container typegallery (width < 520px) {
+  .typesheet__plans {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 20px 16px;
+    margin-top: 20px;
+  }
+  .typesheet__row {
+    display: contents;
+    --base: calc((100cqi - 16px) / 1.835);
+  }
+  .typesheet__legend {
+    flex: 1;
+    align-self: flex-end;
+  }
+}
