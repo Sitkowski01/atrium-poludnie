@@ -465,3 +465,83 @@
   flex-direction: column;
   justify-content: center;
 }
+
+/* ---------- stopka jako pełny pas na całą szerokość okna: ciemna tabliczka zamyka arkusz ----------
+   (wcześniej ściśnięta w kolumnie treści, żeby zmieścić się z kontaktem na laptopie; teraz zakończenie
+   i tak wypełnia ekran, więc stopka ma swój oddech) */
+.site-footer {
+  --f-line: rgb(239 235 227 / 0.16);
+  --f-soft: rgb(239 235 227 / 0.66);
+  margin-top: clamp(48px, 7vh, 96px);
+  padding-top: clamp(36px, 5vh, 64px);
+  background: var(--ink);
+  color: var(--paper);
+}
+.site-footer__inner::before {
+  display: none;
+}
+.site-footer__cell {
+  padding: 8px 32px 36px;
+  border-left-color: var(--f-line);
+}
+.site-footer__brand {
+  padding-left: 0;
+}
+.site-footer__logo {
+  color: var(--paper);
+  font-size: clamp(34px, 3.4vw, 52px);
+}
+.site-footer__logo em {
+  color: var(--sun);
+}
+.site-footer__note,
+.site-footer__label,
+.site-footer__spec dt,
+.site-footer__base {
+  color: var(--f-soft);
+}
+.site-footer__nav a,
+.site-footer__spec dd,
+.site-footer__top {
+  color: var(--paper);
+}
+.site-footer__num {
+  color: var(--f-soft);
+}
+.site-footer__go {
+  color: var(--sun);
+}
+.site-footer__nav li,
+.site-footer__nav li:first-child,
+.site-footer__spec div,
+.site-footer__spec div:first-child,
+.site-footer__base {
+  border-color: var(--f-line);
+}
+@media (min-width: 901px), (max-width: 560px) {
+  .site-footer__nav li:nth-child(4) {
+    border-top-color: var(--f-line);
+  }
+}
+.site-footer__base {
+  min-height: 64px;
+}
+@media (hover: hover) {
+  .site-footer__logo:hover em,
+  .site-footer__nav a:hover .site-footer__num {
+    color: var(--sun);
+  }
+}
+.site-footer :focus-visible {
+  outline-color: var(--sun);
+}
+@media (max-width: 900px) {
+  .site-footer__brand {
+    border-bottom-color: var(--f-line);
+  }
+}
+@media (max-width: 560px) {
+  .site-footer__cell {
+    padding: 20px 0 24px;
+  }
+}
