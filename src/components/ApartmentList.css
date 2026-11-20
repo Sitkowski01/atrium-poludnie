@@ -499,3 +499,53 @@
   white-space: normal;
 }
 .apt-list__group + .apt-list__item { border-top: 0; }
+
+/* ---------- zwarta lista: wiersz w jednej linii na komputerze, dwóch na telefonie ---------- */
+.apt-list__facts { display: flex; flex-wrap: wrap; gap: 0 6px; }
+.apt-list__facts-row { display: inline; }
+/* jedna linia faktów: kropka przed każdym faktem poza pierwszym w całym wierszu */
+.apt-list__facts-row + .apt-list__facts-row .apt-list__fact:first-child { padding-left: 14px; }
+.apt-list__facts-row + .apt-list__facts-row .apt-list__fact:first-child::before { display: block; }
+/* sortowanie z długą nazwą nie może rozpychać sekcji poza ekran (telefon tracił prawy margines) */
+.apt-list__sort select { min-width: 0; max-width: 100%; text-overflow: ellipsis; }
+.apt-list__head, .apt-list__sort { min-width: 0; }
+.apt-list__main { padding-top: 12px; padding-bottom: 12px; }
+.apt-list__sun-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  font-size: 13px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.apt-list__sun-icon { flex: none; fill: var(--sun); }
+.apt-list__group-bar { max-width: 460px; }
+.apt-list__group-key {
+  display: flex;
+  align-items: center;
+  gap: 6px 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.apt-list__group-key-sun,
+.apt-list__group-key-home {
+  display: inline-block;
+  width: 20px;
+  border-radius: 999px;
+  margin-right: -8px;
+}
+.apt-list__group-key-sun { height: 6px; background: linear-gradient(90deg, #e8792a, #f4a94e 50%, #e8792a); }
+.apt-list__group-key-home { height: 3px; background: var(--ink); opacity: .55; }
+.apt-list__group-bar .sunbar__track { height: 10px; }
+.apt-list__group-bar .sunbar__ticks { font-size: 12px; }
+
+/* telefon: status obok numeru (jedna linia mniej w każdym wierszu) */
+@container chapter (max-width: 560px) {
+  .apt-list__number {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+}

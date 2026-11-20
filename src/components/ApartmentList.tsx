@@ -20,7 +20,7 @@ import { SunBar } from './SunBar'
 import './ApartmentList.css'
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
-  { value: 'sun-home', label: 'Najwięcej słońca, gdy jesteś w domu' },
+  { value: 'sun-home', label: 'Słońce w Twoich godzinach' },
   { value: 'sun-desc', label: 'Najdłużej w słońcu' },
   { value: 'price-asc', label: 'Cena rosnąco' },
   { value: 'price-desc', label: 'Cena malejąco' },
@@ -316,12 +316,18 @@ export function ApartmentList() {
               <Fragment key={a.id}>
               {header && (
                 <li className="apt-list__group" aria-hidden="true">
-                  <SunBar sun={sun} home={home} className="apt-list__group-bar" />
+                  <SunBar sun={sun} home={home} ticks className="apt-list__group-bar" />
                   <span className="apt-list__group-text">
                     słońce w salonie {formatHour(sun.from)}–{formatHour(sun.to)}
                     {home.length > 0 && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
                     {` · ${runLen[index]} ${flatsWord(runLen[index])}`}
                   </span>
+                  {home.length > 0 && (
+                    <span className="apt-list__group-key">
+                      <span className="apt-list__group-key-sun" /> słońce w salonie
+                      <span className="apt-list__group-key-home" /> jesteś w domu
+                    </span>
+                  )}
                 </li>
               )}
               <li
@@ -363,13 +369,16 @@ export function ApartmentList() {
                         </span>
                       ))}
                     </span>
-                    {!inGroup[index] && <span className="apt-list__sun">
-                      <SunBar sun={sun} home={home} className="apt-list__sunbar" />
-                      <span className={`apt-list__sun-hours${home.length ? ' apt-list__sun-hours--home' : ''}`}>
-                        {sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez słońca'}
+                    {/* słońce w wierszu tekstem (czytelne), pasek tylko w nagłówku grupy z osią godzin */}
+                    {!inGroup[index] && (
+                      <span className="apt-list__sun-text">
+                        <svg className="apt-list__sun-icon" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+                          <circle cx="6" cy="6" r="3.2" />
+                        </svg>
+                        {sun ? `słońce ${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez bezpośredniego słońca'}
                         {home.length > 0 && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
                       </span>
-                    </span>}
+                    )}
                   </span>
                   <span className="apt-list__price">
                     <strong>{formatPrice(a.price)}</strong>
