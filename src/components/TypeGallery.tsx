@@ -162,7 +162,7 @@ export function TypeGallery() {
       <table className="typetable" aria-label="Porównanie typów mieszkań">
         <thead><tr>
           <th scope="col">Typ</th><th scope="col">Metraż</th>
-          <th scope="col">Słońce w salonie</th><th scope="col">Cena od</th><th scope="col">Wolne</th>
+          <th scope="col">Słońce w salonie, 3. p.</th><th scope="col">Cena od</th>
         </tr></thead>
         <tbody>{cards.map((card) => (
           <TypeRow key={card.slot} card={card} active={active === card.slot}
@@ -221,7 +221,7 @@ function presentation(card: TypeCard) {
   const span = (w: { from: number; to: number }) => `${formatHour(w.from)}\u2060–\u2060${formatHour(w.to)}`
   const lowDiffers = Boolean(ref && low && (Math.abs(ref.from - low.from) > 0.05 || Math.abs(ref.to - low.to) > 0.05))
   const sun = ref ? span(ref) : 'bez bezpośredniego słońca'
-  const ground = lowDiffers && low ? `parter ${span(low)}` : null
+  const ground = lowDiffers && low ? `parter: ${span(low)}` : null
   const price = card.priceFrom == null ? 'wyprzedane' : formatPrice(card.priceFrom)
   const sunLabel = ref ? `słońce w salonie ${sun} na 3. piętrze${ground ? `, ${ground}` : ''}` : sun
   return {
@@ -266,13 +266,12 @@ function TypeRow({ card, active, onActive, onPick }: TypeInteractionProps) {
       <td className="typetable__area">{formatArea(card.area)}</td>
       <td className="typetable__sun">
         <span className="typetable__range">{sun}</span>
-        <span className="typetable__note">3. piętro{ground && <> · <span className="typetable__range">{ground}</span></>}</span>
+        {ground && <span className="typetable__note"><span className="typetable__range">{ground}</span></span>}
       </td>
       <td className="typetable__price">{price}</td>
-      <td className="typetable__free">{card.free}</td>
-      <td className="typetable__mobile" colSpan={5}>
-        <span>{formatArea(card.area)}</span> · {exposure} · słońce {sun} · {freeLabel(card.free)}
-        {ground && <> · {ground}</>}
+      {/* liczba wolnych jest w etykiecie dostępności; w tabeli była w każdym wierszu ta sama, więc nic nie mówiła */}
+      <td className="typetable__mobile" colSpan={4}>
+        <span>{formatArea(card.area)}</span> · {exposure} · <span className="typetable__range">słońce {sun}</span>
       </td>
     </tr>
   )

@@ -60,7 +60,7 @@
   transition: transform var(--hover) var(--ease-hover), filter var(--hover) var(--ease-hover);
 }
 .typesheet__caption { display: block; align-self: start; min-width: 0; }
-.typesheet__title { display: block; line-height: 1.25; }
+.typesheet__title { display: block; line-height: 1.25; white-space: nowrap; }
 .typesheet__number {
   color: var(--ink-2);
   font: 600 12px var(--font-display);
@@ -68,7 +68,7 @@
   white-space: nowrap;
 }
 .typesheet__name {
-  font: 600 16px/1.25 var(--font-display);
+  font: 600 15px/1.25 var(--font-display);
   transition: color var(--hover) var(--ease-hover);
 }
 .typesheet__area {
@@ -138,7 +138,7 @@
 .typetable tr[data-active='true'] { background: var(--card); }
 .typetable td { padding: 10px 8px; vertical-align: middle; }
 .typetable th:first-child, .typetable td:first-child { padding-left: 0; }
-.typetable th:last-child, .typetable .typetable__free { padding-right: 20px; }
+.typetable th:last-child, .typetable .typetable__price { padding-right: 24px; }
 .typetable th:nth-child(2), .typetable th:nth-child(4), .typetable th:nth-child(5),
 .typetable__area, .typetable__price, .typetable__free { text-align: right; }
 .typetable__area, .typetable__price, .typetable__free, .typetable__range {
@@ -205,3 +205,5 @@
   .typesheet__plan[data-active='true'] img { transform: none; }
   .typetable__arrow { transform: translateY(-50%); }
 }
+
+.typetable__range { white-space: nowrap; }
