@@ -283,7 +283,7 @@ export function LightFinder() {
 
         {matches.length > 0 && (
           <button type="button" className="btn btn--primary light__search" onClick={goToSearch}>
-            Pokaż {matches.length === 1 ? 'to' : 'te'} {matches.length} {flats(matches.length)} w wyszukiwarce →
+            Pokaż {matches.length === 1 ? 'to' : 'te'} {matches.length} {flats(matches.length)} w wyszukiwarce <span aria-hidden="true">→</span>
           </button>
         )}
       </div>
