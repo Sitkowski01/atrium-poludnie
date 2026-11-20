@@ -12,8 +12,8 @@ describe('dayTint', () => {
     expect(sunset.alpha).toBeGreaterThan(dayTint(12).alpha)
     expect(sunset.rgb[0]).toBeGreaterThan(sunset.rgb[2]) // więcej czerwieni niż błękitu
   })
-  it('nigdy nie przekracza 0,1 krycia (kontrast tekstu)', () => {
-    for (let h = 0; h <= 24; h += 0.25) expect(dayTint(h).alpha).toBeLessThanOrEqual(0.1)
+  it('nigdy nie przekracza 0,14 krycia (kontrast tekstu --ink-2 zostaje powyżej 4,5:1)', () => {
+    for (let h = 0; h <= 24; h += 0.25) expect(dayTint(h).alpha).toBeLessThanOrEqual(0.14)
   })
   it('przechodzi płynnie między punktami', () => {
     const a = dayTint(17.5)

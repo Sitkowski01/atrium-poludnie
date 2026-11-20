@@ -32,8 +32,12 @@
   row-gap: 8px;
   margin-top: 20px;
 }
+/* drugi rząd w tych samych kolumnach co pierwszy: T4 pod T1, T5 pod T2, podziałka pod T3 — siatka arkusza */
 .typesheet__row:last-child {
-  grid-template-columns: calc(var(--base) * .744) calc(var(--base) * .653) minmax(0, 1fr);
+  grid-template-columns: var(--base) calc(var(--base) * .835) calc(var(--base) * .727);
+}
+.typesheet__row:last-child .typesheet__legend {
+  justify-self: start;
 }
 .typesheet__plan {
   display: grid;

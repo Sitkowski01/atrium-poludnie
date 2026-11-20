@@ -41,7 +41,7 @@ export function MobileBuilding() {
       idle = window.setTimeout(() => {
         goingDown = false
         if (!frame) frame = requestAnimationFrame(update)
-      }, 900)
+      }, 450)
     }
     update()
     window.addEventListener('scroll', schedule, { passive: true })
@@ -161,6 +161,8 @@ export function MobileBuilding() {
         <path d="m9 1 7 4v8l-7 4-7-4V5Zm0 8 7-4M9 9 2 5m7 4v8" />
       </svg>
       Bryła
+      {/* ile mieszkań bryła teraz pokazuje (typ, pory w domu) */}
+      {state.spotlight && <span className="mobile-building__count">· {state.spotlight.ids.length}</span>}
       {state.spotlight && <span className="mobile-building__dot" aria-hidden="true" />}
     </button>
     {active && <div className="mobile-building__scrim" aria-hidden="true" onClick={() => setPhase('closing')} />}
