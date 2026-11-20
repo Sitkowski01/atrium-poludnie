@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { formatHour } from '../domain/format'
 import { DAY_END, DAY_START, sunAt, sunCaption } from '../domain/sun'
 import { useHour, useStore } from '../state/store'
@@ -13,6 +13,21 @@ const PRESETS = [
 
 /** Godzin symulacji na sekundę podczas odtwarzania. */
 const SPEED = 1.6
+
+/** Wschód po prawej, zachód po lewej; wspólny znak kontrolek pór dnia. */
+export function SunMomentGlyph({ position }: { position: number }) {
+  const angle = (position - 2) * Math.PI / 5
+  const point = (a: number) => ({ x: -10 * Math.sin(a), y: 8 * (1 - Math.cos(a)) })
+  const end = point(angle)
+  const mid = point(angle / 2)
+  return (
+    <svg className="sun-moment" viewBox="0 0 26 14" width="26" height="14" aria-hidden="true" focusable="false"
+      style={{ '--sun-x': `${end.x}px`, '--sun-y': `${end.y}px`, '--sun-mid-x': `${mid.x}px`, '--sun-mid-y': `${mid.y}px` } as CSSProperties}>
+      <path d="M3 12 A10 8 0 0 1 23 12" fill="none" stroke="currentColor" strokeWidth="1" opacity=".45" />
+      <circle className="sun-moment__disc" cx="13" cy="4" r="3.2" />
+    </svg>
+  )
+}
 
 export function SunControl() {
   const { state, dispatch } = useStore()
@@ -139,7 +154,7 @@ export function SunControl() {
       </label>
 
       <div className="sun-control__presets" role="group" aria-label="Szybki wybór pory dnia">
-        {PRESETS.map((p) => (
+        {PRESETS.map((p, index) => (
           <button
             key={p.label}
             type="button"
@@ -147,6 +162,7 @@ export function SunControl() {
             aria-pressed={hour === p.hour}
             onClick={() => glideTo(p.hour)}
           >
+            <SunMomentGlyph position={index * 2} />
             {p.label}
           </button>
         ))}

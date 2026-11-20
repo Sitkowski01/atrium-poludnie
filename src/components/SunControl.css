@@ -100,7 +100,9 @@
 
 .sun-control__presets {
   display: flex;
-  gap: 6px;
+  gap: 0;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
 }
 
 /* wąski panel: szybki wybór schodzi pod suwak, opis słońca dostaje całą szerokość.
@@ -183,11 +185,72 @@
   .sun-control__presets {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
+    gap: 0;
   }
   .sun-control__presets .chip {
     padding: 0 6px;
   }
+}
+
+.sun-control__presets .chip {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  min-width: 40px;
+  min-height: 40px;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font: 400 12px var(--font-body);
+  transition: color var(--hover) var(--ease-hover), background-color var(--hover) var(--ease-hover), box-shadow var(--hover) var(--ease-hover);
+}
+.sun-control__presets .chip + .chip { border-left: 1px solid var(--line); }
+.sun-control__presets .chip:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+.sun-control__presets .chip:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+.sun-control__presets .chip[aria-pressed='true'] {
+  background: var(--card);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+.sun-control__presets .chip:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  position: relative;
+  z-index: 1;
+}
+.sun-moment { flex: none; }
+.sun-moment__disc {
+  fill: var(--ink-3);
+  transform: translate(var(--sun-x), var(--sun-y));
+}
+[aria-pressed='true'] .sun-moment__disc { fill: var(--sun); }
+@keyframes sun-moment-travel {
+  from { transform: translate(0, 0); }
+  50% { transform: translate(var(--sun-mid-x), var(--sun-mid-y)); }
+  to { transform: translate(var(--sun-x), var(--sun-y)); }
+}
+@media (hover: hover) {
+  .sun-control__presets .chip:hover { color: var(--ink); }
+  .sun-control__presets .chip:hover:not([aria-pressed='true']) {
+    background: transparent;
+    border-color: var(--line);
+  }
+  .sun-control__presets .chip:hover .sun-moment__disc,
+  .filter-bar__home-chips .chip:hover .sun-moment__disc {
+    animation: sun-moment-travel var(--hover) var(--ease-hover);
+  }
+}
+@media (pointer: coarse), (max-width: 980px) {
+  .sun-control__presets .chip { min-width: 44px; min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sun-control *, .sun-moment__disc { animation: none !important; transition: none !important; }
+  .sun-control__slider input[type='range']::-webkit-slider-thumb { transition: none; transform: none; }
+  .sun-control__slider input[type='range']::-moz-range-thumb { transition: none; transform: none; }
 }
 
 /* telefon: przycisk odtwarzania tej samej wysokości co pory dnia obok (44 px) */
