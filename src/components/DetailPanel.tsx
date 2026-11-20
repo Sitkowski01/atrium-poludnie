@@ -9,7 +9,7 @@ import {
   formatPerM2,
   roomsLabel,
 } from '../domain/format'
-import { DAY_END, DAY_START, sunWindow } from '../domain/sun'
+import { DAY_END, DAY_START, sunWindow, sunShare } from '../domain/sun'
 import type { Apartment } from '../domain/types'
 import { useHour, useStore } from '../state/store'
 import { cancelHourTween } from '../state/tweenHour'
@@ -18,6 +18,7 @@ import { FloorPlan } from './FloorPlan'
 import { InquiryForm } from './InquiryForm'
 import { MortgageCalculator } from './MortgageCalculator'
 import { SunChart } from './SunChart'
+import { MOMENTS, homeHours } from '../domain/light'
 import { WalkViewer } from './WalkViewer'
 
 const PLAN_SCALE: Record<number, number> = { 0: 0.835, 1: 0.727, 2: 1, 3: 0.744, 4: 0.653 }
@@ -115,6 +116,16 @@ export function DetailPanel() {
   const a = selected
   const isFavourite = a ? state.favourites.includes(a.id) : false
   const sun = a ? sunWindow(a.facade, a.floor) : null
+  // wątek „Kiedy jesteś w domu?”: te same pory i ten sam wynik co w liście, także na wykresie słońca
+  const moments = MOMENTS.filter((m) => state.filters.home.includes(m.id))
+  const homeTotal = homeHours(moments)
+  const homeBands = moments.map((m) => [m.from, m.to] as const)
+  const homeNote =
+    a && homeTotal > 0
+      ? `${new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 }).format(
+          moments.reduce((s, m) => s + sunShare(a.facade, a.floor, m.from, m.to) * (m.to - m.from), 0),
+        )} z ${new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 }).format(homeTotal)} h w słońcu, kiedy jesteś w domu (${moments.map((m) => m.label.toLowerCase()).join(', ')})`
+      : undefined
 
   return (
     <dialog
@@ -169,7 +180,7 @@ export function DetailPanel() {
             </div>
             <div className="detail__head-copy">
               <p className="eyebrow">
-                {floorLabel(a.floor)} · <span className="detail__eyebrow-long">okna na </span>{FACADE_LABEL[a.facade]}
+                {floorLabel(a.floor)} · {FACADE_LABEL[a.facade]}
               </p>
               <h2 className="detail__title">Mieszkanie {a.id}</h2>
             </div>
@@ -220,7 +231,7 @@ export function DetailPanel() {
             <div className="detail__section-head">
               <h3 id="detail-sun">Słońce w salonie</h3>
             </div>
-            <SunChart facade={a.facade} floor={a.floor} hour={hour}>
+            <SunChart facade={a.facade} floor={a.floor} hour={hour} home={homeBands} homeNote={homeNote}>
             <label className="detail__hour">
               <span className="visually-hidden">Pora dnia</span>
               <input

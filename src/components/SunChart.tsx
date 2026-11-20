@@ -13,7 +13,22 @@ const BASE = 142
 const xAt = (hour: number) => LEFT + ((hour - DAY_START) / (DAY_END - DAY_START)) * (RIGHT - LEFT)
 const yAt = (value: number) => BASE - value * (BASE - TOP)
 
-export function SunChart({ facade, floor, hour, children }: { facade: Facade; floor: number; hour: number; children?: ReactNode }) {
+export function SunChart({
+  facade,
+  floor,
+  hour,
+  home = [],
+  homeNote,
+  children,
+}: {
+  facade: Facade
+  floor: number
+  hour: number
+  /** godziny w domu (z „Kiedy jesteś w domu?”): cienki tor pod osią, jak na paskach w liście */
+  home?: readonly (readonly [number, number])[]
+  homeNote?: string
+  children?: ReactNode
+}) {
   const clipId = useId()
   const plotRef = useRef<HTMLDivElement>(null)
   const [plotWidth, setPlotWidth] = useState(WIDTH)
@@ -60,6 +75,7 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
       <p className="sun-chart__summary">
         {window ? `${formatHour(window.from)}–${formatHour(window.to)} · łącznie ${formatDuration(window.total)}` : summary}
       </p>
+      {homeNote && <p className="sun-chart__home-note">{homeNote}</p>}
       <div className="sun-chart__plot" ref={plotRef}>
       <svg
         className="sun-chart__svg"
@@ -77,6 +93,9 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
           width={xAt(window.to) - xAt(window.from)} height={BASE - TOP} clipPath={`url(#${clipId})`} />}
         <path className="sun-chart__curve" d={line} />
         <path className="sun-chart__baseline" d={`M ${LEFT} ${BASE} H ${RIGHT}`} />
+        {home.map(([a, b]) => (
+          <path key={`${a}-${b}`} className="sun-chart__home" d={`M ${xAt(a)} ${BASE + 6} H ${xAt(b)}`} />
+        ))}
         {ticks.map((tick) => (
           <g key={tick}>
             <path className="sun-chart__tick" d={`M ${xAt(tick)} ${BASE} v 5`} />

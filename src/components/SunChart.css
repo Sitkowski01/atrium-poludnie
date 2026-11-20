@@ -109,3 +109,17 @@
   line-height: 1.4;
   color: var(--ink-2);
 }
+
+/* godziny w domu pod osią wykresu: ten sam cienki grafitowy tor co na paskach listy */
+.sun-chart__home {
+  stroke: var(--ink);
+  stroke-opacity: 0.55;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.sun-chart__home-note {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
