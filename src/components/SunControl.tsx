@@ -7,7 +7,7 @@ import './SunControl.css'
 
 const PRESETS = [
   { label: 'Rano', hour: 8 },
-  { label: 'W południe', hour: 13 },
+  { label: 'Środek dnia', hour: 13 },
   { label: 'Wieczór', hour: 19 },
 ]
 

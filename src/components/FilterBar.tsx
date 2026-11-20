@@ -10,9 +10,9 @@ import './FilterBar.css'
 const ROOM_OPTIONS = [1, 2, 3, 4]
 
 const FACADE_OPTIONS: { value: Facade | 'all'; label: string }[] = [
-  { value: 'all', label: 'Obie' },
-  { value: 'S', label: 'Południe' },
-  { value: 'E', label: 'Wschód' },
+  { value: 'all', label: 'Obu stron' },
+  { value: 'S', label: 'Południa' },
+  { value: 'E', label: 'Wschodu' },
 ]
 
 const NARROW_QUERY = '(max-width: 980px)'
@@ -177,7 +177,7 @@ export function FilterBar() {
       </div>
 
       <div className="filter-bar__group" role="group" aria-labelledby={`${panelId}-facade`}>
-        <span className="filter-bar__label" id={`${panelId}-facade`}>Ekspozycja</span>
+        <span className="filter-bar__label" id={`${panelId}-facade`}>Okna od</span>
         <div className="filter-bar__chips">
           {FACADE_OPTIONS.map((o) => (
             <button
@@ -237,7 +237,7 @@ export function FilterBar() {
       </div>
 
       <div className="filter-bar__row">
-        <span className="filter-bar__label">Piętro i pokaż</span>
+        <span className="filter-bar__label">Piętro i lista</span>
         <div className="filter-bar__last">
       <div role="group" aria-labelledby={`${panelId}-floor`}>
         <span className="visually-hidden" id={`${panelId}-floor`}>Piętro</span>

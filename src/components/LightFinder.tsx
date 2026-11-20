@@ -71,7 +71,7 @@ export function LightFinder() {
       ? `${FACADE_NAMES[missedFacade.facade].subject} nie ma wtedy słońca w salonie.`
       : missedWindow.from > homeFrom + 1
         ? `${FACADE_NAMES[missedFacade.facade].subject} dostaje słońce do salonu dopiero od ${formatHour(missedWindow.from)}, więc w tych godzinach przegrywa.`
-        : `${FACADE_NAMES[missedFacade.facade].subject} ma słońce w salonie tylko do ${formatHour(missedWindow.to)}, więc przy tylu godzinach w domu odpada.`
+        : `${FACADE_NAMES[missedFacade.facade].subject} ma słońce w salonie tylko do ${formatHour(missedWindow.to)}, więc nie wystarczy na Twoje godziny w domu.`
   const shownCount = Math.round(useCountUp(matches.length, { duration: 700 }))
   const soldOnly = useMemo(() => onlySoldMatch(apartments, moments), [apartments, moments])
   // Wspólne podsumowanie dotyczy wszystkich dopasowanych mieszkań.
@@ -227,7 +227,7 @@ export function LightFinder() {
             {matches.length > 0 && <p className="light__common">
               {commonResult
                 ? `Każde z nich: ${hoursText(matches[0].share)}; słońce od ${formatHour(matches[0].firstSunAt)} w Twoich godzinach.`
-                : `Najwięcej: ${bestHours} z ${hoursFormat.format(totalHours)} godzin w domu przy słońcu.`}
+                : `Najlepsze ma słońce przez ${bestHours} z ${hoursFormat.format(totalHours)} godzin, które spędzasz w domu.`}
             </p>}
             {matches.length > 0 && facadeName && (
               <p className="light__note">

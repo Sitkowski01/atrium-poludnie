@@ -392,8 +392,8 @@ export function Building() {
           ) : (
             <>
               <span className="building__card-eyebrow">35 mieszkań · 7 kondygnacji</span>
-              <strong className="building__card-title building__card-title--pointer">Najedź na okno, kliknij, żeby wejść</strong>
-              <strong className="building__card-title building__card-title--touch">Dotknij okna, żeby wejść</strong>
+              <strong className="building__card-title building__card-title--pointer">Wskaż okno i kliknij, żeby zobaczyć mieszkanie</strong>
+              <strong className="building__card-title building__card-title--touch">Dotknij okna, żeby zobaczyć mieszkanie</strong>
               <span className="building__card-meta building__card-title--pointer">
                 Strzałki na klawiaturze przechodzą między mieszkaniami.
               </span>
@@ -445,7 +445,7 @@ export function Building() {
         })}
         {/* podpowiedź w rzędzie legendy, pod rysunkiem (na komputerze); na dotyku zostaje karta pod bryłą */}
         <span className="building__legend-hint" aria-hidden="true">
-          Najedź na okno, kliknij, żeby wejść
+          Wskaż okno i kliknij, żeby zobaczyć mieszkanie
         </span>
       </div>
       </div>

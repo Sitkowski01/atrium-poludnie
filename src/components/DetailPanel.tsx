@@ -214,7 +214,7 @@ export function DetailPanel() {
 
           <section className="detail__section" aria-labelledby="detail-walk">
             <div className="detail__section-head">
-              <h3 id="detail-walk">Spacer 360°</h3>
+              <h3 id="detail-walk">Wnętrze 360°</h3>
               <span className="detail__hint">przeciągnij, żeby się rozejrzeć</span>
             </div>
             <WalkViewer key={a.id} apartment={a} />

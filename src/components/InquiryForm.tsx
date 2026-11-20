@@ -30,7 +30,7 @@ function validate(v: Values): Errors {
   if (phone) {
     const digits = phone.replace(/\D/g, '').length
     if (!/^\+?[\d\s-]+$/.test(phone) || digits < 9 || digits > 15) {
-      errors.phone = 'Numer: 9–15 cyfr, dozwolone spacje, + i -.'
+      errors.phone = 'Numer telefonu powinien mieć 9–15 cyfr, np. +48 600 123 456.'
     }
   }
   if (!v.consent) errors.consent = 'Zgoda jest wymagana, aby wysłać zapytanie.'
