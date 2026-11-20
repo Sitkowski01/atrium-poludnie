@@ -222,3 +222,87 @@
     justify-content: center;
   }
 }
+
+/* trzy przykłady pod wynikiem: dowód, że liczba coś znaczy; klik otwiera mieszkanie */
+.light__examples {
+  display: grid;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.light__examples li {
+  border-bottom: 1px solid var(--line);
+}
+.light__example {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 11ch;
+  grid-template-areas: 'id meta price' 'id bar share';
+  align-items: center;
+  gap: 4px 16px;
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--hover) var(--ease-hover);
+}
+.light__example-id {
+  grid-area: id;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition: color var(--hover) var(--ease-hover);
+}
+.light__example-meta {
+  grid-area: meta;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.light__example-bar {
+  grid-area: bar;
+}
+.light__example-share {
+  grid-area: share;
+  justify-self: end;
+  font-size: 12px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.light__example-price {
+  grid-area: price;
+  justify-self: end;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+@media (hover: hover) {
+  .light__example:hover {
+    background: var(--card);
+  }
+  .light__example:hover .light__example-id {
+    color: var(--accent);
+  }
+}
+
+/* wąsko: opis przykładu w całości, w swojej linii (bez wielokropka) */
+@container chapter (width < 520px) {
+  .light__example {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-areas: 'id meta meta' 'id bar price' 'id bar share';
+  }
+  .light__example-meta {
+    white-space: normal;
+  }
+}

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { formatHour } from '../domain/format'
+import { floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
 import { MOMENTS, homeHours, matchMoments, onlySoldMatch, summarizeMatches, type Moment } from '../domain/light'
 import { sunAt, sunWindow } from '../domain/sun'
 import { useCountUp } from '../hooks/useCountUp'
 import { useStore, type Spotlight } from '../state/store'
+import { SunBar } from './SunBar'
 import { tweenHour } from '../state/tweenHour'
 import './LightFinder.css'
 
@@ -151,6 +152,12 @@ export function LightFinder() {
   }
 
   const evening = picked.length === 1 && picked[0] === 'wieczor'
+  // dowód zamiast gołej liczby: trzy przykłady, każdy innego typu (najlepsze dopasowanie w swoim typie)
+  const examples = useMemo(() => {
+    const seen = new Set<number>()
+    return matches.filter((m) => !seen.has(m.apartment.slot) && seen.add(m.apartment.slot)).slice(0, 3)
+  }, [matches])
+  const homeBands = useMemo(() => moments.map((m) => [m.from, m.to] as const), [moments])
 
   return (
     <div className="light" ref={root}>
@@ -219,6 +226,26 @@ export function LightFinder() {
               </p>
             )}
           </>
+        )}
+
+        {examples.length > 0 && (
+          <ul className="light__examples" aria-label="Przykładowe mieszkania">
+            {examples.map(({ apartment: a, share }) => (
+              <li key={a.id}>
+                <button type="button" className="light__example" onClick={() => dispatch({ type: 'select', id: a.id })}>
+                  <span className="light__example-id">{a.id}</span>
+                  <span className="light__example-meta">
+                    {roomsLabel(a.rooms)} · {formatArea(a.area)} · {floorLabel(a.floor)}
+                  </span>
+                  <SunBar sun={sunWindow(a.facade, a.floor)} home={homeBands} className="light__example-bar" />
+                  <span className="light__example-share">
+                    {hoursFormat.format(share * totalHours)} z {hoursFormat.format(totalHours)} h
+                  </span>
+                  <span className="light__example-price">{formatPrice(a.price)}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
         )}
 
         {matches.length > 0 && (
