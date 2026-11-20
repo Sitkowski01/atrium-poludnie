@@ -340,3 +340,10 @@
   .typetable .typetable__mobile { grid-column: 2; }
   .typetable__sunline { display: block; white-space: nowrap; }
 }
+
+/* fokus z klawiatury na wierszu typu: obwódka całego wiersza (przycisk rozciąga się na wiersz) */
+.typetable__type button:focus-visible { outline: none; }
+.typetable tr:has(.typetable__type button:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}

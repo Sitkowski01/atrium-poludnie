@@ -409,7 +409,7 @@ export function Building() {
         <p className="building__spotnote" aria-hidden={!storeSpot} data-on={storeSpot ? '' : undefined}>
           <span className="building__spotnote-mark" aria-hidden="true" />
           {/* przy wygaszaniu zostaje ostatni opis, żeby podpis nie znikał pusty */}
-          <span className="building__spotnote-label">{noteSpot?.label}</span>
+          <span className="building__spotnote-label" title={noteSpot?.label}>{noteSpot?.label}</span>
           <span className="building__spotnote-count">{noteSpot ? flatsLabel(noteSpot.ids.length) : ''}</span>
         </p>
       <div

@@ -45,8 +45,8 @@
   line-height: 36px;
   border-radius: var(--radius);
   background: var(--scrim);
-  /* nakładka na zdjęciu zostaje ciemna, więc tekst jasny bez względu na motyw strony */
-  color: var(--card);
+  /* nakładka na zdjęciu zostaje ciemna, więc tekst jasny i pełny (--card ma krycie .55 → kontrast 3:1) */
+  color: var(--paper);
   font-size: 14px;
   font-weight: 600;
   overflow: hidden;
@@ -66,8 +66,8 @@
   border: 0;
   border-radius: 999px;
   background: var(--scrim);
-  /* nakładka na zdjęciu zostaje ciemna, więc tekst jasny bez względu na motyw strony */
-  color: var(--card);
+  /* nakładka na zdjęciu zostaje ciemna, więc tekst jasny i pełny (--card ma krycie .55 → kontrast 3:1) */
+  color: var(--paper);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.2;

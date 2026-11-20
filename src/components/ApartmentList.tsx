@@ -119,21 +119,21 @@ export function ApartmentList() {
   const collapsible = visible.length > collapsedRows
   const shown = collapsible && !expanded ? visible.slice(0, collapsedRows) : visible
   const sameShare =
-    shown.length > 1 &&
+    visible.length > 1 &&
     // porównujemy godziny tak, jak je wypisujemy (4,4 h vs 4,3 h), nie zaokrąglony ułamek
-    shown.every((a) => hoursFormat.format((shares.get(a.id) ?? 0) * totalHours) === hoursFormat.format((shares.get(shown[0].id) ?? 0) * totalHours))
-  // wszystkie pokazane wiersze mają to samo słońce (np. wyższe piętra od południa): pasek mówimy raz nad listą,
+    visible.every((a) => hoursFormat.format((shares.get(a.id) ?? 0) * totalHours) === hoursFormat.format((shares.get(visible[0].id) ?? 0) * totalHours))
+  // całe wyniki mają to samo słońce (np. wyższe piętra od południa): pasek mówimy raz nad listą,
   // a wiersze zostają zwarte i różnią się tym, co naprawdę się różni — piętrem, metrażem, ceną
-  const sunOf = (x: (typeof shown)[number]) => sunWindow(x.facade, x.floor)
+  const sunOf = (x: (typeof visible)[number]) => sunWindow(x.facade, x.floor)
   const sameSun =
-    shown.length > 1 &&
+    visible.length > 1 &&
     (home.length === 0 || sameShare) &&
-    shown.every((x) => {
-      const a0 = sunOf(shown[0])
+    visible.every((x) => {
+      const a0 = sunOf(visible[0])
       const ax = sunOf(x)
       return Boolean(a0 && ax && formatHour(a0.from) === formatHour(ax.from) && formatHour(a0.to) === formatHour(ax.to))
     })
-  const commonSun = sameSun ? sunOf(shown[0]) : null
+  const commonSun = sameSun ? sunOf(visible[0]) : null
 
   // bryła towarzyszy liście: gdy rozdział jest na ekranie, podświetla mieszkania pokazane w wierszach
   // (najechany wiersz i tak wygrywa — ma własną kartę na bryle)
@@ -269,9 +269,9 @@ export function ApartmentList() {
             <div className="apt-list__common">
               <SunBar sun={commonSun} home={home} ticks className="apt-list__common-bar" />
               <p>
-                <strong>Każde z pokazanych:</strong> słońce w salonie {formatHour(commonSun.from)}–{formatHour(commonSun.to)}
+                <strong>Każde z wyniku:</strong> słońce w salonie {formatHour(commonSun.from)}–{formatHour(commonSun.to)}
                 {home.length > 0 &&
-                  ` · ${hoursFormat.format((shares.get(shown[0].id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h, kiedy jesteś w domu`}
+                  ` · ${hoursFormat.format((shares.get(visible[0].id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h, kiedy jesteś w domu`}
               </p>
             </div>
           )}
@@ -342,7 +342,7 @@ export function ApartmentList() {
                       <SunBar sun={sun} home={home} className="apt-list__sunbar" />
                       <span className={`apt-list__sun-hours${home.length ? ' apt-list__sun-hours--home' : ''}`}>
                         {sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez słońca'}
-                        {home.length > 0 && !sameShare && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
+                        {home.length > 0 && !sameShare && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
                       </span>
                     </span>}
                   </span>

@@ -172,7 +172,7 @@ export function TypeGallery() {
     <div className="typegal" ref={galRef}>
       <figure className="typesheet" data-active={active !== null}>
         <figcaption className="typesheet__heading">
-          <span>Rzuty w jednej skali</span><span>Arkusz A-02</span>
+          <span>Rzuty w jednej skali · pasek: dzień 5–21</span><span>Arkusz 02 / 05</span>
         </figcaption>
         <div className="typesheet__plans">
         <div className="typesheet__row">{cards.filter((card) => ORDER.indexOf(card.slot) < 3).map(plan)}</div>
@@ -281,7 +281,7 @@ function TypePlan({ card, active, onActive, onPick }: TypeInteractionProps) {
         <span className="typesheet__price">
           {card.priceFrom == null ? 'wyprzedane' : `od ${formatPrice(card.priceFrom)}`}
         </span>
-        <SunBar sun={sunWindow(card.facade, 3)} ticks className="typesheet__bar" />
+        <SunBar sun={sunWindow(card.facade, 3)} className="typesheet__bar" />
         <span className="typesheet__sun">{presentation(card).sun} · 3. piętro</span>
       </span>
     </button>

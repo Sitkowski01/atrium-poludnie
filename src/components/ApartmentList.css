@@ -471,3 +471,12 @@
   color: var(--ink);
   font-weight: 600;
 }
+
+/* telefon: sortowanie na pełną szerokość, równo z przyciskami filtrów nad nim */
+@container chapter (max-width: 560px) {
+  .apt-list__sort { width: 100%; }
+  .apt-list__sort select { flex: 1; min-width: 0; }
+}
+
+/* opis mieszkania może się zawinąć na wąskim ekranie, zamiast wystawać poza wiersz */
+.apt-list__facts { min-width: 0; white-space: normal; }
