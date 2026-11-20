@@ -121,6 +121,18 @@ export function ApartmentList() {
   const sameShare =
     shown.length > 1 &&
     shown.every((a) => hoursFormat.format(shares.get(a.id) ?? 0) === hoursFormat.format(shares.get(shown[0].id) ?? 0))
+  // wszystkie pokazane wiersze mają to samo słońce (np. wyższe piętra od południa): pasek mówimy raz nad listą,
+  // a wiersze zostają zwarte i różnią się tym, co naprawdę się różni — piętrem, metrażem, ceną
+  const sunOf = (x: (typeof shown)[number]) => sunWindow(x.facade, x.floor)
+  const sameSun =
+    shown.length > 1 &&
+    (home.length === 0 || sameShare) &&
+    shown.every((x) => {
+      const a0 = sunOf(shown[0])
+      const ax = sunOf(x)
+      return Boolean(a0 && ax && formatHour(a0.from) === formatHour(ax.from) && formatHour(a0.to) === formatHour(ax.to))
+    })
+  const commonSun = sameSun ? sunOf(shown[0]) : null
 
   // bryła towarzyszy liście: gdy rozdział jest na ekranie, podświetla mieszkania pokazane w wierszach
   // (najechany wiersz i tak wygrywa — ma własną kartę na bryle)
@@ -133,11 +145,12 @@ export function ApartmentList() {
     io.observe(el)
     return () => io.disconnect()
   }, [])
-  const shownKey = shown.map((a) => a.id).join(',')
+  // bryła pokazuje cały wynik wyszukiwania (ta sama liczba co nad listą), nie tylko pierwszą stronę
+  const shownKey = visible.map((a) => a.id).join(',')
   const listSpot = useMemo<Spotlight | null>(
     () =>
       shownKey
-        ? { ids: shownKey.split(','), label: 'Pokazane na liście' }
+        ? { ids: shownKey.split(','), label: 'Mieszkania z listy' }
         : null,
     [shownKey],
   )
@@ -210,13 +223,6 @@ export function ApartmentList() {
 
   return (
     <section ref={sectionRef} className="apt-list" aria-label="Lista mieszkań">
-      {/* ten sam wynik w każdym pokazanym wierszu: mówimy go raz, nad listą, zamiast powtarzać w każdym */}
-      {home.length > 0 && sameShare && shown.length > 1 && (
-        <p className="apt-list__common">
-          Każde z pokazanych: {hoursFormat.format((shares.get(shown[0].id) ?? 0) * totalHours)} z {hoursFormat.format(totalHours)} h
-          w słońcu, kiedy jesteś w domu.
-        </p>
-      )}
       <div className="apt-list__head">
         <p className="apt-list__count" aria-live="polite" ref={countRef} tabIndex={-1}>
           <strong>{visible.length}</strong>
@@ -258,6 +264,16 @@ export function ApartmentList() {
         </div>
       ) : (
         <>
+          {commonSun && (
+            <div className="apt-list__common">
+              <SunBar sun={commonSun} home={home} className="apt-list__common-bar" />
+              <p>
+                <strong>Każde z pokazanych:</strong> słońce w salonie {formatHour(commonSun.from)}–{formatHour(commonSun.to)}
+                {home.length > 0 &&
+                  ` · ${hoursFormat.format((shares.get(shown[0].id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h, kiedy jesteś w domu`}
+              </p>
+            </div>
+          )}
         <ul
           ref={listRef}
           id={listId}
@@ -321,13 +337,13 @@ export function ApartmentList() {
                         </span>
                       ))}
                     </span>
-                    <span className="apt-list__sun">
+                    {!commonSun && <span className="apt-list__sun">
                       <SunBar sun={sun} home={home} className="apt-list__sunbar" />
                       <span className={`apt-list__sun-hours${home.length ? ' apt-list__sun-hours--home' : ''}`}>
                         {sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez słońca'}
                         {home.length > 0 && !sameShare && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
                       </span>
-                    </span>
+                    </span>}
                   </span>
                   <span className="apt-list__price">
                     <strong>{formatPrice(a.price)}</strong>
