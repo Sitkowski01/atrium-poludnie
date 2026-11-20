@@ -140,7 +140,8 @@ export function ApartmentList() {
   const sectionRef = useRef<HTMLElement>(null)
   const [listInView, setListInView] = useState(false)
   useEffect(() => {
-    const el = sectionRef.current
+    // cały rozdział 04 (filtry i lista): bryła pokazuje wynik wyszukiwania od pierwszego filtra do końca listy
+    const el = sectionRef.current?.closest<HTMLElement>('#mieszkania') ?? sectionRef.current
     if (!el || typeof IntersectionObserver === 'undefined') return
     const io = new IntersectionObserver(([e]) => setListInView(e.isIntersecting), { rootMargin: '-35% 0px -35% 0px' })
     io.observe(el)

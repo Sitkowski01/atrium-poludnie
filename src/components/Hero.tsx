@@ -132,7 +132,8 @@ export function Hero() {
   const free = apartments.filter((a) => a.status === 'wolne')
   const cheapest = Math.min(...free.map((a) => a.price))
   // liczby dochodzą przy wejściu; czytnik dostaje od razu wartość końcową
-  const freeShown = Math.round(useCountUp(free.length, { from: 0, duration: 1100 }))
+  // najdłuższe słońce w salonie w całym budynku (dowolne piętro, dowolna strona)
+  const longestSun = Math.max(...apartments.map((a) => sunWindow(a.facade, a.floor)?.total ?? 0))
   const priceShown = Math.round(useCountUp(cheapest / 1000, { from: (cheapest / 1000) * 0.6, duration: 1100 }))
 
   const lines = useMemo<Line[]>(
@@ -189,18 +190,16 @@ export function Hero() {
         </a>
         <dl className="hero__facts">
           <div>
-            <dt>wolnych</dt>
-            <dd>
-              <span aria-hidden="true">{freeShown}</span>
-              <span className="visually-hidden">{free.length}</span>
-            </dd>
+            {/* liczbę wolnych mówi legenda pod bryłą; tu to, czego nie mówi nic innego: ile najdłużej trwa słońce */}
+            <dt>słońca w salonie</dt>
+            <dd>do {formatDuration(longestSun)}</dd>
           </div>
           <div>
             <dt>
               <span className="hero__facts-long">cena </span>od
             </dt>
             <dd>
-              <span aria-hidden="true">{thousands.format(priceShown)} tys. zł</span>
+              <span aria-hidden="true">{thousands.format(priceShown * 1000)} zł</span>
               <span className="visually-hidden">{thousands.format(cheapest)} zł</span>
             </dd>
           </div>
