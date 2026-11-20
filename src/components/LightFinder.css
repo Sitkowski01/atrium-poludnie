@@ -346,7 +346,35 @@
 }
 .light__key-home {
   width: 22px;
-  height: 14px;
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--ink) 16%, transparent);
+  height: 3px;
+  border-radius: 999px;
+  background: var(--ink);
+  opacity: 0.55;
+}
+
+/* telefon: pory w zwartej siatce 3 + 2 (glif, nazwa, godziny), bez opisów — wynik widać zaraz pod nimi */
+@container chapter (width < 520px) {
+  .light__moments {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .light__moment {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    grid-template-areas: 'glyph' 'label' 'time';
+    justify-items: start;
+    row-gap: 2px;
+    min-height: 0;
+    padding: 10px 10px 12px;
+  }
+  .light__glyph {
+    width: 40px;
+  }
+  .light__moment-label {
+    min-height: 0;
+    font-size: 15px;
+  }
+  .light__moment-note {
+    display: none;
+  }
 }

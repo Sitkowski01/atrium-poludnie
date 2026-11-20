@@ -27,13 +27,13 @@
 /* okno „jestem w domu”: szare pole pod słońcem; słońce zostaje na wierzchu,
    więc od razu widać, czy w nie trafia */
 .sunbar__home {
+  /* godziny w domu: osobny tor pod paskiem (2 px), nie plama na słońcu — oba czytelne naraz */
   position: absolute;
-  top: -4px;
-  bottom: -4px;
-  z-index: -1;
-  border-radius: var(--radius);
-  /* godziny w domu: wyraźny, ale spokojny pas za torem (7% ginęło na papierze) */
-  background: color-mix(in srgb, var(--ink) 16%, transparent);
+  top: calc(100% + 3px);
+  height: 3px;
+  border-radius: 999px;
+  background: var(--ink);
+  opacity: 0.55;
 }
 .sunbar__now {
   position: absolute;

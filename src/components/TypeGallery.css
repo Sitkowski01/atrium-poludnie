@@ -311,7 +311,8 @@
 }
 .typesheet__bar {
   display: block;
-  width: 100%;
+  /* jedna długość paska dla wszystkich typów: dzień 5–21 ma tę samą skalę na całym arkuszu */
+  width: 128px;
   margin-top: 8px;
 }
 .typesheet__sun {
