@@ -58,7 +58,7 @@
 .light__moment.is-on {
   border-color: var(--ink);
   background: var(--card);
-  box-shadow: inset 0 3px 0 var(--ink);
+  box-shadow: inset 0 0 0 0.5px var(--ink);
   color: var(--ink);
 }
 .light__glyph {
@@ -147,14 +147,28 @@
   text-wrap: balance;
 }
 .light__note,
-.light__empty,
-.light__more {
+.light__empty {
   margin: 0;
   max-width: 52ch;
   font-size: 14px;
   line-height: 1.55;
   color: var(--ink-2);
 }
+.light__more {
+  justify-self: start;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color var(--hover) var(--ease-hover);
+}
+.light__more:hover { color: var(--ink-2); }
 
 .light__list {
   display: grid;
@@ -213,7 +227,7 @@
 
 /* Wspólna typografia i kolumny z listą mieszkań; pasek pokazuje przecięcie godzin. */
 .light .light__flat {
-  grid-template-columns: 104px minmax(0, 1fr) auto;
+  grid-template-columns: 96px minmax(0, 1fr) 11ch;
   grid-template-areas: none;
   grid-template-rows: auto;
   gap: 12px;
@@ -222,7 +236,7 @@
 .light__flat .apt-list__number { align-self: start; grid-area: auto; }
 .light__flat .apt-list__info { display: grid; gap: 8px; }
 .light__flat .apt-list__facts { grid-area: auto; flex-direction: row; font-size: 12px; }
-.light__flat .apt-list__price { grid-area: auto; justify-items: end; }
+.light__flat .apt-list__price { grid-area: auto; justify-items: end; font-variant-numeric: tabular-nums; }
 .light__flat .apt-list__price strong { font-size: var(--fd-1); }
 .light__flat .light__flat-timeline { grid-area: auto; width: 100%; flex-wrap: wrap; gap: 6px; }
 .light__flat .light__flat-bar {
@@ -241,10 +255,11 @@
 .light__common { margin: 0; font-size: var(--fd-1); font-family: var(--font-display); }
 .light__key-overlap { display: inline-block; width: 18px; height: 6px; }
 .light__key-sun { opacity: .3; }
-@container chapter (max-width: 400px) {
-  .light .light__flat { grid-template-columns: 104px minmax(0, 1fr); }
-  .light__flat .apt-list__number { grid-row: 1 / 3; }
-  .light__flat .apt-list__price { grid-column: 2; }
+@container chapter (max-width: 520px) {
+  .light .light__flat { grid-template-columns: minmax(0, 1fr) 11ch; }
+  .light__flat .apt-list__number { grid-column: 1; grid-row: 1; }
+  .light__flat .apt-list__price { grid-column: 2; grid-row: 1; }
+  .light__flat .apt-list__info { grid-column: 1 / -1; grid-row: 2; justify-items: stretch; }
 }
 
 .light__bar-legend {

@@ -130,6 +130,14 @@ export function FilterBar() {
       <fieldset className="filter-bar__group">
         <legend className="filter-bar__label">Pokoje</legend>
         <div className="filter-bar__chips">
+          <button
+            type="button"
+            className="chip"
+            aria-pressed={filters.rooms.length === 0}
+            onClick={() => dispatch({ type: 'setFilters', patch: { rooms: [] } })}
+          >
+            Dowolne
+          </button>
           {ROOM_OPTIONS.map((n) => (
             <button
               key={n}

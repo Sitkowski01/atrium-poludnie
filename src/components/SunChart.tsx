@@ -67,7 +67,9 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
 
   return (
     <div className="sun-chart">
-      <p className="sun-chart__y-label">ile słońca w salonie</p>
+      <p className="sun-chart__summary">
+        {window ? `${formatHour(window.from)}–${formatHour(window.to)} · łącznie ${formatDuration(window.total)}` : summary}
+      </p>
       <div className="sun-chart__plot" ref={plotRef}>
       <svg
         className="sun-chart__svg"
@@ -115,12 +117,6 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
         ))}
       </div>
       {children}
-      <p className="sun-chart__summary">
-        {window ? <>
-          <span>{formatHour(window.from)}–{formatHour(window.to)}</span>
-          <span>łącznie {formatDuration(window.total)}</span>
-        </> : summary}
-      </p>
     </div>
   )
 }

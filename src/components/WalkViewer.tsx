@@ -346,6 +346,12 @@ function MiniMap({
   onPick: (room: number) => void
 }) {
   const { plan } = apartment
+  const abbreviations = plan.map((r) => r.label.toLocaleLowerCase('pl-PL').startsWith('aneks')
+    ? 'A'
+    : ({ salon: 'Sa', sypialnia: 'Sy', hol: 'H', lazienka: 'Ł', kuchnia: 'K', balkon: 'B' })[r.kind])
+  const labels = abbreviations.map((label, index) => abbreviations.filter((value) => value === label).length > 1
+    ? `${label}${abbreviations.slice(0, index + 1).filter((value) => value === label).length}`
+    : label)
   const pad = 0.25
   const minX = Math.min(...plan.map((r) => r.x))
   const minY = Math.min(...plan.map((r) => r.y))
@@ -413,7 +419,7 @@ function MiniMap({
       </g>
       {plan.map((r, index) => (
         <text key={index} className="walk__initial" x={r.x + r.w / 2} y={r.y + r.h / 2} aria-hidden="true">
-          {r.label.slice(0, 1).toLocaleUpperCase('pl-PL')}
+          {labels[index]}
         </text>
       ))}
     </svg>

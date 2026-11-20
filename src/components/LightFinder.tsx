@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { STATUS_LABEL, floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
 import { MOMENTS, homeHours, matchMoments, onlySoldMatch, summarizeMatches, type Moment } from '../domain/light'
 import { DAY_START, DAY_END, sunAt, sunWindow } from '../domain/sun'
@@ -45,8 +45,6 @@ const has = (n: number) => {
   return n !== 1 && d >= 2 && d <= 4 && (t < 12 || t > 14) ? 'mają' : 'ma'
 }
 
-const WIDE = '(min-width: 981px)'
-
 /** mała tarcza na łuku: gdzie jest słońce w środku tej pory dnia */
 function MomentGlyph({ m }: { m: Moment }) {
   const mid = (m.from + m.to) / 2
@@ -72,9 +70,11 @@ function MomentGlyph({ m }: { m: Moment }) {
 export function LightFinder() {
   const { apartments, dispatch } = useStore()
   const [picked, setPicked] = useState<string[]>(['poranek', 'popoludnie'])
+  const [expanded, setExpanded] = useState(false)
+  const listId = useId()
   const moments = useMemo(() => MOMENTS.filter((m) => picked.includes(m.id)), [picked])
   const totalHours = homeHours(moments)
-  const hoursText = (share: number) => `${hoursFormat.format(Math.round(share * totalHours * 2) / 2)} z ${hoursFormat.format(totalHours)}`
+  const hoursText = (share: number) => `${hoursFormat.format(share * totalHours)} z ${hoursFormat.format(totalHours)}`
   const matches = useMemo(() => matchMoments(apartments, moments), [apartments, moments])
   const summary = useMemo(() => summarizeMatches(apartments, moments, matches), [apartments, moments, matches])
   const facadeName = summary.wholeFacade ? FACADE_NAMES[summary.wholeFacade].from : null
@@ -91,9 +91,11 @@ export function LightFinder() {
         : `${FACADE_NAMES[missedFacade.facade].subject} ma słońce w salonie tylko do ${formatHour(missedWindow.to)}, więc przy tylu godzinach w domu odpada.`
   const shownCount = Math.round(useCountUp(matches.length, { duration: 700 }))
   const soldOnly = useMemo(() => onlySoldMatch(apartments, moments), [apartments, moments])
-  const shown = matches.slice(0, SHOWN)
-  const commonHours = shown.length > 0 && shown.every((m) => hoursText(m.share) === hoursText(shown[0].share))
-    ? hoursText(shown[0].share) : null
+  const shown = expanded ? matches : matches.slice(0, SHOWN)
+  const commonHours = matches.length > 0 && matches.every((m) => Math.abs(m.share - matches[0].share) < 1e-6)
+  // „Co najmniej” zaokrąglamy w dół, żeby nie obiecywać więcej niż daje model.
+  const minimumHours = matches.length ? Math.floor(Math.min(...matches.map((m) => m.share)) * totalHours * 10 + 1e-6) / 10 : 0
+  const bestHours = matches.length ? hoursFormat.format(Math.max(...matches.map((m) => m.share)) * totalHours) : ''
 
   // bryła reaguje tylko wtedy, gdy rozdział jest na ekranie; po wyjściu oddajemy ją innym
   const root = useRef<HTMLDivElement>(null)
@@ -104,15 +106,6 @@ export function LightFinder() {
     const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { rootMargin: '-30% 0px -30% 0px', threshold: 0 })
     io.observe(el)
     return () => io.disconnect()
-  }, [])
-  // bryła stoi obok rozdziału tylko na szerokim ekranie
-  const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia(WIDE).matches)
-  useEffect(() => {
-    const mq = window.matchMedia(WIDE)
-    const on = () => setWide(mq.matches)
-    on()
-    mq.addEventListener('change', on)
-    return () => mq.removeEventListener('change', on)
   }, [])
   const spot = useMemo<Spotlight | null>(
     () =>
@@ -140,6 +133,7 @@ export function LightFinder() {
   )
 
   const toggle = (m: Moment) => {
+    setExpanded(false)
     const on = picked.includes(m.id)
     setPicked((p) => (on ? p.filter((id) => id !== m.id) : [...p, m.id]))
     // bryła pokazuje światło w środku właśnie włączonej pory
@@ -194,7 +188,11 @@ export function LightFinder() {
                 {flats(shownCount)} {has(shownCount)} słońce w&nbsp;salonie przez większość czasu, kiedy jesteś w&nbsp;domu
               </span>
             </p>
-            {commonHours && <p className="light__common">każde {commonHours} h Twoich godzin w słońcu</p>}
+            {matches.length > 0 && <p className="light__common">
+              {commonHours
+                ? `W każdym z nich słońce jest przez co najmniej ${hoursFormat.format(minimumHours)} z Twoich ${hoursFormat.format(totalHours)} godzin w domu.`
+                : `Najlepsze: ${bestHours} z ${hoursFormat.format(totalHours)} godzin w domu ze słońcem.`}
+            </p>}
             {matches.length > 0 && facadeName && (
               <p className="light__note">
                 Pasują wszystkie dostępne mieszkania {facadeName}. {comparison}
@@ -213,7 +211,7 @@ export function LightFinder() {
         )}
 
         {matches.length > 0 && (
-          <ol className="light__list">
+          <ol className="light__list" id={listId}>
             {shown.map(({ apartment: a, share }) => (
               <li key={a.id}>
                 <button
@@ -260,11 +258,9 @@ export function LightFinder() {
           </p>
         )}
         {matches.length > SHOWN && (
-          <p className="light__more">
-            {wide
-              ? `i jeszcze ${matches.length - SHOWN} — podświetlone na bryle`
-              : `i jeszcze ${matches.length - SHOWN} w wyszukiwarce poniżej`}
-          </p>
+          <button type="button" className="light__more" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(!expanded)}>
+            {expanded ? 'Zwiń listę' : `Pokaż wszystkie ${matches.length} →`}
+          </button>
         )}
       </div>
     </div>

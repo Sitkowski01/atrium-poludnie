@@ -12,10 +12,18 @@
 .filter-bar__body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas: 'rooms facade' 'floor price' 'checks area';
+  align-items: start;
   gap: 26px 28px;
   min-width: 0;
   padding: 22px;
 }
+.filter-bar__group:nth-child(1) { grid-area: rooms; }
+.filter-bar__group:nth-child(2) { grid-area: facade; }
+.filter-bar__group:nth-child(3) { grid-area: price; }
+.filter-bar__group:nth-child(4) { grid-area: area; }
+.filter-bar__group:nth-child(5) { grid-area: floor; }
+.filter-bar__group:nth-child(6) { grid-area: checks; }
 
 /* wiersz przełącznika — tylko poniżej 980 px (renderowany z JS) */
 .filter-bar__top {
@@ -73,14 +81,14 @@
     grid-template-rows: 0fr;
     visibility: hidden;
     transition:
-      grid-template-rows 250ms var(--ease),
-      visibility 0s linear 250ms;
+      grid-template-rows var(--hover) var(--ease-hover),
+      visibility 0s linear var(--hover);
   }
   .filter-bar__panel--open {
     grid-template-rows: 1fr;
     visibility: visible;
     transition:
-      grid-template-rows 250ms var(--ease),
+      grid-template-rows var(--hover) var(--ease-hover),
       visibility 0s;
   }
   .filter-bar__panel > .filter-bar__body {
@@ -88,8 +96,8 @@
     overflow: hidden;
     border-top: 1px solid var(--line);
     transition:
-      padding 250ms var(--ease),
-      border-color 250ms var(--ease);
+      padding var(--hover) var(--ease-hover),
+      border-color var(--hover) var(--ease-hover);
   }
   .filter-bar__panel:not(.filter-bar__panel--open) > .filter-bar__body {
     padding-top: 0;
@@ -140,6 +148,8 @@
   gap: 6px;
 }
 .filter-bar__chips .chip {
+  height: 40px;
+  min-height: 40px;
   padding: 0 13px;
 }
 
@@ -245,6 +255,7 @@
 @media (max-width: 640px) {
   .filter-bar__body {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'rooms' 'facade' 'price' 'area' 'floor' 'checks';
     gap: 24px;
     padding: 20px 16px;
   }
@@ -260,6 +271,13 @@
 @container chapter (max-width: 520px) {
   .filter-bar__body {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'rooms' 'facade' 'price' 'area' 'floor' 'checks';
     gap: 24px;
   }
+}
+
+/* liczby pokoi: wąskie kwadratowe chipy, żeby „Dowolne 1 2 3 4” mieściło się w jednym rzędzie */
+.filter-bar__chips .chip {
+  min-width: 40px;
+  padding: 0 12px;
 }

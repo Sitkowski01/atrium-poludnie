@@ -17,12 +17,6 @@
 .sun-chart__plot {
   position: relative;
 }
-.sun-chart__y-label {
-  margin: 0;
-  color: var(--ink-3);
-  font-size: 12px;
-  line-height: 1.4;
-}
 
 .sun-chart__peak {
   position: absolute;
@@ -114,20 +108,8 @@
 }
 
 .sun-chart__summary {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--fd-1);
-  font-weight: 600;
-  line-height: 1.25;
-  color: var(--ink);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 8px;
-}
-.sun-chart__summary > span {
-  white-space: nowrap;
-}
-.sun-chart__summary > span + span::before {
-  content: '·';
-  margin-right: 8px;
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ink-2);
 }

@@ -22,6 +22,7 @@ import { WalkViewer } from './WalkViewer'
 /** katalog renderów danego układu mieszkania (ten sam podział co panoramy) */
 const variant = (a: Apartment) => `s${a.slot}${a.balcony ? '' : 'n'}`
 const asset = (dir: string, a: Apartment) => `${import.meta.env.BASE_URL}${dir}/${variant(a)}.webp`
+const PLAN_SCALE: Record<number, number> = { 0: 0.835, 1: 0.727, 2: 1, 3: 0.744, 4: 0.653 }
 
 function Cover({ apartment }: { apartment: Apartment }) {
   const [ok, setOk] = useState(true)
@@ -36,7 +37,7 @@ function Cover({ apartment }: { apartment: Apartment }) {
 function Plan({ apartment }: { apartment: Apartment }) {
   const [mode, setMode] = useState<'2d' | '3d'>('3d')
   const [ready, setReady] = useState(false)
-  const src3d = asset('rzut3d', apartment)
+  const src3d = `${import.meta.env.BASE_URL}rzut3d/s${apartment.slot}-arkusz.webp`
   // makietę wczytujemy w tle; do tego czasu (a przy braku pliku na stałe) widać rzut 2D bez przełącznika
   useEffect(() => {
     setReady(false)
@@ -61,11 +62,16 @@ function Plan({ apartment }: { apartment: Apartment }) {
         </div>
       )}
       {show3d ? (
-        <figure className="detail__plan3d">
+        <figure className="detail__plan3d" style={{ '--plan-scale': PLAN_SCALE[apartment.slot] } as CSSProperties}>
           <img
             src={src3d}
             alt={`Makieta mieszkania ${apartment.id} z góry, z umeblowaniem`}
           />
+          <figcaption className="detail__plan-area">{formatArea(apartment.area)}</figcaption>
+          <span className="detail__scalebar" aria-label="Podziałka: 5 metrów">
+            <span>0</span><span>5 m</span>
+            <span className="detail__scalebar-bar" />
+          </span>
         </figure>
       ) : (
         <FloorPlan apartment={apartment} />

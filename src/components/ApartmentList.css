@@ -327,6 +327,45 @@
   color: var(--pick);
 }
 
+@container chapter (min-width: 420px) and (max-width: 560px) {
+  .apt-list .apt-list__item {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+    padding: 0;
+  }
+  .apt-list .apt-list__main {
+    grid-column: auto;
+    grid-row: auto;
+    grid-template-columns: 82px minmax(0, 1fr) 110px;
+    grid-template-rows: auto;
+    grid-template-areas: 'num meta price';
+    gap: 8px;
+    min-height: 96px;
+    padding: 12px 8px;
+  }
+  .apt-list .apt-list__info {
+    grid-area: meta;
+    display: grid;
+    gap: 4px;
+  }
+  .apt-list .apt-list__facts,
+  .apt-list .apt-list__sun {
+    grid-area: auto;
+  }
+  .apt-list .apt-list__sunbar { flex-basis: 100%; }
+  .apt-list .apt-list__sun { row-gap: 2px; }
+  .apt-list .apt-list__price { justify-items: end; }
+  .apt-list .apt-list__price strong { font-size: 20px; }
+  .apt-list .apt-list__fav {
+    grid-area: auto;
+    position: absolute;
+    right: 8px;
+    bottom: 4px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
 .apt-list__more {
   width: 100%;
   margin-top: 8px;
