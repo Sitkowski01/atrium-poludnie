@@ -74,7 +74,7 @@ export function LightFinder() {
   const listId = useId()
   const moments = useMemo(() => MOMENTS.filter((m) => picked.includes(m.id)), [picked])
   const totalHours = homeHours(moments)
-  const hoursText = (share: number) => `${hoursFormat.format(share * totalHours)} z ${hoursFormat.format(totalHours)}`
+  const hoursText = (share: number) => `${hoursFormat.format(share * totalHours)} / ${hoursFormat.format(totalHours)} h w słońcu`
   const matches = useMemo(() => matchMoments(apartments, moments), [apartments, moments])
   const summary = useMemo(() => summarizeMatches(apartments, moments, matches), [apartments, moments, matches])
   const facadeName = summary.wholeFacade ? FACADE_NAMES[summary.wholeFacade].from : null
@@ -92,9 +92,6 @@ export function LightFinder() {
   const shownCount = Math.round(useCountUp(matches.length, { duration: 700 }))
   const soldOnly = useMemo(() => onlySoldMatch(apartments, moments), [apartments, moments])
   const shown = expanded ? matches : matches.slice(0, SHOWN)
-  const commonHours = matches.length > 0 && matches.every((m) => Math.abs(m.share - matches[0].share) < 1e-6)
-  // „Co najmniej” zaokrąglamy w dół, żeby nie obiecywać więcej niż daje model.
-  const minimumHours = matches.length ? Math.floor(Math.min(...matches.map((m) => m.share)) * totalHours * 10 + 1e-6) / 10 : 0
   const bestHours = matches.length ? hoursFormat.format(Math.max(...matches.map((m) => m.share)) * totalHours) : ''
 
   // bryła reaguje tylko wtedy, gdy rozdział jest na ekranie; po wyjściu oddajemy ją innym
@@ -154,6 +151,7 @@ export function LightFinder() {
               type="button"
               className={`light__moment${on ? ' is-on' : ''}`}
               aria-pressed={on}
+              title={m.note}
               onClick={() => toggle(m)}
             >
               <MomentGlyph m={m} />
@@ -189,9 +187,7 @@ export function LightFinder() {
               </span>
             </p>
             {matches.length > 0 && <p className="light__common">
-              {commonHours
-                ? `W każdym z nich słońce jest przez co najmniej ${hoursFormat.format(minimumHours)} z Twoich ${hoursFormat.format(totalHours)} godzin w domu.`
-                : `Najlepsze: ${bestHours} z ${hoursFormat.format(totalHours)} godzin w domu ze słońcem.`}
+              {`Najwięcej: ${bestHours} z ${hoursFormat.format(totalHours)} godzin w domu przy słońcu.`}
             </p>}
             {matches.length > 0 && facadeName && (
               <p className="light__note">
@@ -244,8 +240,7 @@ export function LightFinder() {
                   </span>
                   <span className="apt-list__price">
                     <span className="light__flat-share">
-                      <span aria-hidden="true">{hoursText(share)} h</span>
-                      <span className="visually-hidden">{hoursText(share)} godzin w domu ze słońcem w salonie</span>
+                      {hoursText(share)}
                     </span>
                     <strong>{formatPrice(a.price)}</strong>
                   </span>

@@ -60,6 +60,11 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
     plottedValue(sample.hour, sample.value) > plottedValue(best.hour, best.value) ? sample : best,
   )
   const peakX = Math.max(90, Math.min(plotWidth - 90, xAt(peak.hour) / WIDTH * plotWidth))
+  const svgScale = WIDTH / Math.max(1, plotWidth)
+  const peakY = yAt(plottedValue(peak.hour, peak.value))
+  // Kadruj pustą przestrzeń nad krzywą; etykiety mieszczą się wewnątrz SVG.
+  const plotTop = peakY - 32 * svgScale
+  const plotHeight = HEIGHT - plotTop
   const summary = window
     ? `Słońce w oknach salonu: ${formatHour(window.from)}–${formatHour(window.to)} · łącznie ${formatDuration(window.total)}`
     : 'Brak bezpośredniego słońca w oknach salonu'
@@ -73,7 +78,7 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
       <div className="sun-chart__plot" ref={plotRef}>
       <svg
         className="sun-chart__svg"
-        viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+        viewBox={`0 ${plotTop} ${WIDTH} ${plotHeight}`}
         width="100%"
         role="img"
         aria-label={`Nasłonecznienie od ${formatHour(DAY_START)} do ${formatHour(DAY_END)}. ${summary}. ${current}.`}
@@ -94,22 +99,21 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
         ))}
         <path className="sun-chart__marker" d={`M ${markerX} ${markerY} V ${BASE}`} />
         <circle className="sun-chart__point" cx={markerX} cy={markerY} r="4.5" />
+        {window && Math.abs(labelX - peakX) >= 120 && (
+          <text
+            className="sun-chart__peak"
+            x={peakX * svgScale}
+            y={peakY - 8 * svgScale}
+            style={{ fontSize: `${12 * svgScale}px` }}
+          >
+            najwięcej słońca {formatHour(peak.hour)}
+          </text>
+        )}
       </svg>
       <span className="sun-chart__label" aria-hidden="true" style={{
         left: `${labelX}px`,
-        top: `calc(${(markerY - 4.5) / HEIGHT * 100}% - 8px)`,
+        top: `calc(${(markerY - 4.5 - plotTop) / plotHeight * 100}% - 8px)`,
       }}>{formatHour(currentHour)}</span>
-      {window && Math.abs(labelX - peakX) >= 60 && (
-        <p
-          className="sun-chart__peak"
-          style={{
-            left: `${peakX}px`,
-            top: `${yAt(plottedValue(peak.hour, peak.value)) / HEIGHT * 100}%`,
-          }}
-        >
-          najwięcej słońca {formatHour(peak.hour)}
-        </p>
-      )}
       </div>
       <div className="sun-chart__axis" aria-hidden="true">
         {labels.map((tick) => (

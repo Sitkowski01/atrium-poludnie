@@ -12,7 +12,8 @@
 .filter-bar__body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-areas: 'rooms facade' 'floor price' 'checks area';
+  /* pokoje na całą szerokość: „Dowolne 1 2 3 4” w jednym rzędzie */
+  grid-template-areas: 'rooms rooms' 'facade price' 'floor area' 'checks .';
   align-items: start;
   gap: 26px 28px;
   min-width: 0;
@@ -280,9 +281,4 @@
 .filter-bar__chips .chip {
   min-width: 40px;
   padding: 0 12px;
-}
-
-/* „Dowolne 1 2 3 4” zawsze w jednym rzędzie: grupa pokoi na całą szerokość panelu filtrów */
-.filter-bar__group--wide {
-  grid-column: 1 / -1;
 }

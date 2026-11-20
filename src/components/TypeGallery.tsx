@@ -221,17 +221,16 @@ function TypeButton({
       {/* rzuty w jednej skali: kawalerka jest na arkuszu mniejsza niż cztery pokoje (skala ~ √metrażu) */}
       <span className="typecard__media" style={{ ['--plan' as string]: String(PLAN_SCALE[slot] ?? 1) }}>
         {featured && (
-          <>
-            <span className="typecard__sheet" aria-hidden="true">
-              rzuty w jednej skali
-            </span>
-            <span className="typecard__scalebar" aria-hidden="true">
-              <span className="typecard__scalebar-bar" />
-              <span className="typecard__scalebar-label">0</span>
-              <span className="typecard__scalebar-label">5 m</span>
-            </span>
-          </>
+          <span className="typecard__sheet" aria-hidden="true">
+            rzuty w jednej skali
+          </span>
         )}
+        {/* podziałka na każdym arkuszu: wszędzie tej samej długości, bo skala jest wspólna */}
+        <span className="typecard__scalebar" aria-hidden="true">
+          <span className="typecard__scalebar-bar" />
+          <span className="typecard__scalebar-label">0</span>
+          <span className="typecard__scalebar-label">5 m</span>
+        </span>
         <span className="typecard__area" aria-hidden="true">
           {formatArea(area)}
         </span>

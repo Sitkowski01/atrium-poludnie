@@ -10,7 +10,8 @@
   /* tła: strona, wnęka, karta, karta uniesiona */
   --paper: #efebe3;
   --paper-2: #e7e2d8;
-  --card: #f6f3ed;
+  /* półprzezroczysta biel: powierzchnie przejmują odcień pory dnia razem z papierem */
+  --card: rgb(255 253 248 / 0.55);
   --card-2: #ebe6dc;
 
   /* tekst: --ink i --ink-2 do treści; --ink-3 tylko do ozdobników i ikon */

@@ -4,6 +4,7 @@ html:has(dialog.detail[open]) {
 
 dialog.detail {
   --panel-gap: 48px;
+  --body-gap: 26px;
   position: fixed;
   inset: 0 0 0 auto;
   width: min(620px, 100vw);
@@ -40,10 +41,10 @@ dialog.detail::backdrop {
 
 .detail__body {
   display: grid;
-  gap: 26px;
+  gap: var(--body-gap);
   padding-bottom: calc(104px + env(safe-area-inset-bottom));
 }
-.detail__body > :not(.detail__head):not(.detail__dock) {
+.detail__body > :not(.detail__head):not(.detail__dock):not(.detail__compact) {
   margin: 0 28px;
 }
 
@@ -127,7 +128,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__head-copy .eyebrow {
   justify-self: start;
   min-height: 36px;
-  padding: 2px 92px 2px 0;
+  padding: 2px 96px 2px 0;
   background: color-mix(in srgb, var(--paper) 85%, transparent);
 }
 
@@ -198,7 +199,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__section {
   display: grid;
   gap: 14px;
-  padding-top: var(--panel-gap);
+  padding-top: calc(var(--panel-gap) - var(--body-gap));
   border-top: 1px solid var(--line);
 }
 .detail__section:has(#detail-walk) {
@@ -380,7 +381,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 }
 
 @media (max-width: 520px) {
-  .detail__body > :not(.detail__head):not(.detail__dock) {
+  .detail__body > :not(.detail__head):not(.detail__dock):not(.detail__compact) {
     margin: 0 16px;
   }
   .detail__head-copy {
@@ -409,13 +410,46 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 }
 
 @media (max-width: 600px) {
-  .detail__body {
-    gap: 16px;
+  dialog.detail {
+    --body-gap: 16px;
   }
   .detail__section:has(#detail-walk) {
     gap: 8px;
   }
   .detail__facts div {
     padding-block: 8px;
+  }
+}
+
+.detail__compact {
+  display: none;
+}
+dialog.detail[open] .detail__body > .detail__compact {
+  animation: none;
+}
+
+@media (max-width: 600px) {
+  .detail__body > .detail__compact {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: 0;
+    margin-bottom: calc(-1 * var(--body-gap));
+    visibility: hidden;
+    background: var(--paper);
+    animation: none;
+  }
+  .detail__compact.is-visible {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 56px;
+    margin-bottom: calc(-56px - var(--body-gap));
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--line);
+    visibility: visible;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
   }
 }

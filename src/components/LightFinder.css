@@ -178,12 +178,13 @@
   border-top: 1px solid var(--line);
 }
 .light__flat {
+  position: relative;
   display: grid;
   align-items: center;
   gap: 14px;
   width: 100%;
   min-height: 56px;
-  padding: 8px 6px;
+  padding: 8px 0;
   border: 0;
   border-bottom: 1px solid var(--line);
   background: transparent;
@@ -199,9 +200,11 @@
   }
 }
 .light__flat-share {
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 600;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--ink-2);
   font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;
@@ -245,18 +248,18 @@
 
 /* Wspólna typografia i kolumny z listą mieszkań; pasek pokazuje przecięcie godzin. */
 .light .light__flat {
-  grid-template-columns: 96px minmax(0, 1fr) 11ch;
+  grid-template-columns: 104px minmax(0, 1fr) auto;
   grid-template-areas: none;
   grid-template-rows: auto;
-  gap: 12px;
-  padding: 18px 8px;
+  gap: 20px;
+  padding: 18px 0;
 }
 .light__flat .apt-list__number { align-self: start; grid-area: auto; }
-.light__flat .apt-list__info { display: grid; gap: 8px; }
+.light__flat .apt-list__info { display: grid; grid-area: auto; gap: 8px; }
 .light__flat .apt-list__facts { grid-area: auto; flex-direction: row; font-size: 12px; }
 .light__flat .apt-list__price { grid-area: auto; justify-items: end; font-variant-numeric: tabular-nums; }
 .light__flat .apt-list__price strong { font-size: var(--fd-1); }
-.light__flat .light__flat-timeline { grid-area: auto; width: 100%; flex-wrap: wrap; gap: 6px; }
+.light__flat .light__flat-timeline { display: grid; grid-template-columns: minmax(0, 1fr); grid-area: auto; width: 100%; gap: 6px; }
 .light__flat .light__flat-bar {
   position: relative;
   display: block;
@@ -270,12 +273,12 @@
 }
 .light__bar-sun { background: var(--sun); opacity: .3; }
 .light__bar-overlap, .light__key-overlap { background: var(--accent); }
-.light__common { margin: 0; font-size: var(--fd-1); font-family: var(--font-display); }
+.light__common { margin: 0; font-size: 14px; line-height: 1.55; font-family: var(--font-body); color: var(--ink-2); }
 .light__key-overlap { display: inline-block; width: 18px; height: 6px; }
 .light__key-sun { opacity: .3; }
 @container chapter (max-width: 520px) {
   .light__building-link { display: inline-flex; }
-  .light .light__flat { grid-template-columns: minmax(0, 1fr) 11ch; }
+  .light .light__flat { grid-template-columns: minmax(0, 1fr) auto; }
   .light__flat .apt-list__number { grid-column: 1; grid-row: 1; }
   .light__flat .apt-list__price { grid-column: 2; grid-row: 1; }
   .light__flat .apt-list__info { grid-column: 1 / -1; grid-row: 2; justify-items: stretch; }
@@ -328,7 +331,7 @@
 }
 
 /* wąsko: pory jako lista wierszy — znak, nazwa z notką, godziny po prawej */
-@container chapter (max-width: 559px) {
+@container chapter (width < 520px) {
   .light__moments {
     grid-template-columns: minmax(0, 1fr);
     gap: 6px;
@@ -363,6 +366,41 @@
   .light__count {
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
+  }
+}
+
+.light__flat::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: -12px;
+  width: 2px;
+  background: var(--pick);
+  transform: scaleY(0);
+  transition: transform var(--hover) var(--ease-hover);
+  pointer-events: none;
+}
+.light__flat:focus-visible::before {
+  transform: scaleY(1);
+}
+@media (hover: hover) {
+  .light__flat:hover::before { transform: scaleY(1); }
+}
+@container chapter (min-width: 520px) {
+  .light__moment {
+    position: relative;
+    grid-row: span 3;
+    min-height: 120px;
+    padding-block: 10px;
+  }
+  .light__glyph { margin-bottom: 0; }
+  .light__moment-note {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 @media (prefers-reduced-motion: reduce) {

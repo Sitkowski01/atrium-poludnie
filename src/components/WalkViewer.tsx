@@ -292,10 +292,7 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
         {/* wszystkie pomieszczenia jak legenda mini-mapy: sąsiednie przez drzwi, dalsze skokiem */}
         <div className="walk__side">
           <p className="walk__label" id={`${apartment.id}-rooms`}>
-            {here.label} —
-            <span>
-              {view.room + 1} z {plan.length}
-            </span>
+            <span>{here.label} · {view.room + 1} / {plan.length}</span>
           </p>
           <ul className="walk__rooms" aria-labelledby={`${apartment.id}-rooms`}>
             {plan.map((r, i) => {
@@ -327,7 +324,7 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
           </div>
         </div>
         <div className="walk__map-wrap">
-          <p className="walk__map-caption">rzut · jesteś tutaj</p>
+          <p className="walk__map-caption">jesteś tutaj</p>
           <MiniMap apartment={apartment} room={view.room} at={center} yaw={view.yaw} onPick={jump} />
         </div>
       </div>

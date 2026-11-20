@@ -72,12 +72,15 @@ export function DetailPanel() {
   const { hour } = useHour()
   const ref = useRef<HTMLDialogElement>(null)
   const pressedOnBackdrop = useRef(false)
+  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
     if (selected && !dialog.open) dialog.showModal()
     if (!selected && dialog.open) dialog.close()
+    dialog.scrollTop = 0
+    setScrolled(false)
   }, [selected])
 
   const [askVisible, setAskVisible] = useState(false)
@@ -118,6 +121,7 @@ export function DetailPanel() {
       className="detail"
       aria-label={a ? `Mieszkanie ${a.id}` : undefined}
       onClose={close}
+      onScroll={(event) => setScrolled(event.currentTarget.scrollTop >= 120)}
       // zamykamy tylko, gdy naciśnięcie i puszczenie trafiły w tło —
       // przeciągnięcie zaznaczenia z pola formularza nie zamyka panelu
       onMouseDown={(e) => {
@@ -129,6 +133,14 @@ export function DetailPanel() {
     >
       {a && (
         <div className="detail__body" key={a.id}>
+          <div className={`detail__compact${scrolled ? ' is-visible' : ''}`}>
+            <span>{a.id} · {formatPrice(a.price)}</span>
+            <button type="button" className="detail__icon" aria-label="Zamknij szczegóły" onClick={close}>
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
           <header className="detail__head">
             <div className="detail__head-top">
               <button
