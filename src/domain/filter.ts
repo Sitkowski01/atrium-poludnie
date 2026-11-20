@@ -1,5 +1,6 @@
 import type { Apartment, Filters, Limits, SortKey } from './types'
 import { MOMENTS, matchMoments, type Moment } from './light'
+import { sunWindow } from './sun'
 
 export function limitsOf(list: readonly Apartment[]): Limits {
   const areas = list.map((a) => a.area)
@@ -59,6 +60,11 @@ export function sortApartments(list: readonly Apartment[], key: SortKey, home: r
       const ranks = new Map(matchMoments(list, home, { includeSold: true }).map((m, i) => [m.apartment.id, i]))
       // Sortowanie nie usuwa danych: niedopasowane trafiają za dopasowane, według ceny.
       return out.sort((a, b) => (ranks.get(a.id) ?? Infinity) - (ranks.get(b.id) ?? Infinity) || a.price - b.price)
+    }
+    case 'sun-desc': {
+      // domyślnie: najwięcej słońca w salonie; przy równym — wyżej, potem taniej (różne typy obok siebie)
+      const sun = (a: Apartment) => sunWindow(a.facade, a.floor)?.total ?? 0
+      return out.sort((a, b) => sun(b) - sun(a) || b.floor - a.floor || a.price - b.price)
     }
     case 'price-asc':
       return out.sort((a, b) => a.price - b.price)

@@ -144,7 +144,8 @@
 .apt-list__main {
   display: grid;
   /* stała kolumna ceny (mieści „1 195 000 zł”): paski słońca kończą się w każdym wierszu w tym samym miejscu */
-  grid-template-columns: 104px minmax(0, 1fr) 132px;
+  /* pierwsza kolumna mieści „zarezerwowane” z odstępem od paska */
+  grid-template-columns: 124px minmax(0, 1fr) 132px;
   align-items: center;
   gap: 20px;
   width: 100%;

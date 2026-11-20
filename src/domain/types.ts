@@ -60,7 +60,7 @@ export interface Filters {
   onlyFavourites: boolean
 }
 
-export type SortKey = 'price-asc' | 'price-desc' | 'area-desc' | 'floor-desc' | 'sun-home'
+export type SortKey = 'sun-desc' | 'price-asc' | 'price-desc' | 'area-desc' | 'floor-desc' | 'sun-home'
 
 /** Zakresy wyliczone z danych — granice suwaków w filtrach. */
 export interface Limits {

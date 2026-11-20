@@ -20,6 +20,7 @@ import './ApartmentList.css'
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: 'sun-home', label: 'Najwięcej słońca w domu' },
+  { value: 'sun-desc', label: 'Najwięcej słońca' },
   { value: 'price-asc', label: 'Cena rosnąco' },
   { value: 'price-desc', label: 'Cena malejąco' },
   { value: 'area-desc', label: 'Największe' },
@@ -133,13 +134,14 @@ export function ApartmentList() {
   const listSpot = useMemo<Spotlight | null>(
     () =>
       shownKey
-        ? { ids: shownKey.split(','), label: `Na liście: ${shownKey.split(',').length} ${flatsWord(shownKey.split(',').length)}` }
+        ? { ids: shownKey.split(','), label: 'Pokazane na liście' }
         : null,
     [shownKey],
   )
   const ownListSpot = useRef<Spotlight | null>(null)
   useEffect(() => {
-    if (ownListSpot.current && ownListSpot.current !== listSpot) {
+    // zdejmujemy własne podświetlenie przy wyjściu z rozdziału ORAZ przy zmianie listy
+    if (ownListSpot.current && (ownListSpot.current !== listSpot || !listInView)) {
       dispatch({ type: 'spotlight', spot: null, owner: ownListSpot.current })
       ownListSpot.current = null
     }

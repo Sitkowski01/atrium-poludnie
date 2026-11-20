@@ -3,7 +3,7 @@ import { APARTMENTS } from './data'
 import { activeFilterChips } from './activeFilters'
 import { applyFilters, countActive, defaultFilters, limitsOf, sortApartments } from './filter'
 import { MATCH_FROM, MOMENTS, homeHours, matchMoments } from './light'
-import { sunShare } from './sun'
+import { sunShare, sunWindow } from './sun'
 
 const limits = limitsOf(APARTMENTS)
 const base = defaultFilters(limits)
@@ -76,5 +76,17 @@ describe('pory w domu jako kryterium jednej listy', () => {
     expect(sortApartments(APARTMENTS, 'sun-home')).toEqual(sortApartments(APARTMENTS, 'price-asc'))
     expect(sortApartments(APARTMENTS, 'sun-home', [])).toEqual(sortApartments(APARTMENTS, 'price-asc'))
     expect(sortApartments(APARTMENTS, 'sun-home', moments)).toHaveLength(APARTMENTS.length)
+  })
+})
+
+describe('sortowanie domyślne: najwięcej słońca', () => {
+  it('pierwsze mieszkanie ma najdłuższe słońce w salonie, a kolejne nie więcej', () => {
+    const sorted = sortApartments(APARTMENTS, 'sun-desc')
+    const sun = (a: (typeof APARTMENTS)[number]) => sunWindow(a.facade, a.floor)?.total ?? 0
+    for (let i = 1; i < sorted.length; i++) expect(sun(sorted[i])).toBeLessThanOrEqual(sun(sorted[i - 1]) + 1e-9)
+  })
+  it('na początku listy stoją różne typy, nie siedem takich samych kawalerek', () => {
+    const first = sortApartments(APARTMENTS, 'sun-desc').slice(0, 8)
+    expect(new Set(first.map((a) => a.slot)).size).toBeGreaterThan(1)
   })
 })

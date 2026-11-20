@@ -84,15 +84,15 @@ function reducer(state: FullState, action: Action): FullState {
   switch (action.type) {
     case 'setFilters': {
       const home = action.patch.home
-      const sort = home?.length === 0 && state.sort === 'sun-home'
-        ? 'price-asc'
-        : home && home.length > 0 && state.filters.home.length === 0 && state.sort === 'price-asc'
+      const sort: SortKey = home?.length === 0 && state.sort === 'sun-home'
+        ? 'sun-desc'
+        : home && home.length > 0 && state.filters.home.length === 0 && (state.sort === 'sun-desc' || state.sort === 'price-asc')
           ? 'sun-home'
           : state.sort
       return { ...state, sort, filters: { ...state.filters, ...action.patch } }
     }
     case 'resetFilters':
-      return { ...state, filters: defaultFilters(LIMITS), sort: state.sort === 'sun-home' ? 'price-asc' : state.sort }
+      return { ...state, filters: defaultFilters(LIMITS), sort: state.sort === 'sun-home' ? 'sun-desc' : state.sort }
     case 'setSort':
       return { ...state, sort: action.sort }
     case 'setHour': {
@@ -154,7 +154,7 @@ const HourCtx = createContext<Hour | null>(null)
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [full, dispatch] = useReducer(reducer, undefined, () => ({
     filters: defaultFilters(LIMITS),
-    sort: 'price-asc' as SortKey,
+    sort: 'sun-desc' as SortKey,
     hour: 10,
     introCancelled: false,
     hoveredId: null,
