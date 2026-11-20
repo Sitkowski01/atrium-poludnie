@@ -103,7 +103,7 @@ export default function App() {
             num="04"
             name="Mieszkania"
             title="Wszystkie mieszkania"
-            lead="Pasek to dzień od 5:00 do 21:00: pomarańczowy odcinek to słońce w salonie. Gdy pokazane mieszkania mają to samo słońce, pasek stoi raz, nad listą."
+            lead="Pasek przy każdym mieszkaniu to jego dzień od 5:00 do 21:00: pomarańczowy odcinek to słońce w salonie."
           >
             <FilterBar />
             <ApartmentList />

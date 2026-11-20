@@ -134,19 +134,13 @@ export function ApartmentList() {
       return Boolean(a0 && ax && formatHour(a0.from) === formatHour(ax.from) && formatHour(a0.to) === formatHour(ax.to))
     })
   const commonSun = sameSun ? sunOf(shown[0]) : null
-  // zdanie mówi wprost o pokazanych wierszach (z ich liczbą), więc nie przeczy innym mieszkaniom z wyniku
-  const visibleHours = shown.map((x) => (shares.get(x.id) ?? 0) * totalHours)
-  const lo = hoursFormat.format(Math.min(...visibleHours))
-  const hi = hoursFormat.format(Math.max(...visibleHours))
-  const shareRange = lo === hi ? hi : `${lo}⁠–⁠${hi}`
 
   // bryła towarzyszy liście: gdy rozdział jest na ekranie, podświetla mieszkania pokazane w wierszach
   // (najechany wiersz i tak wygrywa — ma własną kartę na bryle)
   const sectionRef = useRef<HTMLElement>(null)
   const [listInView, setListInView] = useState(false)
   useEffect(() => {
-    // cały rozdział 04 (filtry i lista): bryła pokazuje wynik wyszukiwania od pierwszego filtra do końca listy
-    const el = sectionRef.current?.closest<HTMLElement>('#mieszkania') ?? sectionRef.current
+    const el = sectionRef.current
     if (!el || typeof IntersectionObserver === 'undefined') return
     const io = new IntersectionObserver(([e]) => setListInView(e.isIntersecting), { rootMargin: '-35% 0px -35% 0px' })
     io.observe(el)
@@ -275,8 +269,9 @@ export function ApartmentList() {
             <div className="apt-list__common">
               <SunBar sun={commonSun} home={home} ticks className="apt-list__common-bar" />
               <p>
-                <strong>{shown.length === visible.length ? 'Wszystkie' : `Tych ${shown.length}`} {flatsWord(shown.length)} na liście:</strong> słońce w salonie {formatHour(commonSun.from)}–{formatHour(commonSun.to)}
-                {home.length > 0 && ` · ${shareRange} z ${hoursFormat.format(totalHours)} h, kiedy jesteś w domu`}
+                <strong>Każde z pokazanych:</strong> słońce w salonie {formatHour(commonSun.from)}–{formatHour(commonSun.to)}
+                {home.length > 0 &&
+                  ` · ${hoursFormat.format((shares.get(shown[0].id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h, kiedy jesteś w domu`}
               </p>
             </div>
           )}
