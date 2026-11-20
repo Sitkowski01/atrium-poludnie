@@ -480,3 +480,18 @@
 
 /* opis mieszkania może się zawinąć na wąskim ekranie, zamiast wystawać poza wiersz */
 .apt-list__facts { min-width: 0; white-space: normal; }
+
+/* nagłówek grupy: jeden pasek słońca dla kolejnych mieszkań z tym samym słońcem */
+.apt-list__group {
+  display: grid;
+  gap: 8px;
+  padding: 16px 0 10px;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+.apt-list__group-bar { max-width: 420px; }
+.apt-list__group-text {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.apt-list__group + .apt-list__item { border-top: 0; }

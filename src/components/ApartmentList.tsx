@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react'
 import {
   FACADE_LABEL,
   STATUS_LABEL,
@@ -125,22 +125,16 @@ export function ApartmentList() {
   const collapsedRows = COLLAPSED_ROWS
   const collapsible = visible.length > collapsedRows
   const shown = collapsible && !expanded ? visible.slice(0, collapsedRows) : visible
-  const sameShare =
-    visible.length > 1 &&
-    // porównujemy godziny tak, jak je wypisujemy (4,4 h vs 4,3 h), nie zaokrąglony ułamek
-    visible.every((a) => hoursFormat.format((shares.get(a.id) ?? 0) * totalHours) === hoursFormat.format((shares.get(visible[0].id) ?? 0) * totalHours))
-  // całe wyniki mają to samo słońce (np. wyższe piętra od południa): pasek mówimy raz nad listą,
-  // a wiersze zostają zwarte i różnią się tym, co naprawdę się różni — piętrem, metrażem, ceną
-  const sunOf = (x: (typeof visible)[number]) => sunWindow(x.facade, x.floor)
-  const sameSun =
-    visible.length > 1 &&
-    (home.length === 0 || sameShare) &&
-    visible.every((x) => {
-      const a0 = sunOf(visible[0])
-      const ax = sunOf(x)
-      return Boolean(a0 && ax && formatHour(a0.from) === formatHour(ax.from) && formatHour(a0.to) === formatHour(ax.to))
-    })
-  const commonSun = sameSun ? sunOf(visible[0]) : null
+  // grupy: kolejne wiersze z tym samym słońcem (i tym samym wynikiem w domu) dostają JEDEN pasek nad sobą;
+  // pojedyncze mieszkanie ma pasek w wierszu. Grupy rosną tylko w dół, więc rozwinięcie listy nic nad wzrokiem nie przesuwa
+  const sunKey = (x: (typeof shown)[number]) => {
+    const w = sunWindow(x.facade, x.floor)
+    const h = home.length ? hoursFormat.format((shares.get(x.id) ?? 0) * totalHours) : ''
+    return w ? `${formatHour(w.from)}-${formatHour(w.to)}|${h}` : `brak|${h}`
+  }
+  const keys = shown.map(sunKey)
+  const runLen = keys.map((k, i) => (i > 0 && keys[i - 1] === k ? 0 : keys.slice(i).findIndex((x) => x !== k) === -1 ? keys.length - i : keys.slice(i).findIndex((x) => x !== k)))
+  const inGroup = keys.map((k, i) => (i > 0 && keys[i - 1] === k) || runLen[i] > 1)
 
   // bryła towarzyszy liście: gdy rozdział jest na ekranie, podświetla mieszkania pokazane w wierszach
   // (najechany wiersz i tak wygrywa — ma własną kartę na bryle)
@@ -294,16 +288,7 @@ export function ApartmentList() {
         </div>
       ) : (
         <>
-          {commonSun && (
-            <div className="apt-list__common">
-              <SunBar sun={commonSun} home={home} ticks className="apt-list__common-bar" />
-              <p>
-                <strong>Każde z wyniku:</strong> słońce w salonie {formatHour(commonSun.from)}–{formatHour(commonSun.to)}
-                {home.length > 0 &&
-                  ` · ${hoursFormat.format((shares.get(visible[0].id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h, kiedy jesteś w domu`}
-              </p>
-            </div>
-          )}
+
         <ul
           ref={listRef}
           id={listId}
@@ -326,9 +311,20 @@ export function ApartmentList() {
             ]
               .filter(Boolean)
               .join(' ')
+            const header = runLen[index] > 1 && sun
             return (
+              <Fragment key={a.id}>
+              {header && (
+                <li className="apt-list__group" aria-hidden="true">
+                  <SunBar sun={sun} home={home} className="apt-list__group-bar" />
+                  <span className="apt-list__group-text">
+                    słońce w salonie {formatHour(sun.from)}–{formatHour(sun.to)}
+                    {home.length > 0 && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
+                    {` · ${runLen[index]} ${flatsWord(runLen[index])}`}
+                  </span>
+                </li>
+              )}
               <li
-                key={a.id}
                 className={cls}
                 style={{ '--i': Math.min(index, 8) } as CSSProperties}
                 ref={(el) => {
@@ -367,11 +363,11 @@ export function ApartmentList() {
                         </span>
                       ))}
                     </span>
-                    {!commonSun && <span className="apt-list__sun">
+                    {!inGroup[index] && <span className="apt-list__sun">
                       <SunBar sun={sun} home={home} className="apt-list__sunbar" />
                       <span className={`apt-list__sun-hours${home.length ? ' apt-list__sun-hours--home' : ''}`}>
                         {sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez słońca'}
-                        {home.length > 0 && !sameShare && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
+                        {home.length > 0 && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
                       </span>
                     </span>}
                   </span>
@@ -412,6 +408,7 @@ export function ApartmentList() {
                   <Heart filled={fav} />
                 </button>
               </li>
+              </Fragment>
             )
           })}
         </ul>
