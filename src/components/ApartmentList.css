@@ -405,11 +405,15 @@
   .apt-list__info {
     grid-area: info;
   }
+  /* godziny w tej samej linii co pasek (po prawej): wiersz niższy, liczby nie wiszą same pod paskiem */
   .apt-list__sun {
-    gap: 4px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
   }
   .apt-list__sun-hours {
     font-size: 12px;
+    white-space: nowrap;
   }
   .apt-list__sunbar {
     flex: 1 1 0;
