@@ -144,9 +144,9 @@ export function ContactSection() {
           </p>
           {/* podpis autora: strona jest pracą do portfolio, kontakt prowadzi do prawdziwego wykonawcy */}
           <p className="site-footer__credit">
-            Projekt i wykonanie:{' '}
+            Projekt i wykonanie: Mikołaj Sitek ·{' '}
             <a href="https://sitekmikolaj.pl" target="_blank" rel="noopener">
-              Mikołaj Sitek
+              sitekmikolaj.pl
             </a>
             <br />
             <a href="mailto:sitekmikolaj01@gmail.com">sitekmikolaj01@gmail.com</a>
