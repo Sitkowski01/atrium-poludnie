@@ -102,13 +102,28 @@ function HourRenders({ hiRes, ready }: { hiRes: boolean | null; ready: ReadonlyS
   const nearest = (h: number) =>
     best(h) ? h : [...FRAME_HOURS].filter((x) => best(x)).sort((x, y) => Math.abs(x - h) - Math.abs(y - h))[0]
   const fa = nearest(want.a)
-  const fb = want.b
-  const urlA = fa === undefined ? null : best(fa)
-  const urlB = fb !== fa ? best(fb) : null
+  // przenikanie tylko między dwoma prawdziwymi sąsiadami; zastępczy render (jeszcze się wczytuje) stoi sam
+  const fb = fa === want.a && want.b !== want.a && best(want.b) ? want.b : undefined
+  // wszystkie wczytane rendery zostają w drzewie na stałe (stały klucz, stały adres) i zmienia się tylko
+  // ich krycie: zmiana godziny nie podmienia elementów, więc obraz się nie przeładowuje i nie miga
   return (
     <g aria-hidden="true" className="building__renders">
-      {urlA && <image key={fa} href={urlA} x={VB.x} y={VB.y} width={VB.w} height={VB.h} />}
-      {urlB && <image key={fb} href={urlB} x={VB.x} y={VB.y} width={VB.w} height={VB.h} opacity={want.t} />}
+      {FRAME_HOURS.map((h) => {
+        const url = best(h)
+        if (!url) return null
+        const opacity = h === fa ? 1 : h === fb ? want.t : 0
+        return (
+          <image
+            key={h}
+            href={url}
+            x={VB.x}
+            y={VB.y}
+            width={VB.w}
+            height={VB.h}
+            opacity={opacity}
+          />
+        )
+      })}
     </g>
   )
 }

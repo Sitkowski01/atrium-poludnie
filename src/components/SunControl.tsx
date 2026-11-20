@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { formatHour } from '../domain/format'
 import { DAY_END, DAY_START, sunAt, sunCaption } from '../domain/sun'
 import { useHour, useStore } from '../state/store'
+import { cancelHourTween, tweenHour } from '../state/tweenHour'
 import './SunControl.css'
 
 const PRESETS = [
@@ -84,7 +85,14 @@ export function SunControl() {
 
   const setHour = (next: number) => {
     setPlaying(false)
+    cancelHourTween()
     dispatch({ type: 'setHour', hour: next, byUser: true })
+  }
+  // szybki wybór: bryła przechodzi do tej pory płynnie, przez kolejne rendery, bez skoku
+  const glideTo = (next: number) => {
+    setPlaying(false)
+    dispatch({ type: 'cancelIntro' })
+    tweenHour(next, (h) => dispatch({ type: 'setHour', hour: h, byUser: true }))
   }
 
   return (
@@ -94,6 +102,7 @@ export function SunControl() {
         className="btn sun-control__play"
         onClick={() => {
           dispatch({ type: 'cancelIntro' })
+          cancelHourTween()
           setPlaying((p) => !p)
         }}
       >
@@ -136,7 +145,7 @@ export function SunControl() {
             type="button"
             className="chip"
             aria-pressed={hour === p.hour}
-            onClick={() => setHour(p.hour)}
+            onClick={() => glideTo(p.hour)}
           >
             {p.label}
           </button>

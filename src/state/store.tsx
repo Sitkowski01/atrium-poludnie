@@ -7,6 +7,7 @@ import {
   type Dispatch,
   type ReactNode,
 } from 'react'
+import { liveHour } from './tweenHour'
 import { APARTMENTS } from '../domain/data'
 import { applyFilters, defaultFilters, limitsOf, sortApartments } from '../domain/filter'
 import type { Apartment, Filters, Limits, SortKey } from '../domain/types'
@@ -154,6 +155,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     spotlights: [],
   }))
   const { filters, sort, hoveredId, selectedId, favourites, spotlights } = full
+  liveHour.current = full.hour
   const spotlight = spotlights.length ? spotlights[spotlights.length - 1] : null
   const state = useMemo<State>(
     () => ({ filters, sort, hoveredId, selectedId, favourites, spotlight }),

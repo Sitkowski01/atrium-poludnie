@@ -5,6 +5,7 @@ import { DAY_START, DAY_END, sunAt, sunWindow } from '../domain/sun'
 import { useCountUp } from '../hooks/useCountUp'
 import { useStore, type Spotlight } from '../state/store'
 import './ApartmentList.css'
+import { tweenHour } from '../state/tweenHour'
 import './LightFinder.css'
 import './SunBar.css'
 
@@ -142,7 +143,10 @@ export function LightFinder() {
     const on = picked.includes(m.id)
     setPicked((p) => (on ? p.filter((id) => id !== m.id) : [...p, m.id]))
     // bryła pokazuje światło w środku właśnie włączonej pory
-    if (!on) dispatch({ type: 'setHour', hour: Math.round(((m.from + m.to) / 2) * 20) / 20, byUser: true })
+    if (!on) {
+      dispatch({ type: 'cancelIntro' })
+      tweenHour(Math.round(((m.from + m.to) / 2) * 20) / 20, (h) => dispatch({ type: 'setHour', hour: h, byUser: true }))
+    }
   }
 
   const evening = picked.length === 1 && picked[0] === 'wieczor'

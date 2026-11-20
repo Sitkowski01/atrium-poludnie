@@ -12,6 +12,7 @@ import {
 import { DAY_END, DAY_START, sunWindow } from '../domain/sun'
 import type { Apartment } from '../domain/types'
 import { useHour, useStore } from '../state/store'
+import { cancelHourTween } from '../state/tweenHour'
 import './DetailPanel.css'
 import { FloorPlan } from './FloorPlan'
 import { InquiryForm } from './InquiryForm'
@@ -234,7 +235,10 @@ export function DetailPanel() {
                 value={hour}
                 style={{ '--pct': `${(hour - DAY_START) / (DAY_END - DAY_START) * 100}%` } as CSSProperties}
                 aria-valuetext={formatHour(hour)}
-                onChange={(e) => dispatch({ type: 'setHour', hour: Number(e.target.value), byUser: true })}
+                onChange={(e) => {
+                  cancelHourTween()
+                  dispatch({ type: 'setHour', hour: Number(e.target.value), byUser: true })
+                }}
               />
             </label>
             </SunChart>
