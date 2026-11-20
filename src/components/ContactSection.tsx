@@ -158,14 +158,12 @@ export function ContactSection() {
               <dt>Budynek</dt>
               <dd>35 mieszkań · 7 kondygnacji</dd>
             </div>
-            <div>
-              <dt>Rysunek</dt>
-              <dd>A-05 · listopad 2026</dd>
-            </div>
           </dl>
         </div>
         <div className="site-footer__base">
-          <span>Arkusz 05 / 05</span>
+          <span>
+            Arkusz 05 / 05<span className="site-footer__drawing"> · rysunek A-05 · listopad 2026</span>
+          </span>
           <a className="site-footer__top" href="#top" onClick={(e) => goTo(e, 'top')}>
             Do góry
             <span aria-hidden="true">↑</span>

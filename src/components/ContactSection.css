@@ -53,7 +53,8 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(42px, 5.4vw, 80px);
+  /* na niskim ekranie tytuł maleje z wysokością okna, żeby kontakt ze stopką mieścił się na jednym ekranie */
+  font-size: clamp(40px, min(5.4vw, 7.3vh), 80px);
   line-height: 0.95;
   letter-spacing: -0.035em;
   color: var(--ink);
@@ -64,8 +65,8 @@
   color: inherit;
 }
 .contact__lead {
-  max-width: 52ch;
-  margin: 26px 0 0;
+  max-width: 60ch;
+  margin: clamp(14px, 2.4vh, 26px) 0 0;
   font-size: 17px;
   line-height: 1.6;
   color: var(--ink-2);
@@ -75,7 +76,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: clamp(20px, 3.2vh, 32px);
 }
 .contact__actions .btn {
   min-height: 48px;
@@ -187,7 +188,8 @@
 /* ---------- stopka: tabliczka rysunkowa, gruba kreska u góry, komórki dzielone włoskowymi liniami ---------- */
 
 .site-footer {
-  margin-top: clamp(72px, 10vh, 120px);
+  /* kontakt i stopka mają zmieścić się razem na jednym ekranie laptopa (768 px) */
+  margin-top: clamp(32px, 5vh, 72px);
 }
 .site-footer__inner {
   display: grid;
@@ -203,7 +205,7 @@
 }
 .site-footer__cell {
   min-width: 0;
-  padding: 26px 28px 30px;
+  padding: 18px 24px 20px;
   border-left: 1px solid var(--line);
 }
 .site-footer__brand {
@@ -232,13 +234,13 @@
 }
 .site-footer__note {
   max-width: 44ch;
-  margin-top: 16px;
+  margin-top: 12px;
   font-size: 13px;
   line-height: 1.6;
   color: var(--ink-2);
 }
 .site-footer__label {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.2em;
@@ -257,7 +259,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  min-height: 40px;
+  min-height: 34px;
   font-family: var(--font-display);
   font-size: var(--fd-1);
   font-weight: 600;
@@ -297,7 +299,7 @@
   display: grid;
   grid-template-columns: 84px minmax(0, 1fr);
   gap: 12px;
-  padding: 9px 0;
+  padding: 7px 0;
   border-bottom: 1px solid var(--line);
   font-size: 13px;
 }
@@ -318,7 +320,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  min-height: 52px;
+  min-height: 46px;
   border-top: 1px solid var(--line);
   font-size: 12px;
   font-weight: 600;
@@ -328,6 +330,7 @@
 }
 .site-footer__top {
   display: inline-flex;
+  white-space: nowrap;
   align-items: center;
   gap: 10px;
   min-height: 44px;
@@ -423,4 +426,24 @@
 }
 .site-footer__spec dd {
   white-space: nowrap;
+}
+
+/* rozdziały w dwóch kolumnach (01–03 | 04–05): stopka o połowę niższa, cała widać ją razem z kontaktem */
+@media (min-width: 901px), (max-width: 560px) {
+  .site-footer__nav {
+    grid-auto-flow: column;
+    grid-template-rows: repeat(3, auto);
+    align-content: start;
+    column-gap: 24px;
+  }
+  .site-footer__nav li:nth-child(4) {
+    border-top: 1px solid var(--line);
+  }
+}
+
+/* telefon: na pasku tylko numer arkusza i „Do góry” w jednej linii */
+@media (max-width: 560px) {
+  .site-footer__drawing {
+    display: none;
+  }
 }
