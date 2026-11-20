@@ -35,7 +35,8 @@ const TYPE_INFO: Record<number, TypeInfo> = {
   },
   2: {
     name: 'Cztery pokoje',
-    note: 'narożne, południe i wschód',
+    // narożne, ale salon (dla którego liczymy słońce) ma okna tylko na południe — stąd te same godziny co T2, T3
+    note: 'narożne, salon od południa',
     alt: 'Salon w mieszkaniu czteropokojowym',
     alt3d: 'Makieta 3D mieszkania czteropokojowego z góry',
   },
@@ -305,7 +306,7 @@ function TypePlan({ card, active, onActive, onPick }: TypeInteractionProps) {
 function TypeRow({ card, active, onActive, onPick }: TypeInteractionProps) {
   const { onPointerEnter, onPointerLeave, ...buttonHandlers } = useTypeInteraction(onActive, onPick)
   const { sun, ground, price, label } = presentation(card)
-  const exposure = card.slot === 2 ? 'południe i wschód' : card.slot < 2 ? 'południe' : 'wschód'
+  const exposure = card.slot === 2 ? 'narożne, salon od południa' : card.slot < 2 ? 'południe' : 'wschód'
   return (
     <tr data-active={active} onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
       <td className="typetable__thumb" aria-hidden="true">
