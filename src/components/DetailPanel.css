@@ -461,3 +461,10 @@ dialog.detail[open] .detail__body > .detail__compact {
   .detail__icon { width: 44px; height: 44px; }
   .detail__switch .chip { min-height: 44px; }
 }
+
+.detail__fact-note {
+  display: block;
+  margin-top: 2px;
+  font: 500 12px var(--font-body);
+  color: var(--ink-2);
+}

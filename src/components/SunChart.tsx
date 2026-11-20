@@ -94,7 +94,7 @@ export function SunChart({
         <path className="sun-chart__curve" d={line} />
         <path className="sun-chart__baseline" d={`M ${LEFT} ${BASE} H ${RIGHT}`} />
         {home.map(([a, b]) => (
-          <path key={`${a}-${b}`} className="sun-chart__home" d={`M ${xAt(a)} ${BASE + 6} H ${xAt(b)}`} />
+          <path key={`${a}-${b}`} className="sun-chart__home" d={`M ${xAt(a)} ${BASE - 4} H ${xAt(b)}`} />
         ))}
         {ticks.map((tick) => (
           <g key={tick}>

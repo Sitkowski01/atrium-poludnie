@@ -126,6 +126,8 @@ export function DetailPanel() {
           moments.reduce((s, m) => s + sunShare(a.facade, a.floor, m.from, m.to) * (m.to - m.from), 0),
         )} z ${new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 }).format(homeTotal)} h w słońcu, kiedy jesteś w domu (${moments.map((m) => m.label.toLowerCase()).join(', ')})`
       : undefined
+  // to samo krótko, w faktach na górze panelu: wątek „w domu” widać od pierwszego spojrzenia
+  const homeShort = homeNote ? `${homeNote.split(' w słońcu')[0]} w domu` : undefined
 
   return (
     <dialog
@@ -203,7 +205,10 @@ export function DetailPanel() {
             </div>
             <div>
               <dt>Słońce</dt>
-              <dd>{sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'brak'}</dd>
+              <dd>
+                {sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'brak'}
+                {homeShort && <small className="detail__fact-note">{homeShort}</small>}
+              </dd>
             </div>
             <div>
               <dt>Balkon</dt>
