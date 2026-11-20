@@ -4,6 +4,8 @@
 patrzy, do których salonów wpada światło, zaznacza, kiedy bywa w domu, i dostaje listę mieszkań,
 które mają słońce właśnie wtedy. Potem wybiera okno na bryle budynku i ogląda wnętrze w 360°.
 
+**Strona: [atrium-poludnie.vercel.app](https://atrium-poludnie.vercel.app)**
+
 Inwestycja jest fikcyjna (Szczecin, 35 mieszkań, 7 kondygnacji). Budynek, wnętrza i panoramy
 wyrenderowałem w Blenderze ze skryptów, z tych samych danych, z których korzysta strona.
 
@@ -85,9 +87,8 @@ npm run build      # sprawdzenie typów + build do dist/
 ```
 
 Build używa ścieżek względnych (`base: './'`), więc zawartość `dist/` działa pod dowolnym
-adresem, także w podkatalogu innej strony. Przy wdrożeniu pod docelowym adresem trzeba podać
-pełny adres w `og:image` w `index.html` (serwisy społecznościowe nie przyjmują adresów
-względnych).
+adresem, także w podkatalogu innej strony. Przy przeniesieniu pod inny adres trzeba zmienić
+`og:url` i `og:image` w `index.html` (serwisy społecznościowe wymagają pełnego adresu).
 
 ## Struktura
 
