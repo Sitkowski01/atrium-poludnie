@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef, useState, type FocusEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FocusEvent, type PointerEvent } from 'react'
 import { formatArea, formatHour, formatPrice, freeLabel } from '../domain/format'
 import { sunRange, sunWindow } from '../domain/sun'
 import type { Facade } from '../domain/types'
 import { useStore, type Spotlight } from '../state/store'
-import { SunBar } from './SunBar'
 import './TypeGallery.css'
 
 /**
@@ -54,7 +53,10 @@ const TYPE_INFO: Record<number, TypeInfo> = {
 }
 
 const ORDER = [2, 0, 1, 3, 4]
-const SLATS = Array.from({ length: 8 }, (_, i) => i)
+const SHORT_NAMES: Record<number, string> = {
+  2: 'Cztery pokoje', 0: 'Trzy pokoje', 1: 'Dwa pokoje, południe',
+  3: 'Dwa pokoje, wschód', 4: 'Kawalerka',
+}
 
 interface TypeCard {
   slot: number
@@ -70,6 +72,8 @@ interface TypeCard {
 
 export function TypeGallery() {
   const { apartments, dispatch } = useStore()
+  const [active, setActive] = useState<number | null>(null)
+  const interactions = useRef(new Map<string, TypeCard>())
 
   const cards = useMemo<TypeCard[]>(
     () =>
@@ -106,9 +110,11 @@ export function TypeGallery() {
   )
 
   const goToSearch = (card: TypeCard) => {
+    interactions.current.clear()
+    setActive(null)
     dispatch({ type: 'resetFilters' })
     dispatch({ type: 'setFilters', patch: { rooms: [card.rooms], facade: card.facade } })
-    dispatch({ type: 'spotlight', spot: null, owner: card.spot })
+    dispatch({ type: 'spotlight', spot: null, owner: ownSpot.current ?? card.spot })
     ownSpot.current = null
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const target = document.getElementById('mieszkania')
@@ -118,157 +124,156 @@ export function TypeGallery() {
     }
   }
 
+  const onActive = (card: TypeCard, source: string, on: boolean) => {
+    interactions.current.delete(source)
+    if (on) interactions.current.set(source, card)
+    const next = [...interactions.current.values()].at(-1) ?? null
+    if (ownSpot.current && ownSpot.current !== next?.spot) {
+      dispatch({ type: 'spotlight', spot: null, owner: ownSpot.current })
+    }
+    ownSpot.current = next?.spot ?? null
+    setActive(next?.slot ?? null)
+    if (next) dispatch({ type: 'spotlight', spot: next.spot })
+  }
+
+  const plan = (card: TypeCard) => (
+    <TypePlan key={card.slot} card={card} active={active === card.slot}
+      onActive={(on) => onActive(card, `plan-${card.slot}`, on)}
+      onPick={() => goToSearch(card)} />
+  )
+
   return (
     <div className="typegal">
-      {cards.map((card, i) => (
-        <TypeButton
-          key={card.slot}
-          card={card}
-          featured={i === 0}
-          index={i + 1}
-          onActive={(on) => {
-            ownSpot.current = on ? card.spot : null
-            dispatch(on ? { type: 'spotlight', spot: card.spot } : { type: 'spotlight', spot: null, owner: card.spot })
-          }}
-          onPick={() => goToSearch(card)}
-        />
-      ))}
+      <figure className="typesheet" data-active={active !== null}>
+        <figcaption className="typesheet__heading">
+          <span>Rzuty w jednej skali</span><span>Arkusz A-02</span>
+        </figcaption>
+        <div className="typesheet__row">{cards.filter((card) => ORDER.indexOf(card.slot) < 3).map(plan)}</div>
+        <div className="typesheet__row">
+          {cards.filter((card) => ORDER.indexOf(card.slot) >= 3).map(plan)}
+          <div className="typesheet__legend">
+            <div className="typesheet__scale">
+              <span className="typesheet__scale-bar" />
+              <span>0</span><span>5 m</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+      <table className="typetable" aria-label="Porównanie typów mieszkań">
+        <thead><tr>
+          <th scope="col">Typ</th><th scope="col">Metraż</th>
+          <th scope="col">Słońce w salonie</th><th scope="col">Cena od</th><th scope="col">Wolne</th>
+        </tr></thead>
+        <tbody>{cards.map((card) => (
+          <TypeRow key={card.slot} card={card} active={active === card.slot}
+            onActive={(on) => onActive(card, `row-${card.slot}`, on)}
+            onPick={() => goToSearch(card)} />
+        ))}</tbody>
+      </table>
     </div>
   )
 }
 
-function TypeButton({
-  card,
-  featured,
-  index,
-  onActive,
-  onPick,
-}: {
+interface TypeInteractionProps {
   card: TypeCard
-  featured: boolean
-  index: number
+  active: boolean
   onActive: (on: boolean) => void
   onPick: () => void
-}) {
-  const { slot, info, area, free, priceFrom } = card
-  // żaluzje: undefined = jeszcze nie ruszane (bez animacji przy ładowaniu), 'in' / 'out' = kierunek
-  const [blinds, setBlinds] = useState<'in' | 'out' | undefined>(undefined)
+}
+
+// Osobne refy zachowują fokus po zejściu kursora i hover po utracie fokusu.
+function useTypeInteraction(onActive: (on: boolean) => void, onPick: () => void) {
   const hover = useRef(false)
   const focus = useRef(false)
-
-  const sync = () => {
-    const on = hover.current || focus.current
-    setBlinds((prev) => (on ? 'in' : prev === undefined ? undefined : 'out'))
-    onActive(on)
+  const sync = () => onActive(hover.current || focus.current)
+  return {
+    onPointerEnter: (e: PointerEvent<HTMLElement>) => {
+      if (e.pointerType === 'touch') return
+      hover.current = true
+      sync()
+    },
+    onPointerLeave: () => {
+      if (!hover.current) return
+      hover.current = false
+      sync()
+    },
+    onFocus: (e: FocusEvent<HTMLButtonElement>) => {
+      if (!e.currentTarget.matches(':focus-visible')) return
+      focus.current = true
+      sync()
+    },
+    onBlur: () => {
+      if (!focus.current) return
+      focus.current = false
+      sync()
+    },
+    onClick: () => {
+      hover.current = false
+      focus.current = false
+      onPick()
+    },
   }
+}
 
-  const base = import.meta.env.BASE_URL
-  const priceText = priceFrom == null ? 'wyprzedane' : `od ${formatPrice(priceFrom)}`
-  // jedna opowieść o słońcu na całej stronie: tak jak w hero — 3. piętro jako odniesienie, parter jako różnica
+function presentation(card: TypeCard) {
   const ref = sunWindow(card.facade, 3)
   const low = sunWindow(card.facade, 0)
-  const span = (w: { from: number; to: number }) => `${formatHour(w.from)}–${formatHour(w.to)}`
+  const span = (w: { from: number; to: number }) => `${formatHour(w.from)}\u2060–\u2060${formatHour(w.to)}`
   const lowDiffers = Boolean(ref && low && (Math.abs(ref.from - low.from) > 0.05 || Math.abs(ref.to - low.to) > 0.05))
-  const sunText = ref
-    ? `salon ${span(ref)} (3. piętro)${lowDiffers && low ? ` · parter ${span(low)}` : ''}`
-    : 'bez bezpośredniego słońca'
-  const sunLabel = ref
-    ? `słońce w salonie ${span(ref)} na 3. piętrze${lowDiffers && low ? `, na parterze ${span(low)}` : ''}`
-    : sunText
-  const label = `${info.name}, ${info.note}, ${formatArea(area)}, ${priceText}${
-    priceFrom == null ? '' : `, ${freeLabel(free)}`
-  }, ${sunLabel} — pokaż w wyszukiwarce`
+  const sun = ref ? span(ref) : 'bez bezpośredniego słońca'
+  const ground = lowDiffers && low ? `parter ${span(low)}` : null
+  const price = card.priceFrom == null ? 'wyprzedane' : formatPrice(card.priceFrom)
+  const sunLabel = ref ? `słońce w salonie ${sun} na 3. piętrze${ground ? `, ${ground}` : ''}` : sun
+  return {
+    sun, ground, price,
+    label: `${card.info.name}, ${card.info.note}, ${formatArea(card.area)}, ${card.priceFrom == null ? price : `od ${price}`}, ${freeLabel(card.free)}, ${sunLabel} — pokaż w wyszukiwarce`,
+  }
+}
 
+function TypePlan({ card, active, onActive, onPick }: TypeInteractionProps) {
+  const handlers = useTypeInteraction(onActive, onPick)
   return (
-    <button
-      type="button"
-      className={`typecard${featured ? ' typecard--featured' : ''}`}
-      aria-label={label}
-      data-blinds={blinds}
-      onPointerEnter={(e) => {
-        if (e.pointerType === 'touch') return
-        hover.current = true
-        sync()
-      }}
-      onPointerLeave={() => {
-        if (!hover.current) return
-        hover.current = false
-        sync()
-      }}
-      onFocus={(e: FocusEvent<HTMLButtonElement>) => {
-        if (!e.currentTarget.matches(':focus-visible')) return
-        focus.current = true
-        sync()
-      }}
-      onBlur={() => {
-        if (!focus.current) return
-        focus.current = false
-        sync()
-      }}
-      onClick={() => {
-        hover.current = false
-        focus.current = false
-        setBlinds((prev) => (prev ? 'out' : prev))
-        onPick()
-      }}
-    >
-      {/* rzuty w jednej skali: kawalerka jest na arkuszu mniejsza niż cztery pokoje (skala ~ √metrażu) */}
-      <span className="typecard__media" style={{ ['--plan' as string]: String(PLAN_SCALE[slot] ?? 1) }}>
-        {featured && (
-          <span className="typecard__sheet" aria-hidden="true">
-            rzuty w jednej skali
-          </span>
-        )}
-        <span className="typecard__area" aria-hidden="true">
-          {formatArea(area)}
+    <button type="button" className="typesheet__plan" data-active={active}
+      style={{ ['--plan' as string]: PLAN_SCALE[card.slot] }}
+      aria-label={presentation(card).label} {...handlers}>
+      <img src={`${import.meta.env.BASE_URL}rzut3d/s${card.slot}-arkusz.webp`}
+        width={1100} height={1100} alt="" fetchPriority="low" decoding="async" />
+      <span className="typesheet__caption">
+        <span className="typesheet__title">
+          <span className="typesheet__number">T{ORDER.indexOf(card.slot) + 1}</span>{' '}
+          <span className="typesheet__name">{SHORT_NAMES[card.slot]}</span>
         </span>
-        {/* najpierw układ (makiety różnią się między typami), żaluzje odsłaniają światło we wnętrzu */}
-        <img
-          className="typecard__img typecard__img--base"
-          src={`${base}rzut3d/s${slot}-arkusz.webp`}
-          alt=""
-          // rzuty (razem ok. 370 kB) pobierają się od razu, z niskim priorytetem: skok z menu do „Typów” nie trafia na puste arkusze
-          fetchPriority="low"
-          decoding="async"
-        />
-        <img
-          className="typecard__img typecard__img--reveal"
-          src={`${base}okladki/s${slot}.webp`}
-          alt=""
-          loading="lazy"
-          decoding="async"
-        />
-        <span className="typecard__blinds" aria-hidden="true">
-          {SLATS.map((n) => (
-            <span key={n} style={{ ['--i' as string]: n }} />
-          ))}
-        </span>
-      </span>
-      {/* wpis jak w katalogu: numer typu na kresce, nazwa i cena w jednym rzędzie, dane pod spodem */}
-      <span className="typecard__body">
-        <span className="typecard__num" aria-hidden="true">
-          T{index}
-          <span className="typecard__num-rule" />
-          {/* podziałka przy numerze każdego typu: wszędzie tej samej długości, bo skala jest wspólna */}
-          <span className="typecard__scalebar">
-            <span className="typecard__scalebar-bar" />
-            <span className="typecard__scalebar-label">0</span>
-            <span className="typecard__scalebar-label">5 m</span>
-          </span>
-        </span>
-        <span className="typecard__name">{info.name}</span>
-        <span className="typecard__price">{priceText}</span>
-        <span className="typecard__facts">
-          {info.note}
-        </span>
-        <span className="typecard__free">{priceFrom != null ? freeLabel(free) : ''}</span>
-        <span className="typecard__sun">
-          <SunBar sun={ref} />
-          <span className="typecard__sun-label">
-            {sunText}
-          </span>
-        </span>
+        <span className="typesheet__area">{formatArea(card.area)}</span>
       </span>
     </button>
+  )
+}
+
+function TypeRow({ card, active, onActive, onPick }: TypeInteractionProps) {
+  const { onPointerEnter, onPointerLeave, ...buttonHandlers } = useTypeInteraction(onActive, onPick)
+  const { sun, ground, price, label } = presentation(card)
+  const exposure = card.slot === 2 ? 'południe i wschód' : card.slot < 2 ? 'południe' : 'wschód'
+  return (
+    <tr data-active={active} onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
+      <td className="typetable__type">
+        <button type="button" aria-label={label} {...buttonHandlers}>
+          <span className="typesheet__number">T{ORDER.indexOf(card.slot) + 1}</span>{' '}
+          {SHORT_NAMES[card.slot]}
+          <span className="typetable__arrow" aria-hidden="true">→</span>
+        </button>
+        <span className="typetable__note">{card.info.note}</span>
+      </td>
+      <td className="typetable__area">{formatArea(card.area)}</td>
+      <td className="typetable__sun">
+        <span className="typetable__range">{sun}</span>
+        <span className="typetable__note">3. piętro{ground && <> · <span className="typetable__range">{ground}</span></>}</span>
+      </td>
+      <td className="typetable__price">{price}</td>
+      <td className="typetable__free">{card.free}</td>
+      <td className="typetable__mobile" colSpan={5}>
+        <span>{formatArea(card.area)}</span> · {exposure} · słońce {sun} · {freeLabel(card.free)}
+        {ground && <> · {ground}</>}
+      </td>
+    </tr>
   )
 }
