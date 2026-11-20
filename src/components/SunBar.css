@@ -26,14 +26,13 @@
 }
 /* okno „jestem w domu”: szare pole pod słońcem; słońce zostaje na wierzchu,
    więc od razu widać, czy w nie trafia */
-.sunbar__want {
+.sunbar__home {
   position: absolute;
-  top: -4px;
-  bottom: -4px;
+  top: -3px;
+  bottom: -3px;
   z-index: -1;
-  border-radius: 3px;
-  background: rgb(28 27 24 / 0.07);
-  box-shadow: inset 0 0 0 1px rgb(28 27 24 / 0.4);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
 }
 .sunbar__now {
   position: absolute;

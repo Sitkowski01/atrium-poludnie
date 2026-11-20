@@ -258,6 +258,8 @@
   white-space: nowrap;
 }
 
+.apt-list__sun-hours--home { white-space: normal; }
+
 .apt-list__price strong {
   font-family: var(--font-display);
   font-size: var(--fd-2);

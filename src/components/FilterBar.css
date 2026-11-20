@@ -12,18 +12,21 @@
 .filter-bar__body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-areas: 'rooms facade' 'price area' 'floor checks';
+  grid-template-areas: 'home home' 'rooms facade' 'price area' 'floor checks';
   align-items: end;
   gap: 26px 20px;
   min-width: 0;
   padding: 22px;
 }
-.filter-bar__group:nth-child(1) { grid-area: rooms; }
-.filter-bar__group:nth-child(2) { grid-area: facade; }
-.filter-bar__group:nth-child(3) { grid-area: price; }
-.filter-bar__group:nth-child(4) { grid-area: area; }
-.filter-bar__group:nth-child(5) { grid-area: floor; }
-.filter-bar__group:nth-child(6) { grid-area: checks; }
+.filter-bar__home { grid-area: home; display: grid; gap: 12px; min-width: 0; }
+.filter-bar__chips.filter-bar__home-chips { flex-wrap: wrap; gap: 8px; }
+.filter-bar__home-chips .chip { border-radius: var(--radius); }
+.filter-bar__group:nth-child(2) { grid-area: rooms; }
+.filter-bar__group:nth-child(3) { grid-area: facade; }
+.filter-bar__group:nth-child(4) { grid-area: price; }
+.filter-bar__group:nth-child(5) { grid-area: area; }
+.filter-bar__group:nth-child(6) { grid-area: floor; }
+.filter-bar__group:nth-child(7) { grid-area: checks; }
 
 /* wiersz przełącznika — tylko poniżej 980 px (renderowany z JS) */
 .filter-bar__top {
@@ -261,7 +264,7 @@
 @media (max-width: 640px) {
   .filter-bar__body {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: 'rooms' 'facade' 'price' 'area' 'floor' 'checks';
+    grid-template-areas: 'home' 'rooms' 'facade' 'price' 'area' 'floor' 'checks';
     gap: 24px;
     padding: 20px 16px;
   }
@@ -277,7 +280,7 @@
 @container chapter (max-width: 520px) {
   .filter-bar__body {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: 'rooms' 'facade' 'price' 'area' 'floor' 'checks';
+    grid-template-areas: 'home' 'rooms' 'facade' 'price' 'area' 'floor' 'checks';
     gap: 24px;
   }
 }
@@ -288,6 +291,9 @@
   padding: 0 10px;
 }
 .filter-bar__group > input[type='range'] { height: 40px; min-height: 40px; margin: 0; }
+@media (pointer: coarse) {
+  .filter-bar__home-chips .chip { min-height: 44px; height: 44px; }
+}
 @media (max-width: 640px) {
   .filter-bar__group { grid-template-rows: auto 44px; }
   .filter-bar__chips .chip,

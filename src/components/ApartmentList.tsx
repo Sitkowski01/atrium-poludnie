@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react'
 import {
   FACADE_LABEL,
   STATUS_LABEL,
@@ -10,6 +10,7 @@ import {
   roomsLabel,
 } from '../domain/format'
 import { sunWindow } from '../domain/sun'
+import { MOMENTS, homeHours, matchMoments } from '../domain/light'
 import { activeFilterChips } from '../domain/activeFilters'
 import type { SortKey } from '../domain/types'
 import { useStore } from '../state/store'
@@ -18,6 +19,7 @@ import { SunBar } from './SunBar'
 import './ApartmentList.css'
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  { value: 'sun-home', label: 'Najwięcej słońca w domu' },
   { value: 'price-asc', label: 'Cena rosnąco' },
   { value: 'price-desc', label: 'Cena malejąco' },
   { value: 'area-desc', label: 'Największe' },
@@ -80,7 +82,7 @@ function EmptyArt() {
 
 const NARROW_QUERY = '(max-width: 980px)'
 const COLLAPSED_ROWS = 8
-const COLLAPSED_ROWS_WIDE = 8
+const hoursFormat = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 })
 
 function matchNarrow(): MediaQueryList | null {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return null
@@ -112,6 +114,11 @@ export function ApartmentList() {
   const { state, dispatch, visible, apartments, limits } = useStore()
   const filtered = activeFilterChips(state.filters, limits).length > 0
   const { hoveredId, selectedId, favourites } = state
+  const moments = useMemo(() => MOMENTS.filter((m) => state.filters.home.includes(m.id)), [state.filters.home])
+  const home = useMemo(() => moments.map((m) => [m.from, m.to] as const), [moments])
+  const totalHours = homeHours(moments)
+  const shares = useMemo(() => new Map(matchMoments(visible, moments, { includeSold: true })
+    .map((m) => [m.apartment.id, m.share])), [visible, moments])
   const listRef = useRef<HTMLUListElement>(null)
   const pointerInside = useRef(false)
   const rowRefs = useRef(new Map<string, HTMLLIElement>())
@@ -130,7 +137,7 @@ export function ApartmentList() {
   // wiersz, którego serce miało fokus w chwili usuwania z listy „Tylko ulubione”
   const pendingFocus = useRef<{ id: string; next: string | null; prev: string | null } | null>(null)
 
-  const collapsedRows = narrow ? COLLAPSED_ROWS : COLLAPSED_ROWS_WIDE
+  const collapsedRows = narrow ? COLLAPSED_ROWS : Infinity
   const collapsible = visible.length > collapsedRows
   const shown = collapsible && !expanded ? visible.slice(0, collapsedRows) : visible
   const hiddenHovered = !expanded && visible.findIndex((a) => a.id === hoveredId) >= collapsedRows
@@ -195,7 +202,7 @@ export function ApartmentList() {
             value={state.sort}
             onChange={(e) => dispatch({ type: 'setSort', sort: e.target.value as SortKey })}
           >
-            {SORT_OPTIONS.map((o) => (
+            {SORT_OPTIONS.filter((o) => o.value !== 'sun-home' || state.filters.home.length > 0).map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
               </option>
@@ -289,9 +296,10 @@ export function ApartmentList() {
                       ))}
                     </span>
                     <span className="apt-list__sun">
-                      <SunBar sun={sun} className="apt-list__sunbar" />
-                      <span className="apt-list__sun-hours" aria-hidden="true">
+                      <SunBar sun={sun} home={home} className="apt-list__sunbar" />
+                      <span className={`apt-list__sun-hours${home.length ? ' apt-list__sun-hours--home' : ''}`}>
                         {sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez słońca'}
+                        {home.length > 0 && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
                       </span>
                     </span>
                   </span>

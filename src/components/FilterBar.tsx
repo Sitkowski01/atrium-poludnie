@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 import { countActive } from '../domain/filter'
+import { MOMENTS } from '../domain/light'
 import { floorLabel, formatArea, formatPrice } from '../domain/format'
 import type { Facade } from '../domain/types'
 import { useStore } from '../state/store'
@@ -127,6 +128,26 @@ export function FilterBar() {
         inert={collapsed}
       >
         <div className="filter-bar__body">
+      <div className="filter-bar__home" role="group" aria-labelledby={`${panelId}-home`}>
+        <span className="filter-bar__label" id={`${panelId}-home`}>W domu</span>
+        <div className="filter-bar__chips filter-bar__home-chips">
+          {MOMENTS.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              className="chip"
+              aria-pressed={filters.home.includes(m.id)}
+              onClick={() => dispatch({ type: 'setFilters', patch: {
+                home: filters.home.includes(m.id)
+                  ? filters.home.filter((id) => id !== m.id)
+                  : [...filters.home, m.id],
+              } })}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="filter-bar__group filter-bar__group--wide" role="group" aria-labelledby={`${panelId}-rooms`}>
         <span className="filter-bar__label" id={`${panelId}-rooms`}>Pokoje</span>
         <div className="filter-bar__chips">
