@@ -215,10 +215,12 @@ export function LightFinder() {
                     </span>
                     <span className="light__flat-facts-row">{floorLabel(a.floor)}</span>
                   </span>
-                  <SunBar sun={sunWindow(a.facade, a.floor)} wants={wants} className="light__flat-bar" />
-                  <span className="light__flat-share">
-                    <span aria-hidden="true">{hoursText(share)} h</span>
-                    <span className="visually-hidden">{hoursText(share)} godzin w domu ze słońcem w salonie</span>
+                  <span className="light__flat-timeline">
+                    <SunBar sun={sunWindow(a.facade, a.floor)} wants={wants} className="light__flat-bar" />
+                    <span className="light__flat-share">
+                      <span aria-hidden="true">{hoursText(share)} h</span>
+                      <span className="visually-hidden">{hoursText(share)} godzin w domu ze słońcem w salonie</span>
+                    </span>
                   </span>
                   <span className="light__flat-price">{formatPrice(a.price)}</span>
                 </button>

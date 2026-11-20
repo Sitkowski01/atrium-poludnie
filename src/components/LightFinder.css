@@ -168,7 +168,7 @@
   grid-template-columns: 56px minmax(0, 1fr) 112px;
   grid-template-areas:
     'id facts price'
-    'id bar share';
+    'id timeline timeline';
   align-items: center;
   gap: 14px;
   width: 100%;
@@ -237,11 +237,20 @@
 .light__flat-bar {
   grid-area: bar;
   min-width: 0;
+  flex: 1;
+}
+
+.light__flat-timeline {
+  grid-area: timeline;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
 .light__flat .sunbar__want,
 .light__key-home {
-  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--ink) 16%, transparent) 0 2px, transparent 2px 5px);
+  background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--ink) 28%, transparent) 0 2px, transparent 2px 4px);
   box-shadow: none;
   border: 0;
 }
@@ -335,7 +344,7 @@
     grid-template-columns: 56px minmax(0, 1fr) 112px;
     grid-template-areas:
       'id facts price'
-      'id bar share';
+      'id timeline timeline';
     row-gap: 8px;
     padding: 12px 4px;
   }
@@ -367,8 +376,8 @@
     grid-template-columns: 56px minmax(0, 1fr) auto;
     grid-template-areas:
       'id facts facts'
-      'id price share'
-      'id bar bar';
+      'id price price'
+      'id timeline timeline';
   }
   .light__flat-price {
     text-align: left;

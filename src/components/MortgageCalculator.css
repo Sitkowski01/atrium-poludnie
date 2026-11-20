@@ -112,10 +112,9 @@
 
 .mortgage__bar {
   display: flex;
-  height: 12px;
-  min-height: 10px;
+  height: 6px;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: 2px;
   background: var(--line);
 }
 
@@ -126,11 +125,11 @@
 }
 
 .mortgage__bar-capital {
-  background: var(--ink);
+  background: var(--ink-2);
 }
 
 .mortgage__bar-interest {
-  background: var(--ink-3);
+  background: var(--line-2);
 }
 
 .mortgage__legend {
@@ -157,11 +156,11 @@
 }
 
 .mortgage__swatch--capital {
-  background: var(--ink);
+  background: var(--ink-2);
 }
 
 .mortgage__swatch--interest {
-  background: var(--ink-3);
+  background: var(--line-2);
 }
 
 .mortgage__note {

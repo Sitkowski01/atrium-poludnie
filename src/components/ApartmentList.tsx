@@ -184,8 +184,8 @@ export function ApartmentList() {
     <section className="apt-list" aria-label="Lista mieszkań">
       <div className="apt-list__head">
         <p className="apt-list__count" aria-live="polite" ref={countRef} tabIndex={-1}>
-          <strong>{visible.length}</strong> {flatsWord(visible.length)}
-          {collapsible && !expanded && <span className="apt-list__count-shown"> · widać {shown.length}</span>}
+          <strong>{shown.length}</strong>
+          {shown.length < visible.length ? ` z ${visible.length} mieszkań` : ` ${flatsWord(visible.length)}`}
         </p>
         <label className="apt-list__sort">
           <span className="apt-list__sort-label">Sortuj</span>

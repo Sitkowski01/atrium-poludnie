@@ -71,19 +71,21 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 
 .detail__head {
   position: relative;
-  min-height: 300px;
   display: grid;
   align-content: end;
   overflow: hidden;
 }
 .detail__cover {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
 }
 .detail__cover img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 50% 62%;
   animation: detail-cover 1.2s var(--ease) backwards;
 }
 @keyframes detail-cover {
@@ -95,7 +97,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(color-mix(in srgb, var(--ink) 18%, transparent), transparent 35%, var(--paper) 72%);
+  background: linear-gradient(to bottom, transparent 65%, var(--paper) 100%);
 }
 .detail__cover--empty {
   background:
@@ -142,12 +144,12 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   gap: 6px;
   padding: 0 28px 4px;
   background: var(--paper);
-  box-shadow: 0 -8px 0 var(--paper);
 }
 .detail__title {
   font-family: var(--font-display);
   font-size: clamp(40px, 7vw, 56px);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1;
 }
 
@@ -248,7 +250,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__section h3 {
   font-family: var(--font-display);
   font-size: var(--fd-3);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1.1;
 }
 .detail__hint {
@@ -309,7 +312,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__dock {
   position: sticky;
   bottom: 0;
-  z-index: 2;
+  /* nad kontrolkami spaceru (z-index 3), pod spacerem powiększonym (1000) */
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -387,21 +391,12 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   .detail__body {
     gap: 16px;
   }
-  .detail__head {
-    min-height: 0;
-    padding-top: 120px;
-  }
   .detail__cover {
-    bottom: auto;
-    height: 120px;
-    max-height: 120px;
+    aspect-ratio: 16 / 8;
   }
   .detail__section:has(#detail-walk) {
     padding-top: 16px;
     gap: 8px;
-  }
-  .detail__section:has(#detail-walk) .detail__kicker {
-    display: none;
   }
   .detail__facts div {
     padding-block: 8px;
