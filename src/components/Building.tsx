@@ -55,12 +55,15 @@ function framesFor(hour: number): { a: number; b: number; t: number } {
 
 /** podświetlenie z legendy: jedna grupa mieszkań na bryle, reszta przygaszona */
 type Spot = 'wolne' | 'rezerwacja' | 'sprzedane' | 'poza'
-const SPOTS: { key: Spot; label: string }[] = [
-  { key: 'wolne', label: 'wolne' },
-  { key: 'rezerwacja', label: 'rezerwacja' },
-  { key: 'sprzedane', label: 'sprzedane' },
-  { key: 'poza', label: 'poza filtrami' },
+/** formy: [1, 2–4, 5+] — „1 wolne”, „2 rezerwacje”, „8 sprzedanych” */
+const SPOTS: { key: Spot; forms: [string, string, string] }[] = [
+  { key: 'wolne', forms: ['wolne', 'wolne', 'wolnych'] },
+  { key: 'rezerwacja', forms: ['rezerwacja', 'rezerwacje', 'rezerwacji'] },
+  { key: 'sprzedane', forms: ['sprzedane', 'sprzedane', 'sprzedanych'] },
+  { key: 'poza', forms: ['poza filtrami', 'poza filtrami', 'poza filtrami'] },
 ]
+const plural = (n: number, [one, few, many]: [string, string, string]) =>
+  n === 1 ? one : n % 10 >= 2 && n % 10 <= 4 && !(n % 100 >= 12 && n % 100 <= 14) ? few : many
 /** grupy statusu obejmują tylko mieszkania w filtrach, resztę zbiera „poza filtrami”, więc liczniki sumują się do 35 */
 const inSpot = (a: Apartment, spot: Spot, dim: boolean) => (spot === 'poza' ? dim : !dim && a.status === spot)
 
@@ -386,8 +389,9 @@ export function Building() {
         </p>
       ) : (
       <div className="building__legend" role="group" aria-label="Legenda: pokaż na bryle">
-        {SPOTS.map(({ key, label }) => {
+        {SPOTS.map(({ key, forms }) => {
           const count = apartments.filter((a) => inSpot(a, key, !visibleIds.has(a.id))).length
+          const label = plural(count, forms)
           // rozdział strony przejął bryłę: legenda nie pokazuje stanu, który teraz nic nie robi
           const on = spot === key && !storeSpot
           return (
@@ -412,7 +416,7 @@ export function Building() {
         })}
         {/* podpowiedź w rzędzie legendy, pod rysunkiem (na komputerze); na dotyku zostaje karta pod bryłą */}
         <span className="building__legend-hint" aria-hidden="true">
-          Najedź na okno, kliknij, żeby wejść
+          Kliknij okno, żeby wejść
         </span>
       </div>
       )}

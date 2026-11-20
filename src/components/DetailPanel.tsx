@@ -201,7 +201,7 @@ export function DetailPanel() {
           <p className="visually-hidden">{roomsLabel(a.rooms)}</p>
 
           <section className="detail__section" aria-labelledby="detail-walk">
-            <p className="detail__kicker" aria-hidden="true"><span>04.1</span><span>Spacer</span></p>
+            <p className="detail__kicker" aria-hidden="true"><span>1 / 5</span></p>
             <div className="detail__section-head">
               <h3 id="detail-walk">Spacer 360°</h3>
               <span className="detail__hint">przeciągnij, żeby się rozejrzeć</span>
@@ -210,7 +210,7 @@ export function DetailPanel() {
           </section>
 
           <section className="detail__section" aria-labelledby="detail-plan">
-            <p className="detail__kicker" aria-hidden="true"><span>04.2</span><span>Rzut</span></p>
+            <p className="detail__kicker" aria-hidden="true"><span>2 / 5</span></p>
             <div className="detail__section-head">
               <h3 id="detail-plan">Rzut</h3>
             </div>
@@ -218,7 +218,7 @@ export function DetailPanel() {
           </section>
 
           <section className="detail__section" aria-labelledby="detail-sun">
-            <p className="detail__kicker" aria-hidden="true"><span>04.3</span><span>Światło</span></p>
+            <p className="detail__kicker" aria-hidden="true"><span>3 / 5</span></p>
             <div className="detail__section-head">
               <h3 id="detail-sun">Słońce w salonie</h3>
             </div>
@@ -242,14 +242,14 @@ export function DetailPanel() {
 
           <details className="detail__section detail__loan" aria-labelledby="detail-loan">
             <summary>
-            <span className="detail__kicker" aria-hidden="true"><span>04.4</span><span>Finansowanie</span></span>
+            <span className="detail__kicker" aria-hidden="true"><span>4 / 5</span></span>
               <h3 id="detail-loan">Rata kredytu</h3>
             </summary>
             <MortgageCalculator key={a.id} price={a.price} />
           </details>
 
           <section className="detail__section" id="detail-ask-section" aria-labelledby="detail-ask">
-            <p className="detail__kicker" aria-hidden="true"><span>04.5</span><span>Kontakt</span></p>
+            <p className="detail__kicker" aria-hidden="true"><span>5 / 5</span></p>
             <div className="detail__section-head">
               <h3 id="detail-ask">Zapytaj o to mieszkanie</h3>
             </div>
