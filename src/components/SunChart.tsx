@@ -124,7 +124,9 @@ export function SunChart({
           <span key={tick} style={{ left: `${xAt(tick) / WIDTH * 100}%` }}>{tick}:00</span>
         ))}
       </div>
-      <p className="sun-chart__legend">Krzywa: wysokość słońca · pas: słońce w salonie</p>
+      <p className="sun-chart__legend">
+        Krzywa: wysokość słońca · pas: słońce w salonie{home.length > 0 && ' · kreska u dołu: jesteś w domu'}
+      </p>
       {children}
     </div>
   )
