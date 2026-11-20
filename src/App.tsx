@@ -59,8 +59,8 @@ export default function App() {
           Atrium <em>Południe</em>
         </a>
         <TopNav />
-        <a className="btn btn--outline topbar__cta" href="#mieszkania">
-          Wybierz mieszkanie
+        <a className="btn btn--outline topbar__cta" href="#kontakt">
+          Umów spacer
         </a>
       </header>
 

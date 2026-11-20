@@ -182,7 +182,7 @@ svg text,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
+  min-height: 40px;
   padding: 0 15px;
   border: 1px solid var(--line-2);
   border-radius: var(--radius-s);
@@ -203,11 +203,11 @@ svg text,
     color: var(--ink);
   }
 }
-/* wybrane: papier z grafitową ramką i kreską u dołu — bez czarnych bloków, które krzyczały głośniej niż treść */
+/* wybrane (jeden stan na całej stronie): papier uniesiony i grafitowy obrys 1,5 px — bez czarnych bloków */
 .chip[aria-pressed='true'] {
   background: var(--card);
   border-color: var(--ink);
-  box-shadow: inset 0 -2px 0 var(--ink);
+  box-shadow: inset 0 0 0 0.5px var(--ink);
   color: var(--ink);
   font-weight: 600;
 }

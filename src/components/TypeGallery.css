@@ -1,6 +1,10 @@
 /* wpisy w parze dzielą wiersze siatki (subgrid): nazwy, ceny i paski słońca stoją na jednej linii,
    nawet gdy opis jednego typu zajmuje dwie linie */
+/* --sheet: bok rzutu największego typu, wspólny dla CAŁEGO arkusza (liczony od szerokości kolumny,
+   nie od wysokości ramki) — dzięki temu metr ma tę samą długość na każdej karcie */
 .typegal {
+  /* największy rzut w parze (T2, skala 0,835) wypełnia ~92% wysokości ramki; T1 mieści się w ramce 12:5 */
+  --sheet: calc((100cqi - 24px) / 2 * 0.75 * 1.1);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: 24px;
@@ -50,7 +54,7 @@
   box-shadow: inset 0 0 0 1px var(--line);
 }
 .typecard--featured .typecard__media {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 12 / 5;
 }
 .typecard__img {
   position: absolute;
@@ -61,10 +65,13 @@
 }
 /* rzut leży na arkuszu: cały widoczny, w skali wspólnej dla typów, z oddechem papieru dookoła */
 .typecard__img.typecard__img--base {
-  inset: 3% 0;
-  height: 94%;
+  inset: auto;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--sheet) * var(--plan, 1));
+  height: calc(var(--sheet) * var(--plan, 1));
   object-fit: contain;
-  transform: scale(var(--plan, 1));
+  transform: translate(-50%, -50%);
 }
 .typecard__sheet,
 .typecard__area {
@@ -97,7 +104,8 @@
   display: grid;
   grid-template-columns: auto auto;
   justify-content: space-between;
-  width: calc(0.436 * 0.85 * 56.25%);
+  /* 5 m w skali arkusza: 43,6% boku rzutu największego typu */
+  width: calc(var(--sheet) * 0.436);
   row-gap: 3px;
   font-size: 12px;
   font-weight: 600;
@@ -252,7 +260,7 @@
 }
 @media (hover: hover) {
   .typecard:hover .typecard__img--base {
-    transform: scale(calc(var(--plan, 1) * 1.05));
+    transform: translate(-50%, -50%) scale(1.04);
   }
   .typecard:hover .typecard__name::after {
     opacity: 1;
@@ -276,6 +284,7 @@
 /* wąska kolumna (1024 px obok bryły): nadal dwa wpisy w rzędzie, cena pod nazwą */
 @container chapter (max-width: 520px) {
   .typegal {
+    --sheet: calc((100cqi - 16px) / 2 * 0.75 * 1.1);
     column-gap: 16px;
   }
   .typecard {
@@ -301,7 +310,14 @@
 /* telefon: jeden wpis w rzędzie */
 @container chapter (max-width: 360px) {
   .typegal {
+    --sheet: calc(100cqi * 0.75 * 0.92);
     grid-template-columns: minmax(0, 1fr);
+  }
+  .typecard--featured .typecard__media {
+    aspect-ratio: 4 / 3;
+  }
+  .typecard--featured .typecard__img.typecard__img--base {
+    top: 52%;
   }
 }
 
@@ -347,6 +363,5 @@
 }
 /* duży wpis: rzut niżej, żeby nie wchodził pod podpis „rzuty w jednej skali” */
 .typecard--featured .typecard__img.typecard__img--base {
-  inset: 12% 0 3%;
-  height: 85%;
+  top: 54%;
 }
