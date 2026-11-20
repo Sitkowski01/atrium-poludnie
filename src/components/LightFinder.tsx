@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
-import { MOMENTS, homeHours, matchMoments, onlySoldMatch, summarizeMatches, type Moment } from '../domain/light'
-import { sunAt, sunWindow } from '../domain/sun'
+import { MATCH_FROM, MOMENTS, homeHours, matchMoments, onlySoldMatch, summarizeMatches, type Moment } from '../domain/light'
+import { sunAt, sunShare, sunWindow } from '../domain/sun'
 import { useCountUp } from '../hooks/useCountUp'
 import { useStore, type Spotlight } from '../state/store'
 import { SunBar } from './SunBar'
@@ -152,11 +152,30 @@ export function LightFinder() {
   }
 
   const evening = picked.length === 1 && picked[0] === 'wieczor'
-  // dowód zamiast gołej liczby: trzy przykłady, każdy innego typu (najlepsze dopasowanie w swoim typie)
+  // dowód zamiast gołej liczby, z różnicą widoczną gołym okiem: najlepsze dopasowanie, najlepsze z innym
+  // wynikiem (zwykle druga elewacja) i dla porównania mieszkanie, które odpada — z ile godzin mu brakuje
   const examples = useMemo(() => {
-    const seen = new Set<number>()
-    return matches.filter((m) => !seen.has(m.apartment.slot) && seen.add(m.apartment.slot)).slice(0, 3)
-  }, [matches])
+    const total = homeHours(moments)
+    if (!matches.length || total <= 0) return []
+    const label = (share: number) => hoursFormat.format(share * total)
+    const best = matches[0]
+    const other = matches.find((m) => label(m.share) !== label(best.share)) ??
+      matches.find((m) => m.apartment.slot !== best.apartment.slot)
+    const shown = new Set([best.apartment.id, other?.apartment.id])
+    const miss = apartments
+      .filter((a) => a.status !== 'sprzedane' && !shown.has(a.id))
+      .map((a) => ({
+        apartment: a,
+        share: moments.reduce((sum, m) => sum + sunShare(a.facade, a.floor, m.from, m.to) * (m.to - m.from), 0) / total,
+      }))
+      .filter((m) => m.share < MATCH_FROM)
+      .sort((x, y) => y.share - x.share || y.apartment.floor - x.apartment.floor)[0]
+    return [
+      { ...best, miss: false },
+      ...(other ? [{ ...other, miss: false }] : []),
+      ...(miss ? [{ ...miss, miss: true }] : []),
+    ]
+  }, [matches, moments, apartments])
   const homeBands = useMemo(() => moments.map((m) => [m.from, m.to] as const), [moments])
 
   return (
@@ -230,8 +249,17 @@ export function LightFinder() {
 
         {examples.length > 0 && (
           <ul className="light__examples" aria-label="Przykładowe mieszkania">
-            {examples.map(({ apartment: a, share }) => (
-              <li key={a.id}>
+            {examples.map(({ apartment: a, share, miss }) => (
+              <li key={a.id} className={miss ? 'light__example-miss' : undefined}>
+                {miss && (
+                  <span className="light__example-note">
+                    dla porównania — odpada
+                    {/* ta sama strona co najlepsze, ale nisko: słońce zasłania budynek obok */}
+                    {a.facade === examples[0].apartment.facade && a.floor <= 1 && a.floor < examples[0].apartment.floor
+                      ? ': nisko, w cieniu budynku obok'
+                      : ''}
+                  </span>
+                )}
                 <button type="button" className="light__example" onClick={() => dispatch({ type: 'select', id: a.id })}>
                   <span className="light__example-id">{a.id}</span>
                   <span className="light__example-meta">
@@ -239,7 +267,7 @@ export function LightFinder() {
                   </span>
                   <SunBar sun={sunWindow(a.facade, a.floor)} home={homeBands} className="light__example-bar" />
                   <span className="light__example-share">
-                    {hoursFormat.format(share * totalHours)} z {hoursFormat.format(totalHours)} h
+                    {miss ? 'tylko ' : ''}{hoursFormat.format(share * totalHours)} z {hoursFormat.format(totalHours)} h w słońcu
                   </span>
                   <span className="light__example-price">{formatPrice(a.price)}</span>
                 </button>

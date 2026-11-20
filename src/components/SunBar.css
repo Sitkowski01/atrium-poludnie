@@ -28,11 +28,12 @@
    więc od razu widać, czy w nie trafia */
 .sunbar__home {
   position: absolute;
-  top: -3px;
-  bottom: -3px;
+  top: -4px;
+  bottom: -4px;
   z-index: -1;
   border-radius: var(--radius);
-  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  /* godziny w domu: wyraźny, ale spokojny pas za torem (7% ginęło na papierze) */
+  background: color-mix(in srgb, var(--ink) 16%, transparent);
 }
 .sunbar__now {
   position: absolute;

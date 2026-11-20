@@ -236,7 +236,7 @@
 }
 .light__example {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) 11ch;
+  grid-template-columns: 56px minmax(0, 1fr) max-content;
   grid-template-areas: 'id meta price' 'id bar share';
   align-items: center;
   gap: 4px 16px;
@@ -305,4 +305,20 @@
   .light__example-meta {
     white-space: normal;
   }
+}
+
+/* mieszkanie dla porównania: przygaszone i podpisane, oddzielone od dopasowań */
+.light__example-note {
+  display: block;
+  padding-top: 10px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+.light__example-miss .light__example-id,
+.light__example-miss .light__example-price {
+  color: var(--ink-2);
+}
+.light__example-miss .light__example-bar {
+  opacity: 0.6;
 }
