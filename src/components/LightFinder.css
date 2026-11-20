@@ -59,6 +59,8 @@
   border-color: var(--ink);
   background: var(--card);
   color: var(--ink);
+  /* wybrana pora wyraźnie: grafitowy obrys i słoneczna kreska u góry kafla */
+  box-shadow: inset 0 0 0 1px var(--ink), inset 0 3px 0 var(--sun);
 }
 .light__glyph {
   width: 48px;
@@ -210,5 +212,13 @@
   }
   .light__moment:hover:not(.is-on) {
     transform: none;
+  }
+}
+
+/* telefon: główne wezwanie na całą szerokość, jak w hero i kontakcie */
+@container chapter (width < 520px) {
+  .light__search {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -143,7 +143,8 @@
 
 .apt-list__main {
   display: grid;
-  grid-template-columns: 104px minmax(0, 1fr) auto;
+  /* stała kolumna ceny (mieści „1 195 000 zł”): paski słońca kończą się w każdym wierszu w tym samym miejscu */
+  grid-template-columns: 104px minmax(0, 1fr) 132px;
   align-items: center;
   gap: 20px;
   width: 100%;
@@ -439,5 +440,13 @@
   .apt-list__more { min-height: 44px; }
   .apt-list__head {
     flex-wrap: wrap;
+  }
+}
+
+/* telefon: „Pokaż pozostałe” na całą szerokość, jak inne wezwania */
+@container chapter (max-width: 560px) {
+  .apt-list__more {
+    width: 100%;
+    justify-content: center;
   }
 }
