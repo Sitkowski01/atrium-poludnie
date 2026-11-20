@@ -282,7 +282,7 @@
   grid-area: price;
   justify-self: end;
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.9375rem; /* jak cena pod rzutami typów: jedna wielkość ceny w małych zestawieniach */
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;

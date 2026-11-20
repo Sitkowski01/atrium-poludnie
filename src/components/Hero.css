@@ -62,7 +62,7 @@
 .hero__lead {
   max-width: 46ch;
   margin-top: clamp(18px, 2.6vh, 26px);
-  font-size: 1.0625rem;
+  font-size: 1.0625rem; /* otwarcie i zamknięcie strony mają większy nagłówek, więc i lead o krok większy niż w rozdziałach (16 px) */
   line-height: 1.6;
   color: var(--ink-2);
   text-wrap: pretty;
