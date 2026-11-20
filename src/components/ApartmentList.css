@@ -485,13 +485,17 @@
 .apt-list__group {
   display: grid;
   gap: 8px;
-  padding: 16px 0 10px;
+  /* prawy margines jak kolumna cen (lista sięga pod kolumnę serduszek) */
+  padding: 16px 44px 10px 0;
   border-top: 1px solid var(--line);
   list-style: none;
 }
 .apt-list__group-bar { max-width: 420px; }
 .apt-list__group-text {
+  min-width: 0;
   font-size: 13px;
   color: var(--ink-2);
+  /* lista ma nowrap w wierszach; nagłówek grupy musi się zawijać na telefonie */
+  white-space: normal;
 }
 .apt-list__group + .apt-list__item { border-top: 0; }

@@ -79,3 +79,20 @@
     transition: none;
   }
 }
+
+.active-filters li:has(.active-filters__change) {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.active-filters__change {
+  font-size: 13px;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+  transition: color var(--hover) var(--ease-hover);
+}
+@media (hover: hover) {
+  .active-filters__change:hover { color: var(--ink); }
+}

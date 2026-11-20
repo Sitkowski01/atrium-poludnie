@@ -55,6 +55,23 @@ export function ActiveFilters({ onEmptyFocus }: Props) {
               ×
             </span>
           </button>
+          {/* pory zmienia się w rozdziale 03 — link tam, zamiast drugiego zestawu przycisków w filtrach */}
+          {chip.id === 'home' && (
+            <a
+              className="active-filters__change"
+              href="#swiatlo"
+              onClick={(e) => {
+                const target = document.getElementById('swiatlo')
+                if (!target) return
+                e.preventDefault()
+                const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+                target.focus({ preventScroll: true })
+              }}
+            >
+              zmień pory
+            </a>
+          )}
         </li>
       ))}
       {chips.length >= 2 && (

@@ -1,10 +1,8 @@
 import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 import { countActive } from '../domain/filter'
-import { MOMENTS } from '../domain/light'
 import { floorLabel, formatArea, formatPrice } from '../domain/format'
 import type { Facade } from '../domain/types'
 import { useStore } from '../state/store'
-import { SunMomentGlyph } from './SunControl'
 import './FilterBar.css'
 
 const ROOM_OPTIONS = [1, 2, 3, 4]
@@ -58,7 +56,8 @@ function SlidersIcon() {
 export function FilterBar() {
   const { state, dispatch, limits } = useStore()
   const { filters, favourites } = state
-  const active = countActive(filters, limits)
+  // licznik i „Wyczyść” dotyczą tego panelu; pory w domu mają swój chip nad listą i swoje miejsce w rozdziale 03
+  const active = countActive({ ...filters, home: [] }, limits)
   const narrow = useNarrow()
   const [open, setOpen] = useState(false)
   const panelId = useId()
@@ -116,6 +115,7 @@ export function FilterBar() {
                 // przycisk zaraz zniknie — fokus wraca na przełącznik
                 toggleRef.current?.focus()
                 dispatch({ type: 'resetFilters' })
+                dispatch({ type: 'setFilters', patch: { home: filters.home } })
               }}
             >
               Wyczyść
@@ -129,27 +129,7 @@ export function FilterBar() {
         inert={collapsed}
       >
         <div className="filter-bar__body">
-      <div className="filter-bar__home" role="group" aria-labelledby={`${panelId}-home`}>
-        <span className="filter-bar__label" id={`${panelId}-home`}>W domu</span>
-        <div className="filter-bar__chips filter-bar__home-chips">
-          {MOMENTS.map((m, index) => (
-            <button
-              key={m.id}
-              type="button"
-              className="chip"
-              aria-pressed={filters.home.includes(m.id)}
-              onClick={() => dispatch({ type: 'setFilters', patch: {
-                home: filters.home.includes(m.id)
-                  ? filters.home.filter((id) => id !== m.id)
-                  : [...filters.home, m.id],
-              } })}
-            >
-              <SunMomentGlyph position={index} />
-              {m.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* pory w domu wybiera się w jednym miejscu: rozdział 03 „Kiedy jesteś w domu?”; tu widać je jako chip nad listą */}
       <div className="filter-bar__pair">
       <div className="filter-bar__group" role="group" aria-labelledby={`${panelId}-rooms`}>
         <span className="filter-bar__label" id={`${panelId}-rooms`}>Pokoje</span>
@@ -300,6 +280,7 @@ export function FilterBar() {
               // przycisk zaraz zniknie — fokus wraca na pierwszą kontrolkę filtrów
               e.currentTarget.closest('.filter-bar')?.querySelector<HTMLElement>('button')?.focus()
               dispatch({ type: 'resetFilters' })
+                dispatch({ type: 'setFilters', patch: { home: filters.home } })
             }}
           >
             Wyczyść filtry ({active})
