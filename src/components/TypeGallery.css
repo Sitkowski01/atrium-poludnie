@@ -350,21 +350,3 @@
   outline-offset: -2px;
 }
 
-/* komputer też w rzędach 2–2–1 (wspólna skala): największy rzut ~290 px zamiast ~200 px, czytelny jak rysunek;
-   tylko rzuty + podziałka płyną, nagłówek arkusza zostaje nad nimi */
-.typesheet__plans {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 24px 16px;
-  margin-top: 20px;
-}
-.typesheet__row {
-  display: contents;
-  --base: calc((100cqi - 16px) / 1.835);
-}
-.typesheet__plans .typesheet__legend {
-  flex: 1;
-  align-self: flex-end;
-  justify-self: auto;
-}
