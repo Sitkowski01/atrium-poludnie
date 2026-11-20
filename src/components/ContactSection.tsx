@@ -149,7 +149,7 @@ export function ContactSection() {
               SWN Development
             </a>
             <br />
-            <a href="mailto:hello@swndevelopment.pl">hello@swndevelopment.pl</a>
+            <a href="mailto:mikolaj@swndevelopment.pl">mikolaj@swndevelopment.pl</a>
           </p>
         </div>
         <nav className="site-footer__cell" aria-label="Stopka">

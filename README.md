@@ -121,4 +121,4 @@ Skrypt wnętrz sam usuwa meble, które stanęłyby w drzwiach albo w miejscu kam
 ---
 
 Projekt i wykonanie: **Mikołaj Sitek**, [SWN Development](https://swndevelopment.pl) ·
-[hello@swndevelopment.pl](mailto:hello@swndevelopment.pl)
+[mikolaj@swndevelopment.pl](mailto:mikolaj@swndevelopment.pl)
