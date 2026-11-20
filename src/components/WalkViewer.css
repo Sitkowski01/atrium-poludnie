@@ -389,3 +389,8 @@
     animation-timing-function: steps(1, end) !important;
   }
 }
+
+/* mini-mapa bez skrótów (H1, Sy1): pomieszczenia nazywają przyciski obok, mapa pokazuje tylko, gdzie stoisz */
+.walk__initial {
+  display: none;
+}

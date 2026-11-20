@@ -325,3 +325,17 @@
 @container typegallery (width < 520px) {
   .typetable { display: block; }
 }
+
+/* telefon: nazwa na całą linię, cena pod nią, godziny słońca w swojej linii (bez łamania „· słońce” na początek wiersza) */
+@container typegallery (width < 520px) {
+  .typetable tbody tr {
+    grid-template-columns: var(--tb) minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    row-gap: 2px;
+  }
+  .typetable .typetable__thumb { grid-row: 1 / span 3; }
+  .typetable .typetable__type { grid-column: 2; }
+  .typetable .typetable__price { grid-column: 2; justify-self: start; text-align: left; font-size: 15px; }
+  .typetable .typetable__mobile { grid-column: 2; }
+  .typetable__sunline { display: block; white-space: nowrap; }
+}

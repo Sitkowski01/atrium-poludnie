@@ -205,7 +205,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 .detail__loan { display: block; }
 .detail__loan summary { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px; min-height: 44px; padding-right: 32px; cursor: pointer; list-style: none; }
 .detail__loan summary::-webkit-details-marker { display: none; }
-.detail__loan summary::after { content: '+'; position: absolute; right: 0; bottom: 0; font-size: 24px; }
+.detail__loan summary::after { content: '+'; position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 24px; line-height: 1; }
 .detail__loan[open] summary::after { content: '−'; }
 .detail__loan .mortgage { margin-top: 20px; }
 

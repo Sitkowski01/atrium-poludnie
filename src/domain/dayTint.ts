@@ -1,7 +1,7 @@
 /**
  * Światło dnia na papierze strony: delikatny odcień, który przesuwa się z porą dnia.
  * Świt różowo-brzoskwiniowy, południe prawie neutralne, popołudnie złote, zachód bursztynowy,
- * zmierzch fioletowy. Krycie najwyżej 0,14 — tekst trzyma kontrast o każdej porze.
+ * zmierzch fioletowy. Krycie najwyżej 0,2 — tekst trzyma kontrast o każdej porze.
  */
 type Key = [hour: number, rgb: [number, number, number], alpha: number]
 
@@ -9,11 +9,11 @@ const KEYS: Key[] = [
   [4.5, [96, 100, 150], 0.08], // noc
   [5.6, [160, 130, 175], 0.07], // fiolet przed wschodem
   [6.6, [255, 175, 135], 0.06], // krótki brzoskwiniowy świt
-  [8, [150, 190, 238], 0.14], // poranek: chłodny, błękitny, wyraźnie inny niż południe i wieczór
+  [8, [120, 170, 235], 0.2], // poranek: chłodny, błękitny, wyraźnie inny niż południe i wieczór
   [12, [210, 220, 235], 0.02], // południe: prawie nic
   [14.5, [235, 222, 198], 0.02],
   [16.5, [245, 196, 120], 0.07], // złote popołudnie
-  [19, [240, 150, 60], 0.14], // bursztyn przed zachodem
+  [19, [240, 140, 50], 0.18], // bursztyn przed zachodem
   [20.3, [190, 120, 140], 0.09], // po zachodzie: róż w fiolet
   [21.2, [96, 100, 150], 0.09], // noc
 ]

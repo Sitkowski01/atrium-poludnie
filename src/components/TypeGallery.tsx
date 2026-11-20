@@ -111,6 +111,31 @@ export function TypeGallery() {
     [dispatch],
   )
 
+  // bryła nie stoi bezczynnie, gdy rozdział jest na ekranie: kolejne typy podświetlają się same co ~3 s
+  // (bez ruchu przy „ogranicz ruch” — wtedy stoi pierwszy typ); wskazanie typu przejmuje podświetlenie
+  const galRef = useRef<HTMLDivElement>(null)
+  const [galInView, setGalInView] = useState(false)
+  useEffect(() => {
+    const el = galRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(([e]) => setGalInView(e.isIntersecting), { rootMargin: '-30% 0px -30% 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+  const [tick, setTick] = useState(0)
+  useEffect(() => {
+    if (!galInView || active !== null) return
+    if (typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const id = window.setInterval(() => setTick((t) => t + 1), 2800)
+    return () => window.clearInterval(id)
+  }, [galInView, active])
+  const autoSpot = galInView && active === null && cards.length ? cards[tick % cards.length].spot : null
+  useEffect(() => {
+    if (!autoSpot) return
+    dispatch({ type: 'spotlight', spot: autoSpot })
+    return () => dispatch({ type: 'spotlight', spot: null, owner: autoSpot })
+  }, [autoSpot, dispatch])
+
   const goToSearch = (card: TypeCard) => {
     interactions.current.clear()
     setActive(null)
@@ -145,7 +170,7 @@ export function TypeGallery() {
   )
 
   return (
-    <div className="typegal">
+    <div className="typegal" ref={galRef}>
       <figure className="typesheet" data-active={active !== null}>
         <figcaption className="typesheet__heading">
           <span>Rzuty w jednej skali</span><span>Arkusz A-02</span>
@@ -258,7 +283,7 @@ function TypePlan({ card, active, onActive, onPick }: TypeInteractionProps) {
           {card.priceFrom == null ? 'wyprzedane' : `od ${THOUSANDS.format(Math.round(card.priceFrom / 1000))} tys. zł`}
         </span>
         <SunBar sun={sunWindow(card.facade, 3)} className="typesheet__bar" />
-        <span className="typesheet__sun">{presentation(card).sun}</span>
+        <span className="typesheet__sun">{presentation(card).sun} · 3. piętro</span>
       </span>
     </button>
   )
@@ -288,10 +313,11 @@ function TypeRow({ card, active, onActive, onPick }: TypeInteractionProps) {
         <SunBar sun={sunWindow(card.facade, 3)} className="typetable__bar" />
         {ground && <span className="typetable__note"><span className="typetable__range">{ground}</span></span>}
       </td>
-      <td className="typetable__price">{price}</td>
+      <td className="typetable__price">{card.priceFrom == null ? price : `od ${price}`}</td>
       {/* liczba wolnych jest w etykiecie dostępności; w tabeli była w każdym wierszu ta sama, więc nic nie mówiła */}
       <td className="typetable__mobile" colSpan={4}>
-        <span>{formatArea(card.area)}</span> · {exposure} · <span className="typetable__range">słońce {sun}</span>
+        <span>{formatArea(card.area)}</span> · {exposure}
+        <span className="typetable__sunline">słońce {sun} · 3. piętro</span>
         <SunBar sun={sunWindow(card.facade, 3)} className="typetable__bar" />
       </td>
     </tr>

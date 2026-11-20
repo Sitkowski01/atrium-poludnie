@@ -29,7 +29,7 @@ function status(sun: SunWindow | null, hour: number): { text: string; on: boolea
   if (!sun) return { text: 'bez słońca', on: false }
   if (hour < sun.from) return { text: `słońce od ${formatHour(sun.from)}`, on: false }
   if (hour <= sun.to) return { text: `w słońcu do ${formatHour(sun.to)}`, on: true }
-  return { text: `było do ${formatHour(sun.to)} · jutro od ${formatHour(sun.from)}`, on: false }
+  return { text: `jutro od ${formatHour(sun.from)}`, on: false }
 }
 
 /**
