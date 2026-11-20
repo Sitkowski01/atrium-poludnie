@@ -248,6 +248,11 @@ export function LightFinder() {
         )}
 
         {examples.length > 0 && (
+          <>
+          <p className="light__keys" aria-hidden="true">
+            <span className="light__key"><span className="light__key-sun" />słońce w salonie</span>
+            <span className="light__key"><span className="light__key-home" />jesteś w domu</span>
+          </p>
           <ul className="light__examples" aria-label="Przykładowe mieszkania">
             {examples.map(({ apartment: a, share, miss }) => (
               <li key={a.id} className={miss ? 'light__example-miss' : undefined}>
@@ -274,6 +279,7 @@ export function LightFinder() {
               </li>
             ))}
           </ul>
+          </>
         )}
 
         {matches.length > 0 && (
