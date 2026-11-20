@@ -122,3 +122,7 @@
 @media (max-width: 61.25em) {
   .topbar > .mobile-building__chip { min-height: 44px; }
 }
+
+@media (max-width: 25em) {
+  .topbar > .mobile-building__chip { min-width: 0; padding: 0 9px; }
+}

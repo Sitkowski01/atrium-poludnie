@@ -481,25 +481,6 @@
 /* opis mieszkania może się zawinąć na wąskim ekranie, zamiast wystawać poza wiersz */
 .apt-list__facts { min-width: 0; white-space: normal; }
 
-/* nagłówek grupy: jeden pasek słońca dla kolejnych mieszkań z tym samym słońcem */
-.apt-list__group {
-  display: grid;
-  gap: 8px;
-  /* prawy margines jak kolumna cen (lista sięga pod kolumnę serduszek) */
-  padding: 16px 44px 10px 0;
-  border-top: 1px solid var(--line);
-  list-style: none;
-}
-.apt-list__group-bar { max-width: 420px; }
-.apt-list__group-text {
-  min-width: 0;
-  font-size: 0.8125rem;
-  color: var(--ink-2);
-  /* lista ma nowrap w wierszach; nagłówek grupy musi się zawijać na telefonie */
-  white-space: normal;
-}
-.apt-list__group + .apt-list__item { border-top: 0; }
-
 /* ---------- zwarta lista: wiersz w jednej linii na komputerze, dwóch na telefonie ---------- */
 .apt-list__facts { display: flex; flex-wrap: wrap; gap: 0 6px; }
 .apt-list__facts-row { display: inline; }
@@ -515,31 +496,14 @@
   align-items: center;
   gap: 6px;
   margin-top: 3px;
+  flex-wrap: wrap;
+  column-gap: 6px;
   font-size: 0.8125rem;
   color: var(--ink-2);
-  white-space: nowrap;
 }
+/* godziny i „w domu” przenoszą się w całości, gdy kolumna jest wąska */
+.apt-list__sun-text > span { white-space: nowrap; }
 .apt-list__sun-icon { flex: none; fill: var(--sun); }
-.apt-list__group-bar { max-width: 460px; }
-.apt-list__group-key {
-  display: flex;
-  align-items: center;
-  gap: 6px 14px;
-  flex-wrap: wrap;
-  font-size: 0.75rem;
-  color: var(--ink-2);
-}
-.apt-list__group-key-sun,
-.apt-list__group-key-home {
-  display: inline-block;
-  width: 20px;
-  border-radius: 999px;
-  margin-right: -8px;
-}
-.apt-list__group-key-sun { height: 6px; background: linear-gradient(90deg, #e8792a, #f4a94e 50%, #e8792a); }
-.apt-list__group-key-home { height: 3px; background: var(--ink); opacity: .55; }
-.apt-list__group-bar .sunbar__track { height: 10px; }
-.apt-list__group-bar .sunbar__ticks { font-size: 0.75rem; }
 
 /* telefon: status obok numeru (jedna linia mniej w każdym wierszu) */
 @container chapter (max-width: 560px) {
@@ -559,3 +523,19 @@
   font-variant-numeric: tabular-nums;
 }
 .apt-list__sun-icon { width: 13px; height: 13px; }
+
+/* dotyk (także tablet): serduszko 44 px */
+@media (pointer: coarse) {
+  .apt-list__fav { width: 44px; height: 44px; }
+}
+
+/* najwęższe telefony: „x z y h w domu” zawsze w drugiej linii, bez kropki na jej początku */
+@container chapter (max-width: 330px) {
+  .apt-list__sun-home { flex-basis: 100%; padding-left: 19px; }
+  .apt-list__sun-sep { display: none; }
+}
+
+/* „Pokaż pozostałe ↓”: lista rozwija się w dół, więc strzałka przy najechaniu zjeżdża w dół, a nie w bok */
+@media (hover: hover) {
+  .btn.apt-list__more:hover > span[aria-hidden='true'] { transform: translateY(3px); }
+}

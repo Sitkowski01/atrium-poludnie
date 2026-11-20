@@ -96,3 +96,10 @@
 @media (hover: hover) {
   .active-filters__change:hover { color: var(--ink); }
 }
+
+/* cel dotyku 44 px na telefonie bez zmiany wyglądu linii */
+@media (pointer: coarse) {
+  .active-filters__change { display: inline-block; padding: 12px 0; margin: -12px 0; }
+}
+
+.active-filters__change { display: inline-block; padding-block: 4px; }

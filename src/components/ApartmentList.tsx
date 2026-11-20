@@ -348,13 +348,18 @@ export function ApartmentList() {
                           <circle cx="6" cy="6" r="3.2" />
                         </svg>
                         {sun ? (
-                          <>
+                          <span>
                             słońce <strong>{formatHour(sun.from)}–{formatHour(sun.to)}</strong>
-                          </>
+                          </span>
                         ) : (
-                          'bez bezpośredniego słońca'
+                          <span>bez bezpośredniego słońca</span>
                         )}
-                        {home.length > 0 && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
+                        {home.length > 0 && (
+                          <span className="apt-list__sun-home">
+                            <span className="apt-list__sun-sep" aria-hidden="true">· </span>
+                            {hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z {hoursFormat.format(totalHours)} h w domu
+                          </span>
+                        )}
                       </span>
                     )}
                   </span>
@@ -411,7 +416,14 @@ export function ApartmentList() {
               setExpanded(!expanded)
             }}
           >
-            {expanded ? 'Zwiń listę' : `Pokaż pozostałe ${visible.length - shown.length}${hiddenHovered ? ` · ${hoveredId} niżej` : ''} →`}
+            {expanded ? (
+              'Zwiń listę'
+            ) : (
+              <>
+                Pokaż pozostałe {visible.length - shown.length}
+                {hiddenHovered ? ` · ${hoveredId} niżej` : ''} <span aria-hidden="true">↓</span>
+              </>
+            )}
           </button>
         )}
         </>

@@ -448,7 +448,8 @@ input[type='range']:focus-visible::-moz-range-thumb {
   justify-content: space-between;
   gap: 24px;
   height: var(--header-h);
-  padding: 0 clamp(16px, 4vw, 56px);
+  /* na szerokich monitorach logo i „Umów spacer” stoją nad krawędziami treści (kolumna 1480 px), a nie przy brzegach ekranu */
+  padding: 0 max(clamp(16px, 4vw, 56px), calc((100% - 1480px) / 2 + clamp(16px, 4vw, 56px)));
   /* prawie pełny papier: rozmyta treść pod paskiem wyglądała jak plamy na arkuszu */
   background: linear-gradient(var(--day), var(--day)), var(--paper);
   border-bottom: 1px solid var(--line);
@@ -881,3 +882,12 @@ input[type='range']:focus-visible::-moz-range-thumb {
 
 /* powiększony tekst: przycisk w nagłówku nie rozpycha strony w bok (skraca się do „Spacer”) */
 .topbar__cta { white-space: nowrap; }
+
+/* wąskie telefony (do 400 px): w pasku zostaje sama ikona menu, mniejsze logo i odstępy,
+   żeby logo, „Bryła” i menu zmieściły się bez przewijania w bok */
+@media (max-width: 25em) {
+  .topbar { gap: 10px; }
+  .topbar__logo { font-size: var(--fd-1); }
+  .topbar__menu { font-size: 0; gap: 0; min-width: 44px; justify-content: center; }
+  .topbar:has(> .mobile-building__chip) > .topbar__nav { margin-left: 0; }
+}

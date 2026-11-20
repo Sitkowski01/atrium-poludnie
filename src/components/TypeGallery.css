@@ -24,6 +24,7 @@
   text-transform: uppercase;
   letter-spacing: .2em;
 }
+.typesheet__heading { flex-wrap: wrap; }
 .typesheet__heading span { white-space: nowrap; }
 /* Oba rzędy mierzą cqi względem wnętrza tego samego arkusza. */
 .typesheet__row {
@@ -66,7 +67,7 @@
   transition: transform var(--hover) var(--ease-hover), filter var(--hover) var(--ease-hover);
 }
 .typesheet__caption { display: block; align-self: start; min-width: 0; }
-.typesheet__title { display: block; line-height: 1.25; white-space: nowrap; }
+.typesheet__title { display: block; line-height: 1.25; text-wrap: balance; }
 .typesheet__number {
   color: var(--ink-2);
   font: 600 0.75rem var(--font-display);

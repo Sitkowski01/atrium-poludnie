@@ -568,3 +568,20 @@
 @media (hover: hover) {
   .site-footer__credit a:hover { color: var(--sun); text-decoration-color: var(--sun); }
 }
+
+@media (pointer: coarse) {
+  .contact__lines a, .site-footer__credit a { display: inline-block; padding: 12px 0; margin: -12px 0; }
+}
+
+/* najwęższe telefony: dwie kolumny rozdziałów w stopce bliżej siebie, bez wyjścia za ekran */
+@media (max-width: 22.5em) {
+  .site-footer__nav { column-gap: 14px; }
+  .site-footer__nav a { gap: 10px; }
+}
+/* linki kontaktu poza zdaniem: wyższy obszar kliknięcia także myszą (min. 24 px) */
+.contact__lines a { display: inline-block; padding: 4px 0; margin: -4px 0; }
+
+/* dane inwestycji w stopce: na tablecie dłuższa wartość zawija się zamiast wystawać za ekran */
+@media (max-width: 900px) {
+  .site-footer__spec dd { white-space: normal; }
+}
