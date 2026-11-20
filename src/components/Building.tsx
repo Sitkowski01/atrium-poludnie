@@ -4,6 +4,7 @@ import { nextInGrid, type GridItem } from '../domain/gridNav'
 import { FACADE_LABEL, STATUS_LABEL, floorLabel, formatArea, formatHour, formatPrice, roomsLabel } from '../domain/format'
 import { sunWindow } from '../domain/sun'
 import type { Apartment, Facade } from '../domain/types'
+import { applyFilters } from '../domain/filter'
 import { useHour, useStore } from '../state/store'
 import { SceneSky } from './SceneSky'
 import { SunOrbit } from './SunOrbit'
@@ -135,7 +136,13 @@ const cellLabel = (a: Apartment, dim: boolean) => {
 }
 
 export function Building() {
-  const { apartments, visibleIds, state, dispatch } = useStore()
+  const { apartments, state, dispatch } = useStore()
+  // przygaszamy według filtrów wyszukiwarki bez pór w domu: te bryła pokazuje podświetleniem rozdziału „Światło”,
+  // a hero ma pokazywać cały budynek
+  const visibleIds = useMemo(
+    () => new Set(applyFilters(apartments, { ...state.filters, home: [] }, state.favourites).map((a) => a.id)),
+    [apartments, state.filters, state.favourites],
+  )
   // jeden przystanek Tab na całą bryłę; między mieszkaniami chodzi się strzałkami
   const grid = useMemo<GridItem[]>(
     () => apartments.map((a) => ({ id: a.id, row: a.floor, col: a.slot })),

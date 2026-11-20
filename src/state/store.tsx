@@ -153,8 +153,10 @@ const HourCtx = createContext<Hour | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [full, dispatch] = useReducer(reducer, undefined, () => ({
-    filters: defaultFilters(LIMITS),
-    sort: 'sun-desc' as SortKey,
+    // na start strona zakłada typowy dzień (rano i po pracy w domu): lista od razu odpowiada na pytanie
+    // o słońce; filtr „w domu” widać jako chip i zdejmuje się go jednym kliknięciem
+    filters: { ...defaultFilters(LIMITS), home: ['poranek', 'popoludnie'] },
+    sort: 'sun-home' as SortKey,
     hour: 10,
     introCancelled: false,
     hoveredId: null,

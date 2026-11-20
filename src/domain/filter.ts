@@ -35,7 +35,8 @@ export function applyFilters(
   favourites: readonly string[],
 ): Apartment[] {
   const homeIds = f.home.length
-    ? new Set(matchMoments(list, MOMENTS.filter((m) => f.home.includes(m.id)), { includeSold: true }).map((m) => m.apartment.id))
+    // pory w domu to pytanie kupującego: sprzedane odpadają tak samo jak w liczniku rozdziału „Światło”
+    ? new Set(matchMoments(list, MOMENTS.filter((m) => f.home.includes(m.id))).map((m) => m.apartment.id))
     : null
   return list.filter(
     (a) =>

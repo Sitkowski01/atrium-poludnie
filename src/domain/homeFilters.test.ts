@@ -24,15 +24,15 @@ describe('pory w domu jako kryterium jednej listy', () => {
     expect(ids(result).sort()).toEqual(ids(matchMoments(APARTMENTS, moments).map((m) => m.apartment)).sort())
   })
 
-  it('sprzedane usuwa tylko onlyAvailable', () => {
+  it('filtr pór pomija sprzedane, tak jak licznik w rozdziale „Światło”', () => {
     const result = applyFilters(APARTMENTS, { ...base, home }, [])
-    expect(result.some((a) => a.status === 'sprzedane')).toBe(true)
-    expect(ids(result).sort()).toEqual(ids(matchMoments(APARTMENTS, moments, { includeSold: true }).map((m) => m.apartment)).sort())
+    expect(result.some((a) => a.status === 'sprzedane')).toBe(false)
+    expect(ids(result).sort()).toEqual(ids(matchMoments(APARTMENTS, moments).map((m) => m.apartment)).sort())
   })
 
   it('łączy pory z pokojami, ceną, piętrem, ekspozycją i ulubionymi', () => {
     const result = applyFilters(APARTMENTS, { ...base, home, rooms: [2], facade: 'S', floorMin: 3, priceMax: 900000, onlyFavourites: true }, ['3.02', '5.02'])
-    const expected = matchMoments(APARTMENTS, moments, { includeSold: true }).map((m) => m.apartment)
+    const expected = matchMoments(APARTMENTS, moments).map((m) => m.apartment)
       .filter((a) => a.rooms === 2 && a.facade === 'S' && a.floor >= 3 && a.price <= 900000 && ['3.02', '5.02'].includes(a.id))
     expect(result.length).toBeGreaterThan(0)
     expect(ids(result).sort()).toEqual(ids(expected).sort())
@@ -42,7 +42,7 @@ describe('pory w domu jako kryterium jednej listy', () => {
     for (let mask = 1; mask < 1 << MOMENTS.length; mask++) {
       const selected = MOMENTS.filter((_, i) => mask & (1 << i))
       const result = applyFilters(APARTMENTS, { ...base, home: selected.map((m) => m.id) }, [])
-      const expected = APARTMENTS.filter((a) => selected.reduce((sum, m) =>
+      const expected = APARTMENTS.filter((a) => a.status !== 'sprzedane' && selected.reduce((sum, m) =>
         sum + sunShare(a.facade, a.floor, m.from, m.to) * (m.to - m.from), 0) / homeHours(selected) >= MATCH_FROM)
       expect(result).toEqual(expected)
     }
