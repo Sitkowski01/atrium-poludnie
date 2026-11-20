@@ -118,6 +118,9 @@ export function ApartmentList() {
   const collapsedRows = COLLAPSED_ROWS
   const collapsible = visible.length > collapsedRows
   const shown = collapsible && !expanded ? visible.slice(0, collapsedRows) : visible
+  const sameShare =
+    shown.length > 1 &&
+    shown.every((a) => hoursFormat.format(shares.get(a.id) ?? 0) === hoursFormat.format(shares.get(shown[0].id) ?? 0))
 
   // bryła towarzyszy liście: gdy rozdział jest na ekranie, podświetla mieszkania pokazane w wierszach
   // (najechany wiersz i tak wygrywa — ma własną kartę na bryle)
@@ -207,6 +210,13 @@ export function ApartmentList() {
 
   return (
     <section ref={sectionRef} className="apt-list" aria-label="Lista mieszkań">
+      {/* ten sam wynik w każdym pokazanym wierszu: mówimy go raz, nad listą, zamiast powtarzać w każdym */}
+      {home.length > 0 && sameShare && shown.length > 1 && (
+        <p className="apt-list__common">
+          Każde z pokazanych: {hoursFormat.format((shares.get(shown[0].id) ?? 0) * totalHours)} z {hoursFormat.format(totalHours)} h
+          w słońcu, kiedy jesteś w domu.
+        </p>
+      )}
       <div className="apt-list__head">
         <p className="apt-list__count" aria-live="polite" ref={countRef} tabIndex={-1}>
           <strong>{visible.length}</strong>
@@ -315,7 +325,7 @@ export function ApartmentList() {
                       <SunBar sun={sun} home={home} className="apt-list__sunbar" />
                       <span className={`apt-list__sun-hours${home.length ? ' apt-list__sun-hours--home' : ''}`}>
                         {sun ? `${formatHour(sun.from)}–${formatHour(sun.to)}` : 'bez słońca'}
-                        {home.length > 0 && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
+                        {home.length > 0 && !sameShare && ` · ${hoursFormat.format((shares.get(a.id) ?? 0) * totalHours)} z ${hoursFormat.format(totalHours)} h w domu`}
                       </span>
                     </span>
                   </span>

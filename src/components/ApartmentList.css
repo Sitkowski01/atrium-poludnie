@@ -455,3 +455,9 @@
     justify-content: center;
   }
 }
+
+.apt-list__common {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: var(--ink-2);
+}

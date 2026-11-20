@@ -16,11 +16,6 @@ export function StageRelease() {
     const update = () => {
       frame = 0
       scene.classList.toggle('is-released', end.getBoundingClientRect().top < window.innerHeight)
-      // komputer: gdy koniec listy wypycha przyklejoną bryłę w górę, gaśnie ona na ok. 160 px drogi —
-      // nie odjeżdża ucięta pod nagłówek i nie zostawia sterowania wiszącego nad pustym miejscem
-      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 76
-      const lift = header - scene.getBoundingClientRect().top
-      scene.style.opacity = window.innerWidth > 980 && lift > 0 ? String(Math.max(0, 1 - lift / 160)) : ''
     }
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update)
