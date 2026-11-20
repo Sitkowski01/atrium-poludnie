@@ -225,9 +225,10 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
 }
 .detail__section-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  gap: 4px 12px;
 }
 .detail__section:has(#detail-sun) {
   gap: 24px;
@@ -240,6 +241,8 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   line-height: 1.1;
 }
 .detail__hint {
+  /* podpowiedź w jednej linii: gdy brak miejsca obok tytułu, schodzi pod niego zamiast łamać się w dwie */
+  white-space: nowrap;
   text-align: right;
   font-size: 13px;
   letter-spacing: 0.06em;

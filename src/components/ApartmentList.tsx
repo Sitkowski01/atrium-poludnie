@@ -80,31 +80,8 @@ function EmptyArt() {
   )
 }
 
-const NARROW_QUERY = '(max-width: 980px)'
 const COLLAPSED_ROWS = 8
 const hoursFormat = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 1 })
-
-function matchNarrow(): MediaQueryList | null {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return null
-  try {
-    return window.matchMedia(NARROW_QUERY)
-  } catch {
-    return null
-  }
-}
-
-function useNarrow(): boolean {
-  const [narrow, setNarrow] = useState(() => matchNarrow()?.matches ?? false)
-  useEffect(() => {
-    const mq = matchNarrow()
-    if (!mq) return
-    const onChange = () => setNarrow(mq.matches)
-    onChange()
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-  return narrow
-}
 
 /** „1 mieszkanie”, „3 mieszkania”, „12 mieszkań” */
 const flatsWord = (n: number) =>
@@ -126,7 +103,6 @@ export function ApartmentList() {
   const countRef = useRef<HTMLParagraphElement>(null)
   const moreRef = useRef<HTMLButtonElement>(null)
   const listId = useId()
-  const narrow = useNarrow()
   // kaskada wejścia tylko przy pierwszym renderze listy, nie przy zmianie filtrów
   const intro = useRef(true)
   useEffect(() => {
@@ -137,7 +113,8 @@ export function ApartmentList() {
   // wiersz, którego serce miało fokus w chwili usuwania z listy „Tylko ulubione”
   const pendingFocus = useRef<{ id: string; next: string | null; prev: string | null } | null>(null)
 
-  const collapsedRows = narrow ? COLLAPSED_ROWS : Infinity
+  // zwinięta do 8 wierszy na każdej szerokości (35 naraz to pięć ekranów monotonii)
+  const collapsedRows = COLLAPSED_ROWS
   const collapsible = visible.length > collapsedRows
   const shown = collapsible && !expanded ? visible.slice(0, collapsedRows) : visible
   const hiddenHovered = !expanded && visible.findIndex((a) => a.id === hoveredId) >= collapsedRows
