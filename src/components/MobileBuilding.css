@@ -7,6 +7,9 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
+    /* stała szerokość: pasek nagłówka nie skacze, gdy pojawia się licznik */
+    justify-content: center;
+    min-width: 104px;
     min-height: 36px;
     margin-left: auto;
     padding: 0 10px;

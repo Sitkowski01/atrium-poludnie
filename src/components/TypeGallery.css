@@ -249,7 +249,7 @@
   /* jeden wiersz na typ: rzut obok nazwy, ceny i słońca — bez dopasowywania arkusza do tabeli */
   .typesheet { display: none; }
   /* rozmiar miniatur na tabeli i podziałce (nie na .typegal: kontener nie widzi własnych reguł @container) */
-  .typetable, .typetable__scalehead { --tb: 108px; }
+  .typetable, .typetable__scalehead { --tb: 136px; }
   .typetable__scalehead {
     display: flex;
     justify-content: space-between;

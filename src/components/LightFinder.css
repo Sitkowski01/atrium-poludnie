@@ -236,7 +236,8 @@
 }
 .light__example {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) max-content;
+  /* stała prawa kolumna: paski wszystkich przykładów na jednej osi */
+  grid-template-columns: 56px minmax(0, 1fr) 19ch;
   grid-template-areas: 'id meta price' 'id bar share';
   align-items: center;
   gap: 4px 16px;

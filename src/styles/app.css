@@ -839,7 +839,17 @@ input[type='range']:focus-visible::-moz-range-thumb {
     min-height: 0;
     max-height: none;
     padding: 0 0 8px;
+    /* telefon: suwak pory zaraz pod rysunkiem (widać bryłę, gdy się go przesuwa), legenda pod suwakiem */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
+  .stage__scene > .building {
+    display: contents;
+  }
+  .stage__scene .building__frame { order: 1; }
+  .stage__scene > .sun-control { order: 2; }
+  .stage__scene .building__foot { order: 3; }
 }
 
 @media (prefers-reduced-motion: reduce) {
