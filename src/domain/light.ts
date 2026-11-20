@@ -13,7 +13,7 @@ export interface Moment {
 
 export const MOMENTS: readonly Moment[] = [
   { id: 'poranek', label: 'Poranek', note: 'kawa, zanim wyjdziesz', from: 6, to: 9 },
-  { id: 'przedpoludnie', label: 'Przed południem', note: 'praca z domu', from: 9, to: 12 },
+  { id: 'przedpoludnie', label: 'Przedpołudnie', note: 'praca z domu', from: 9, to: 12 },
   { id: 'poludnie', label: 'Południe', note: 'obiad, dzieci po szkole', from: 12, to: 15 },
   { id: 'popoludnie', label: 'Popołudnie', note: 'powrót, odpoczynek', from: 15, to: 18 },
   { id: 'wieczor', label: 'Wieczór', note: 'kolacja przy zachodzie', from: 18, to: 20.5 },

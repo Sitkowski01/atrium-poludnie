@@ -169,15 +169,13 @@ svg text,
 .btn--ghost {
   background: transparent;
 }
-/* obrys grafitem, wersaliki: wezwanie w nagłówku */
+/* obrys grafitem: to samo brzmienie co „Kiedy jesteś w domu?” — jeden język przycisków na stronie */
 .btn--outline {
   background: transparent;
   border-color: var(--pick-line);
   color: var(--ink);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 .chip {
@@ -446,7 +444,7 @@ input[type='range']:focus-visible::-moz-range-thumb {
   height: var(--header-h);
   padding: 0 clamp(16px, 4vw, 56px);
   /* prawie pełny papier: rozmyta treść pod paskiem wyglądała jak plamy na arkuszu */
-  background: linear-gradient(var(--day), var(--day)), rgb(239 235 227 / 0.97);
+  background: linear-gradient(var(--day), var(--day)), var(--paper);
   border-bottom: 1px solid var(--line);
 }
 .topbar__logo {

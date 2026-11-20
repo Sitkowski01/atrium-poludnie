@@ -405,6 +405,10 @@ export function Building() {
             </button>
           )
         })}
+        {/* podpowiedź w rzędzie legendy, pod rysunkiem (na komputerze); na dotyku zostaje karta pod bryłą */}
+        <span className="building__legend-hint" aria-hidden="true">
+          Najedź na okno, kliknij, żeby wejść
+        </span>
       </div>
       )}
     </div>

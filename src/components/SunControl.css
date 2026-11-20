@@ -161,3 +161,8 @@
 .sun-control__slider input[type='range']::-moz-range-progress {
   background: transparent;
 }
+
+/* przyciski pór węższe: opis słońca z kompasem mieści się w jednej linii */
+.sun-control__presets .chip {
+  padding: 0 11px;
+}

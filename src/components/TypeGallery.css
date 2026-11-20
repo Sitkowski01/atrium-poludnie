@@ -307,7 +307,19 @@
   }
 }
 
-/* ostatni rząd wpisów nie dokłada odstępu przed następnym rozdziałem */
-.typecard:nth-last-child(-n + 2):not(.typecard--featured) .typecard__sun {
-  margin-bottom: 0;
+/* ostatni rząd wpisów (dwie kolumny) nie dokłada odstępu przed następnym rozdziałem */
+@container chapter (min-width: 361px) {
+  .typecard:nth-last-child(-n + 2):not(.typecard--featured) .typecard__sun {
+    margin-bottom: 0;
+  }
+}
+@container chapter (max-width: 360px) {
+  .typecard:last-child .typecard__sun {
+    margin-bottom: 0;
+  }
+}
+/* duży wpis: rzut niżej, żeby nie wchodził pod podpis „rzuty w jednej skali” */
+.typecard--featured .typecard__img.typecard__img--base {
+  inset: 12% 0 3%;
+  height: 85%;
 }

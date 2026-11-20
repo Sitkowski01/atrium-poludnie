@@ -145,7 +145,7 @@
   /* numer stoi częściowo na koronie drzewa: papierowa obwódka pod cyfrą */
   paint-order: stroke;
   stroke: var(--paper);
-  stroke-width: 4px;
+  stroke-width: 7px;
   stroke-linejoin: round;
 }
 .building__compass {
@@ -285,8 +285,9 @@
   flex: none;
   width: 14px;
   height: 10px;
-  border: 1.5px solid var(--pick);
+  border: 1.5px solid var(--accent);
   border-radius: 1px;
+  background: rgb(232 121 42 / 0.3);
 }
 .building__spotnote-label {
   font-weight: 600;
@@ -381,11 +382,12 @@
 
 /* podświetlenie z legendy i rozdziałów: wybrana grupa w ramce, reszta tonie we mgle papieru */
 .building__box.is-spotting .building__cell:not(.is-spot) .building__hit {
-  fill: rgb(var(--fog) / 0.8);
+  fill: rgb(var(--fog) / 0.62);
 }
 .building__box.is-spotting .building__cell.is-spot .building__hit {
-  fill: rgb(255 252 245 / 0.26);
-  stroke: var(--pick);
+  /* wybrane mieszkania w ciepłym świetle, nie w bieli (biel czytała się jak „niedostępne”) */
+  fill: rgb(232 121 42 / 0.3);
+  stroke: var(--accent);
   stroke-width: 1.6;
   animation: building-spot 0.5s var(--ease) backwards;
   animation-delay: calc((6 - var(--f, 0)) * 40ms);
@@ -494,5 +496,23 @@
     gap: 6px;
     padding: 0 8px;
     letter-spacing: 0;
+  }
+}
+
+/* komputer z myszą: podpowiedź stoi w rzędzie legendy, nie w rogu nieba; karta pojawia się dopiero przy oknie */
+.building__legend-hint {
+  margin-left: auto;
+  align-self: center;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+@media (hover: hover) and (min-width: 981px) {
+  .building__card:not(.is-on) {
+    display: none;
+  }
+}
+@media (hover: none), (max-width: 980px) {
+  .building__legend-hint {
+    display: none;
   }
 }

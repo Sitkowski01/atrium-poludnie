@@ -49,7 +49,11 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
   const { plan, facade } = apartment
   const all = useMemo(() => links(plan), [plan])
   const start = useMemo<View>(
-    () => ({ room: Math.max(0, plan.findIndex((r) => r.kind === 'hol')), yaw: ANGLE.down }),
+    // spacer zaczyna się w salonie, twarzą do okien: najlepsze światło na pierwszym kadrze
+    () => {
+      const salon = plan.findIndex((r) => r.kind === 'salon')
+      return { room: salon >= 0 ? salon : Math.max(0, plan.findIndex((r) => r.kind === 'hol')), yaw: ANGLE.down }
+    },
     [plan],
   )
 
@@ -330,11 +334,11 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
               Od początku
             </button>
           </div>
+          <p className="walk__map-key">
+            {Array.from(mapKey, ([initial, labels]) => `${initial} ${Array.from(labels).join(' / ')}`).join(' · ')}
+          </p>
         </div>
         <MiniMap apartment={apartment} room={view.room} at={center} yaw={view.yaw} onPick={jump} />
-        <p className="walk__map-key">
-          {Array.from(mapKey, ([initial, labels]) => `${initial} ${Array.from(labels).join(' / ')}`).join(' · ')}
-        </p>
       </div>
     </div>
   )
@@ -361,6 +365,8 @@ function MiniMap({
   const maxY = Math.max(...plan.map((r) => r.y + r.h))
   const room = plan[current]
   const unit = Math.min(0.5, Math.min(room.w, room.h) / 3)
+  // Cztery jednostki na mapie o szerokości 160, przeliczone na metry rzutu.
+  const labelInset = (maxX - minX + pad * 2) * 4 / 160
 
   return (
     <svg
@@ -384,9 +390,6 @@ function MiniMap({
             width={r.w}
             height={r.h}
           />
-          <text className="walk__initial" x={r.x + r.w / 2} y={r.y + r.h / 3} aria-hidden="true">
-            {r.label.slice(0, 1).toLocaleUpperCase('pl-PL')}
-          </text>
         </g>
       ))}
       <g
@@ -397,6 +400,11 @@ function MiniMap({
         <path className="walk__cone" d={`M0 0 L${-unit * 1.3} ${-unit * 2.2} L${unit * 1.3} ${-unit * 2.2} Z`} />
         <circle className="walk__dot" r={unit * 0.45} />
       </g>
+      {plan.map((r, index) => (
+        <text key={index} className="walk__initial" x={r.x + r.w - labelInset} y={r.y + r.h - labelInset} aria-hidden="true">
+          {r.label.slice(0, 1).toLocaleUpperCase('pl-PL')}
+        </text>
+      ))}
     </svg>
   )
 }

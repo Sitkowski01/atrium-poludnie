@@ -19,6 +19,9 @@
 }
 .contact__main {
   min-width: 0;
+  /* ta sama gruba kreska co nad biurem: obie kolumny zaczynają się na jednej linii */
+  padding-top: 18px;
+  border-top: 2px solid var(--ink);
 }
 
 /* ten sam znacznik rozdziału co w hero: numer, kreska, nazwa */
@@ -390,7 +393,7 @@
     border-left: 0;
   }
   .site-footer__cell + .site-footer__cell {
-    padding-top: 0;
+    padding-top: 8px;
   }
 }
 @media (max-width: 420px) {
