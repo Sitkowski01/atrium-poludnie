@@ -350,3 +350,8 @@
   outline-offset: -2px;
 }
 
+
+/* telefon: przycisk typu w wierszu jako pełny cel dotyku */
+@container typegallery (width < 520px) {
+  .typetable__type button { min-height: 44px; }
+}

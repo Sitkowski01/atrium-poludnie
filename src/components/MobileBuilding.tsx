@@ -108,7 +108,10 @@ export function MobileBuilding() {
       document.body.style.overflow = previousOverflow
       background.forEach(({ element, inert }) => { element.inert = inert })
       if (restoreFocus.current) {
-        (window.innerWidth <= 980 ? chip.current : scene)?.focus({ preventScroll: true })
+        // po klatce: tło musi przestać być inert, zanim fokus wróci na przycisk „Bryła” (niezależnie od tego,
+        // na której kontrolce w arkuszu był fokus przy Escape)
+        const back = window.innerWidth <= 980 ? chip.current : scene
+        requestAnimationFrame(() => back?.focus({ preventScroll: true }))
       }
     }
   }, [active, scene])

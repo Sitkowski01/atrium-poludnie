@@ -263,9 +263,8 @@
 .light__example-meta {
   grid-area: meta;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* zawija się zamiast ucinać (powiększony tekst, wąska kolumna) */
+  white-space: normal;
   font-size: 13px;
   color: var(--ink-2);
 }

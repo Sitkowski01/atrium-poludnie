@@ -329,7 +329,11 @@ export function Building() {
                   onBlur={() => dispatch({ type: 'hover', id: null })}
                   onClick={() => dispatch({ type: 'select', id: a.id })}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') dispatch({ type: 'select', id: a.id })
+                    // preventDefault: inaczej ten sam Enter „kliknąłby” pierwszy przycisk w otwartym panelu (serce → ulubione)
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      dispatch({ type: 'select', id: a.id })
+                    }
                     if (e.key === ' ') e.preventDefault()
                     const next = nextInGrid(grid, a.id, e.key)
                     if (next) {

@@ -79,7 +79,12 @@ export function DetailPanel() {
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
-    if (selected && !dialog.open) dialog.showModal()
+    if (selected && !dialog.open) {
+      dialog.showModal()
+      // fokus na „Zamknij”, nie na pierwszym przycisku (serce): przypadkowe Enter/Spacja nie zmienia ulubionych
+      const closeButtons = Array.from(dialog.querySelectorAll<HTMLElement>('.detail__icon[aria-label="Zamknij szczegóły"]'))
+      closeButtons.find((b) => b.offsetParent !== null && getComputedStyle(b).visibility !== 'hidden')?.focus({ preventScroll: true })
+    }
     if (!selected && dialog.open) dialog.close()
     dialog.scrollTop = 0
     setScrolled(false)

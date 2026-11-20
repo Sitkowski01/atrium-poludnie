@@ -117,3 +117,8 @@
   .mobile-building__chip,
   .stage__slot > .stage__scene.is-sheet { transform: none; transition: none; }
 }
+
+/* cel dotyku 44 px dla przycisku „Bryła” w pasku nagłówka */
+@media (max-width: 980px) {
+  .topbar > .mobile-building__chip { min-height: 44px; }
+}
