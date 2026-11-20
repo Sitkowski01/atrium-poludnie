@@ -63,9 +63,14 @@
   flex: none;
   color: var(--ink-2);
 }
+.sun-control__compass-n {
+  font-family: var(--font-body);
+  font-size: 5px;
+  font-weight: 700;
+  fill: var(--ink-2);
+}
 .sun-control__compass .is-up {
   fill: var(--sun);
-  transition: cx 0.2s linear, cy 0.2s linear;
 }
 .sun-control__compass .is-down {
   fill: var(--ink-3);
@@ -177,5 +182,14 @@
   }
   .sun-control__presets .chip {
     padding: 0 6px;
+  }
+}
+
+/* telefon: przycisk odtwarzania tej samej wysokości co pory dnia obok (44 px) */
+@media (pointer: coarse), (max-width: 980px) {
+  .sun-control__play.btn {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
   }
 }

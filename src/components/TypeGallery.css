@@ -3,8 +3,8 @@
 /* --sheet: bok rzutu największego typu, wspólny dla CAŁEGO arkusza (liczony od szerokości kolumny,
    nie od wysokości ramki) — dzięki temu metr ma tę samą długość na każdej karcie */
 .typegal {
-  /* skala arkusza zostawia pas u góry ramki na podziałkę (nic nie leży na rzucie) */
-  --sheet: calc((100cqi - 24px) / 2 * 0.75 * 0.86);
+  /* największy rzut w parze wypełnia ramkę; podziałka stoi przy numerze typu, nie na arkuszu */
+  --sheet: calc((100cqi - 24px) / 2 * 0.75 * 1.08);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: 24px;
@@ -66,7 +66,7 @@
 /* rzut leży na arkuszu: cały widoczny, w skali wspólnej dla typów, z oddechem papieru dookoła */
 .typecard__img.typecard__img--base {
   inset: auto;
-  top: 54%;
+  top: 50%;
   left: 50%;
   width: calc(var(--sheet) * var(--plan, 1));
   height: calc(var(--sheet) * var(--plan, 1));
@@ -97,22 +97,18 @@
 }
 /* podziałka: 5 m w skali arkusza (43,6% boku rzutu; duży wpis: rzut zajmuje 85% wysokości kadru 16:9) */
 .typecard__scalebar {
-  position: absolute;
-  z-index: 1;
-  /* w pustym prawym górnym rogu arkusza: nigdy na rzucie ani balkonie */
-  right: 12px;
-  top: 8px;
+  flex: none;
   display: grid;
   grid-template-columns: auto auto;
   justify-content: space-between;
   /* 5 m w skali arkusza: 43,6% boku rzutu największego typu */
   width: calc(var(--sheet) * 0.436);
-  row-gap: 3px;
+  row-gap: 2px;
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0;
   color: var(--ink-2);
   font-variant-numeric: tabular-nums;
-  pointer-events: none;
   transition: opacity var(--hover) var(--ease-hover);
 }
 .typecard__scalebar-bar {
@@ -125,8 +121,7 @@
 }
 /* gdy żaluzje odsłaniają wnętrze, podpisy arkusza znikają */
 .typecard[data-blinds='in'] .typecard__sheet,
-.typecard[data-blinds='in'] .typecard__area,
-.typecard[data-blinds='in'] .typecard__scalebar {
+.typecard[data-blinds='in'] .typecard__area {
   opacity: 0;
 }
 /* makieta z góry: płynne powiększenie przy najechaniu (skala arkusza niżej) */
@@ -186,8 +181,7 @@
   color: var(--ink-2);
   font-variant-numeric: tabular-nums;
 }
-.typecard__num::after {
-  content: '';
+.typecard__num-rule {
   flex: 1;
   height: 1px;
   background: linear-gradient(var(--ink), var(--ink)) 0 0 / 0 100% no-repeat, var(--line);
@@ -271,7 +265,7 @@
   .typecard:hover .typecard__num {
     color: var(--ink);
   }
-  .typecard:hover .typecard__num::after {
+  .typecard:hover .typecard__num-rule {
     background-size: 100% 100%;
   }
 }
@@ -279,14 +273,14 @@
   opacity: 1;
   transform: none;
 }
-.typecard:focus-visible .typecard__num::after {
+.typecard:focus-visible .typecard__num-rule {
   background-size: 100% 100%;
 }
 
 /* wąska kolumna (1024 px obok bryły): nadal dwa wpisy w rzędzie, cena pod nazwą */
 @container chapter (max-width: 520px) {
   .typegal {
-    --sheet: calc((100cqi - 16px) / 2 * 0.75 * 0.86);
+    --sheet: calc((100cqi - 16px) / 2 * 0.75 * 1.08);
     column-gap: 16px;
   }
   .typecard {

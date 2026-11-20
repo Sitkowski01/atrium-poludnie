@@ -168,7 +168,7 @@ export function DetailPanel() {
             </div>
             <div className="detail__head-copy">
               <p className="eyebrow">
-                {floorLabel(a.floor)} · okna na {FACADE_LABEL[a.facade]}
+                {floorLabel(a.floor)} · <span className="detail__eyebrow-long">okna na </span>{FACADE_LABEL[a.facade]}
               </p>
               <h2 className="detail__title">Mieszkanie {a.id}</h2>
             </div>
@@ -201,7 +201,7 @@ export function DetailPanel() {
           <p className="visually-hidden">{roomsLabel(a.rooms)}</p>
 
           <section className="detail__section" aria-labelledby="detail-walk">
-            <p className="detail__kicker" aria-hidden="true">04.1</p>
+            <p className="detail__kicker" aria-hidden="true"><span>04.1</span><span>Spacer</span></p>
             <div className="detail__section-head">
               <h3 id="detail-walk">Spacer 360°</h3>
               <span className="detail__hint">przeciągnij, żeby się rozejrzeć</span>
@@ -210,7 +210,7 @@ export function DetailPanel() {
           </section>
 
           <section className="detail__section" aria-labelledby="detail-plan">
-            <p className="detail__kicker" aria-hidden="true">04.2</p>
+            <p className="detail__kicker" aria-hidden="true"><span>04.2</span><span>Rzut</span></p>
             <div className="detail__section-head">
               <h3 id="detail-plan">Rzut</h3>
             </div>
@@ -218,7 +218,7 @@ export function DetailPanel() {
           </section>
 
           <section className="detail__section" aria-labelledby="detail-sun">
-            <p className="detail__kicker" aria-hidden="true">04.3</p>
+            <p className="detail__kicker" aria-hidden="true"><span>04.3</span><span>Światło</span></p>
             <div className="detail__section-head">
               <h3 id="detail-sun">Słońce w salonie</h3>
             </div>
@@ -240,16 +240,16 @@ export function DetailPanel() {
             </SunChart>
           </section>
 
-          <section className="detail__section" aria-labelledby="detail-loan">
-            <p className="detail__kicker" aria-hidden="true">04.4</p>
-            <div className="detail__section-head">
+          <details className="detail__section detail__loan" aria-labelledby="detail-loan">
+            <summary>
+            <span className="detail__kicker" aria-hidden="true"><span>04.4</span><span>Finansowanie</span></span>
               <h3 id="detail-loan">Rata kredytu</h3>
-            </div>
+            </summary>
             <MortgageCalculator key={a.id} price={a.price} />
-          </section>
+          </details>
 
           <section className="detail__section" id="detail-ask-section" aria-labelledby="detail-ask">
-            <p className="detail__kicker" aria-hidden="true">04.5</p>
+            <p className="detail__kicker" aria-hidden="true"><span>04.5</span><span>Kontakt</span></p>
             <div className="detail__section-head">
               <h3 id="detail-ask">Zapytaj o to mieszkanie</h3>
             </div>

@@ -339,7 +339,7 @@ export function ApartmentList() {
           <button
             type="button"
             ref={moreRef}
-            className="btn btn--ghost apt-list__more"
+            className="btn apt-list__more"
             aria-expanded={expanded}
             aria-controls={listId}
             onClick={() => {
@@ -347,7 +347,7 @@ export function ApartmentList() {
               setExpanded(!expanded)
             }}
           >
-            {expanded ? 'Zwiń listę' : `Pokaż pozostałe ${visible.length - shown.length}${hiddenHovered ? ` · ${hoveredId} niżej` : ''}`}
+            {expanded ? 'Zwiń listę' : `Pokaż pozostałe ${visible.length - shown.length}${hiddenHovered ? ` · ${hoveredId} niżej` : ''} →`}
           </button>
         )}
         </>

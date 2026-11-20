@@ -146,18 +146,19 @@ export function SunControl() {
   )
 }
 
-/** Mała róża jak na rysunku architekta: północ u góry, kropka pokazuje, skąd świeci słońce. */
+/** Strzałka jak na rysunku architekta: „N” u góry, igła wskazuje, skąd świeci słońce (azymut). */
 function Compass({ hour }: { hour: number }) {
   const { azimuth, elevation } = sunAt(hour)
   const up = elevation > 0
-  const rad = (azimuth * Math.PI) / 180
-  const x = 8 + Math.sin(rad) * 5.5
-  const y = 8 - Math.cos(rad) * 5.5
   return (
-    <svg className="sun-control__compass" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
-      <circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" strokeOpacity="0.45" />
-      <path d="M8 0.5 L9.4 3.2 L6.6 3.2 Z" fill="currentColor" />
-      <circle cx={x} cy={y} r="2" className={up ? 'is-up' : 'is-down'} />
+    <svg className="sun-control__compass" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
+      <text x="9" y="5" textAnchor="middle" className="sun-control__compass-n">
+        N
+      </text>
+      <g transform={`rotate(${azimuth.toFixed(1)} 9 11)`}>
+        <path d="M9 5.5 L11 11 L9 10 L7 11 Z" className={up ? 'is-up' : 'is-down'} />
+        <path d="M9 10 L9 16" stroke="currentColor" strokeOpacity="0.45" strokeWidth="1" />
+      </g>
     </svg>
   )
 }

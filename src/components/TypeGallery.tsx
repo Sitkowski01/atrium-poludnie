@@ -225,12 +225,6 @@ function TypeButton({
             rzuty w jednej skali
           </span>
         )}
-        {/* podziałka na każdym arkuszu: wszędzie tej samej długości, bo skala jest wspólna */}
-        <span className="typecard__scalebar" aria-hidden="true">
-          <span className="typecard__scalebar-bar" />
-          <span className="typecard__scalebar-label">0</span>
-          <span className="typecard__scalebar-label">5 m</span>
-        </span>
         <span className="typecard__area" aria-hidden="true">
           {formatArea(area)}
         </span>
@@ -259,6 +253,13 @@ function TypeButton({
       <span className="typecard__body">
         <span className="typecard__num" aria-hidden="true">
           T{index}
+          <span className="typecard__num-rule" />
+          {/* podziałka przy numerze każdego typu: wszędzie tej samej długości, bo skala jest wspólna */}
+          <span className="typecard__scalebar">
+            <span className="typecard__scalebar-bar" />
+            <span className="typecard__scalebar-label">0</span>
+            <span className="typecard__scalebar-label">5 m</span>
+          </span>
         </span>
         <span className="typecard__name">{info.name}</span>
         <span className="typecard__price">{priceText}</span>

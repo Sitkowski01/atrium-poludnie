@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { formatDuration, formatHour } from '../domain/format'
-import { DAY_END, DAY_START, SUN_THRESHOLD, directSun, sunProfile, sunWindow } from '../domain/sun'
+import { DAY_END, DAY_START, SUN_THRESHOLD, directSun, sunAt, sunWindow } from '../domain/sun'
 import type { Facade } from '../domain/types'
 import './SunChart.css'
 
@@ -14,7 +14,7 @@ const xAt = (hour: number) => LEFT + ((hour - DAY_START) / (DAY_END - DAY_START)
 const yAt = (value: number) => BASE - value * (BASE - TOP)
 
 export function SunChart({ facade, floor, hour, children }: { facade: Facade; floor: number; hour: number; children?: ReactNode }) {
-  const gradientId = useId()
+  const clipId = useId()
   const plotRef = useRef<HTMLDivElement>(null)
   const [plotWidth, setPlotWidth] = useState(WIDTH)
   useEffect(() => {
@@ -27,41 +27,26 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
   const window = sunWindow(facade, floor)
   const currentHour = Math.max(DAY_START, Math.min(DAY_END, hour))
   const value = directSun(facade, floor, currentHour)
-  // Półsinus z wejściem i zejściem po 20 minut; model godzin pozostaje bez zmian.
-  const plottedValue = (h: number, raw: number) => {
-    if (!window) return raw
-    const t = Math.max(0, Math.min(1, (h - window.from) / (20 / 60), (window.to - h) / (20 / 60)))
-    return raw * Math.sin(t * Math.PI / 2)
-  }
+  // Wysokość słońca jest niezależna od ekspozycji i piętra mieszkania.
+  const plottedValue = (h: number) => Math.max(0, sunAt(h).elevation) / 60
   const markerX = xAt(currentHour)
   const labelX = Math.max(28, Math.min(plotWidth - 28, markerX / WIDTH * plotWidth))
-  const markerY = yAt(plottedValue(currentHour, value))
-  // Znacznik korzysta z tej samej rampy co krzywa, również między próbkami.
-  const profile = sunProfile(facade, floor, 1 / 60)
+  const markerY = yAt(plottedValue(currentHour))
+  const profile = Array.from({ length: (DAY_END - DAY_START) * 60 + 1 }, (_, i) => ({ hour: DAY_START + i / 60 }))
   const samples = profile.filter((sample) => Math.abs(sample.hour - currentHour) > 1e-6)
-  samples.push({ hour: currentHour, value })
+  samples.push({ hour: currentHour })
   samples.sort((a, b) => a.hour - b.hour)
-  // Pomarańczowy ślad tylko nad osią: odcinki zerowe zostają neutralne.
-  const litLine = samples.map((sample, index) => {
-    const lit = plottedValue(sample.hour, sample.value) > 0
-    const previous = samples[index - 1]
-    const next = samples[index + 1]
-    const previousLit = previous && plottedValue(previous.hour, previous.value) > 0
-    const nextLit = next && plottedValue(next.hour, next.value) > 0
-    if (!lit && !previousLit && !nextLit) return ''
-    return `${previousLit || (lit && index > 0) ? 'L' : 'M'} ${xAt(sample.hour)} ${yAt(plottedValue(sample.hour, sample.value))}`
-  }).join(' ')
   const line = samples.map((sample, index) =>
-    `${index === 0 ? 'M' : 'L'} ${xAt(sample.hour)} ${yAt(plottedValue(sample.hour, sample.value))}`,
+    `${index === 0 ? 'M' : 'L'} ${xAt(sample.hour)} ${yAt(plottedValue(sample.hour))}`,
   ).join(' ')
   const ticks = Array.from({ length: (DAY_END - DAY_START) / 2 + 1 }, (_, i) => DAY_START + i * 2)
   const labels = [5, 9, 13, 17, 21]
   const peak = profile.reduce((best, sample) =>
-    plottedValue(sample.hour, sample.value) > plottedValue(best.hour, best.value) ? sample : best,
+    plottedValue(sample.hour) > plottedValue(best.hour) ? sample : best,
   )
   const peakX = Math.max(90, Math.min(plotWidth - 90, xAt(peak.hour) / WIDTH * plotWidth))
   const svgScale = WIDTH / Math.max(1, plotWidth)
-  const peakY = yAt(plottedValue(peak.hour, peak.value))
+  const peakY = yAt(plottedValue(peak.hour))
   // Kadruj pustą przestrzeń nad krzywą; etykiety mieszczą się wewnątrz SVG.
   const plotTop = peakY - 32 * svgScale
   const plotHeight = HEIGHT - plotTop
@@ -81,16 +66,16 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
         viewBox={`0 ${plotTop} ${WIDTH} ${plotHeight}`}
         width="100%"
         role="img"
-        aria-label={`Nasłonecznienie od ${formatHour(DAY_START)} do ${formatHour(DAY_END)}. ${summary}. ${current}.`}
+        aria-label={`Wysokość słońca nad horyzontem od ${formatHour(DAY_START)} do ${formatHour(DAY_END)}. Zacieniony pas: ${summary}. ${current}.`}
       >
         <defs>
-          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop className="sun-chart__gradient-start" offset="0%" />
-            <stop className="sun-chart__gradient-end" offset="100%" />
-          </linearGradient>
+          <clipPath id={clipId}>
+            <path d={`${line} L ${RIGHT} ${BASE} L ${LEFT} ${BASE} Z`} />
+          </clipPath>
         </defs>
-        <path d={`${line} L ${RIGHT} ${BASE} L ${LEFT} ${BASE} Z`} fill={`url(#${gradientId})`} />
-        <path className="sun-chart__curve" d={litLine} />
+        {window && <rect className="sun-chart__window" x={xAt(window.from)} y={TOP}
+          width={xAt(window.to) - xAt(window.from)} height={BASE - TOP} clipPath={`url(#${clipId})`} />}
+        <path className="sun-chart__curve" d={line} />
         <path className="sun-chart__baseline" d={`M ${LEFT} ${BASE} H ${RIGHT}`} />
         {ticks.map((tick) => (
           <g key={tick}>
@@ -106,7 +91,7 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
             y={peakY - 8 * svgScale}
             style={{ fontSize: `${12 * svgScale}px` }}
           >
-            najwięcej słońca {formatHour(peak.hour)}
+            najwyżej {formatHour(peak.hour)}
           </text>
         )}
       </svg>
@@ -120,6 +105,7 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
           <span key={tick} style={{ left: `${xAt(tick) / WIDTH * 100}%` }}>{tick}:00</span>
         ))}
       </div>
+      <p className="sun-chart__legend">Krzywa: wysokość słońca · pas: słońce w salonie</p>
       {children}
     </div>
   )

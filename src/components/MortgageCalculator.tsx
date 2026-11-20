@@ -86,18 +86,19 @@ export function MortgageCalculator({ price }: { price: number }) {
         <span className="visually-hidden" aria-live="polite">
           Rata miesięczna: {formatPrice(monthlyFinal)}
         </span>
-        <dl className="mortgage__facts">
-          <div>
-            <dt>Kwota kredytu</dt>
-            <dd aria-hidden="true">{formatPrice(loanShown)}</dd>
-            <dd className="visually-hidden">{formatPrice(Math.round(res.loan))}</dd>
-          </div>
-          <div>
-            <dt>Suma odsetek</dt>
-            <dd aria-hidden="true">{formatPrice(interestShown)}</dd>
-            <dd className="visually-hidden">{formatPrice(Math.round(res.totalInterest))}</dd>
-          </div>
-        </dl>
+        <table className="mortgage__facts">
+          <caption className="visually-hidden">Zestawienie kosztów kredytu</caption>
+          <tbody>
+            <tr>
+              <th scope="row">Kwota kredytu</th>
+              <td><span aria-hidden="true">{formatPrice(loanShown)}</span><span className="visually-hidden">{formatPrice(Math.round(res.loan))}</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Suma odsetek</th>
+              <td><span aria-hidden="true">{formatPrice(interestShown)}</span><span className="visually-hidden">{formatPrice(Math.round(res.totalInterest))}</span></td>
+            </tr>
+          </tbody>
+        </table>
 
         <div
           className="mortgage__bar"

@@ -10,6 +10,7 @@ import { SunControl } from './components/SunControl'
 import { TopNav } from './components/TopNav'
 import { TypeGallery } from './components/TypeGallery'
 import { DayLight } from './components/DayLight'
+import { StageRelease } from './components/StageRelease'
 import { StoreProvider } from './state/store'
 
 /** Rozdział lewej kolumny: numer, tytuł, lead. Bryła po prawej reaguje na to, co się w nim dzieje. */
@@ -50,6 +51,7 @@ export default function App() {
   return (
     <StoreProvider>
       <DayLight />
+      <StageRelease />
       {/* pierwszy przystanek Tab: bez niego do bryły dochodzi się przez całą stronę */}
       <a className="btn skip-link" href="#budynek">
         Przejdź do bryły budynku

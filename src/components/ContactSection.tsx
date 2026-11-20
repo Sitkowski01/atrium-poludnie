@@ -55,12 +55,16 @@ export function ContactSection() {
               albo zadaj pytanie przy wybranym mieszkaniu.
             </p>
             <div className="contact__actions">
-              <a className="btn btn--primary" href="#mieszkania" onClick={(e) => goTo(e, 'mieszkania')}>
-                Wybierz mieszkanie
+              {/* rozdział kończy się tym, o czym mówi: umówieniem spaceru */}
+              <a
+                className="btn btn--primary"
+                href="mailto:kontakt@atrium-poludnie.example?subject=Spacer%20po%20Atrium%20Po%C5%82udnie"
+              >
+                Umów spacer
                 <span aria-hidden="true">→</span>
               </a>
-              <a className="btn btn--outline" href="#swiatlo" onClick={(e) => goTo(e, 'swiatlo')}>
-                Kiedy jesteś w domu?
+              <a className="btn btn--outline" href="#mieszkania" onClick={(e) => goTo(e, 'mieszkania')}>
+                Wybierz mieszkanie
               </a>
             </div>
           </div>

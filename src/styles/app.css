@@ -590,6 +590,17 @@ input[type='range']:focus-visible::-moz-range-thumb {
   grid-row: 1 / -1;
   align-self: start;
 }
+/* przy kontakcie przyklejona scena gaśnie (StageRelease.tsx) */
+@media (min-width: 981px) {
+  .stage__scene {
+    transition: opacity 0.6s var(--ease-hover), transform 0.6s var(--ease-hover);
+  }
+  .stage__scene.is-released {
+    opacity: 0;
+    transform: translateY(-16px);
+    pointer-events: none;
+  }
+}
 .stage__scene {
   position: sticky;
   top: var(--header-h);

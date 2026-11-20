@@ -404,8 +404,9 @@ export function Building() {
               }}
             >
               <span className={`building__swatch building__swatch--${key}`} aria-hidden="true" />
-              {label}
+              {/* liczba przed słowem, jak w hero („25 wolnych”) */}
               <span className="building__legend-count">{count}</span>
+              {label}
             </button>
           )
         })}

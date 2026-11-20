@@ -127,8 +127,8 @@ export function FilterBar() {
         inert={collapsed}
       >
         <div className="filter-bar__body">
-      <fieldset className="filter-bar__group filter-bar__group--wide">
-        <legend className="filter-bar__label">Pokoje</legend>
+      <div className="filter-bar__group filter-bar__group--wide" role="group" aria-labelledby={`${panelId}-rooms`}>
+        <span className="filter-bar__label" id={`${panelId}-rooms`}>Pokoje</span>
         <div className="filter-bar__chips">
           <button
             type="button"
@@ -150,10 +150,10 @@ export function FilterBar() {
             </button>
           ))}
         </div>
-      </fieldset>
+      </div>
 
-      <fieldset className="filter-bar__group">
-        <legend className="filter-bar__label">Ekspozycja</legend>
+      <div className="filter-bar__group" role="group" aria-labelledby={`${panelId}-facade`}>
+        <span className="filter-bar__label" id={`${panelId}-facade`}>Ekspozycja</span>
         <div className="filter-bar__chips">
           {FACADE_OPTIONS.map((o) => (
             <button
@@ -167,7 +167,7 @@ export function FilterBar() {
             </button>
           ))}
         </div>
-      </fieldset>
+      </div>
 
       <label className="filter-bar__group">
         <span className="filter-bar__label filter-bar__label--row">
@@ -205,8 +205,8 @@ export function FilterBar() {
         />
       </label>
 
-      <fieldset className="filter-bar__group">
-        <legend className="filter-bar__label">Piętro</legend>
+      <div className="filter-bar__group" role="group" aria-labelledby={`${panelId}-floor`}>
+        <span className="filter-bar__label" id={`${panelId}-floor`}>Piętro</span>
         <div className="filter-bar__floors">
           <label className="field">
             <span className="visually-hidden">Piętro od</span>
@@ -229,10 +229,11 @@ export function FilterBar() {
             </select>
           </label>
         </div>
-      </fieldset>
+      </div>
 
-      <fieldset className="filter-bar__group filter-bar__checks">
-        <legend className="filter-bar__label">Pokaż</legend>
+      <div className="filter-bar__group filter-bar__checks" role="group" aria-labelledby={`${panelId}-show`}>
+        <span className="filter-bar__label" id={`${panelId}-show`}>Pokaż</span>
+        <div className="filter-bar__check-options">
         <label className="filter-bar__check">
           <input
             type="checkbox"
@@ -253,7 +254,8 @@ export function FilterBar() {
           />
           Tylko ulubione ({favourites.length})
         </label>
-      </fieldset>
+        </div>
+      </div>
 
       {active > 0 && !narrow && (
         <div className="filter-bar__reset">

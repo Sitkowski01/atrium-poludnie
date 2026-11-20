@@ -28,17 +28,14 @@
   pointer-events: none;
 }
 
-.sun-chart__gradient-start,
-.sun-chart__gradient-end {
-  stop-color: var(--sun);
+.sun-chart__window {
+  fill: var(--sun);
+  fill-opacity: .18;
 }
-
-.sun-chart__gradient-start {
-  stop-opacity: 0.45;
-}
-
-.sun-chart__gradient-end {
-  stop-opacity: 0;
+.sun-chart__legend {
+  margin: 8px 0 0;
+  color: var(--ink-2);
+  font-size: 12px;
 }
 
 .sun-chart__curve {

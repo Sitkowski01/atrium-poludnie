@@ -129,7 +129,7 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   justify-self: start;
   min-height: 36px;
   padding: 2px 96px 2px 0;
-  background: color-mix(in srgb, var(--paper) 85%, transparent);
+  background: var(--paper);
 }
 
 /* ---------- cena i fakty ---------- */
@@ -215,13 +215,23 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   letter-spacing: .2em;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
+  text-transform: uppercase;
 }
-.detail__kicker::after {
+.detail__kicker > span + span::before {
   content: '';
+  display: inline-block;
   width: 36px;
   height: 1px;
+  margin-right: 14px;
+  vertical-align: middle;
   background: var(--line-2);
 }
+.detail__loan { display: block; }
+.detail__loan summary { position: relative; display: grid; gap: 14px; min-height: 44px; padding-right: 32px; cursor: pointer; list-style: none; }
+.detail__loan summary::-webkit-details-marker { display: none; }
+.detail__loan summary::after { content: '+'; position: absolute; right: 0; bottom: 0; font-size: 24px; }
+.detail__loan[open] summary::after { content: '−'; }
+.detail__loan .mortgage { margin-top: 20px; }
 .detail__section-head {
   display: flex;
   align-items: baseline;
@@ -447,9 +457,19 @@ dialog.detail[open] .detail__body > .detail__compact {
     height: 56px;
     margin-bottom: calc(-56px - var(--body-gap));
     padding: 8px 16px;
-    border-bottom: 1px solid var(--line);
+    box-shadow: 0 1px 0 var(--line);
     visibility: visible;
     font-size: 14px;
     font-variant-numeric: tabular-nums;
   }
+  .detail__eyebrow-long { display: none; }
+  .detail__head-copy .eyebrow {
+    display: block;
+    white-space: nowrap;
+    letter-spacing: .04em;
+    padding-right: 96px;
+    font-size: 12px;
+  }
+  .detail__icon { width: 44px; height: 44px; }
+  .detail__switch .chip { min-height: 44px; }
 }

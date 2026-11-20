@@ -6,6 +6,7 @@ import { useCountUp } from '../hooks/useCountUp'
 import { useStore, type Spotlight } from '../state/store'
 import './ApartmentList.css'
 import './LightFinder.css'
+import './SunBar.css'
 
 const SHOWN = 5
 const position = (from: number, to: number) => ({
@@ -14,9 +15,9 @@ const position = (from: number, to: number) => ({
 })
 
 function MatchBar({ sun, moments }: { sun: ReturnType<typeof sunWindow>; moments: readonly Moment[] }) {
-  return <span className="light__flat-bar" aria-hidden="true">
+  return <span className="sunbar__track light__flat-bar" aria-hidden="true">
     {moments.map((m) => <span key={m.id} className="light__bar-home" style={position(m.from, m.to)} />)}
-    {sun && <span className="light__bar-sun" style={position(sun.from, sun.to)} />}
+    {sun && <span className="sunbar__sun" style={position(sun.from, sun.to)} />}
     {sun && moments.map((m) => {
       const from = Math.max(m.from, sun.from)
       const to = Math.min(m.to, sun.to)
@@ -92,6 +93,13 @@ export function LightFinder() {
   const shownCount = Math.round(useCountUp(matches.length, { duration: 700 }))
   const soldOnly = useMemo(() => onlySoldMatch(apartments, moments), [apartments, moments])
   const shown = expanded ? matches : matches.slice(0, SHOWN)
+  const commonResult = shown.length > 1 && shown.every((match) =>
+    hoursText(match.share) === hoursText(shown[0].share) &&
+    formatHour(match.firstSunAt) === formatHour(shown[0].firstSunAt),
+  )
+  const orderedShown = commonResult
+    ? [...shown].sort((a, b) => b.apartment.floor - a.apartment.floor || a.apartment.price - b.apartment.price)
+    : shown
   const bestHours = matches.length ? hoursFormat.format(Math.max(...matches.map((m) => m.share)) * totalHours) : ''
 
   // bryła reaguje tylko wtedy, gdy rozdział jest na ekranie; po wyjściu oddajemy ją innym
@@ -187,7 +195,9 @@ export function LightFinder() {
               </span>
             </p>
             {matches.length > 0 && <p className="light__common">
-              {`Najwięcej: ${bestHours} z ${hoursFormat.format(totalHours)} godzin w domu przy słońcu.`}
+              {commonResult
+                ? `Pokazane mieszkania: ${hoursText(shown[0].share)}; słońce od ${formatHour(shown[0].firstSunAt)} w Twoich godzinach.`
+                : `Najwięcej: ${bestHours} z ${hoursFormat.format(totalHours)} godzin w domu przy słońcu.`}
             </p>}
             {matches.length > 0 && facadeName && (
               <p className="light__note">
@@ -206,9 +216,10 @@ export function LightFinder() {
           </>
         )}
 
+        {commonResult && <p className="light__order">kolejność: wyżej piętro, potem niższa cena</p>}
         {matches.length > 0 && (
           <ol className="light__list" id={listId}>
-            {shown.map(({ apartment: a, share, firstSunAt }) => (
+            {orderedShown.map(({ apartment: a, share, firstSunAt }) => (
               <li key={a.id}>
                 <button
                   type="button"
@@ -232,16 +243,16 @@ export function LightFinder() {
                   </span>
                   <span className="light__flat-timeline">
                     <MatchBar sun={sunWindow(a.facade, a.floor)} moments={moments} />
-                    <span className="light__flat-reason">
+                    {!commonResult && <span className="light__flat-reason">
                       słońce od {formatHour(firstSunAt)}
                       <span className="visually-hidden"> w Twoich godzinach; przy remisie wcześniej znaczy wyżej</span>
-                    </span>
+                    </span>}
                   </span>
                   </span>
                   <span className="apt-list__price">
-                    <span className="light__flat-share">
+                    {!commonResult && <span className="light__flat-share">
                       {hoursText(share)}
-                    </span>
+                    </span>}
                     <strong>{formatPrice(a.price)}</strong>
                   </span>
                 </button>
@@ -252,12 +263,12 @@ export function LightFinder() {
         {matches.length > 0 && (
           <p className="light__bar-legend">
             <span className="light__keys">
-              <span className="light__key"><span className="light__key-overlap" aria-hidden="true" />jesteś w domu i w słońcu</span>
-              <span className="light__key"><span className="light__key-home" aria-hidden="true" />jesteś w domu bez słońca</span>
-              <span className="light__key"><span className="light__key-sun" aria-hidden="true" />słońce poza Twoimi godzinami</span>
+              <span className="light__key"><span className="sunbar__sun light__key-sun" aria-hidden="true" />słońce w salonie</span>
+              <span className="light__key"><span className="light__key-home" aria-hidden="true" />jesteś w domu</span>
             </span>
           </p>
         )}
+        <div className="light__links">
         {matches.length > SHOWN && (
           <button type="button" className="light__more" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(!expanded)}>
             {expanded ? 'Zwiń listę' : `Pokaż wszystkie ${matches.length} →`}
@@ -276,6 +287,7 @@ export function LightFinder() {
             Zobacz na bryle ↑
           </a>
         )}
+        </div>
       </div>
     </div>
   )

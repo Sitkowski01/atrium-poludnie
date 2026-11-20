@@ -83,7 +83,7 @@
   grid-template-columns: minmax(0, 1fr) 40px;
   align-items: center;
   gap: 4px;
-  padding-right: 8px;
+  padding-right: 0;
   border-bottom: 1px solid var(--line);
   background-color: transparent;
   transition:
@@ -253,6 +253,7 @@
 .apt-list__price {
   display: grid;
   justify-items: end;
+  text-align: right;
   gap: 2px;
   white-space: nowrap;
 }
@@ -329,7 +330,11 @@
 }
 
 .apt-list__more {
-  width: 100%;
+  justify-self: start;
+  width: auto;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius);
+  font-weight: 600;
   margin-top: 8px;
 }
 
@@ -419,14 +424,12 @@
   }
 }
 
-.apt-list__more {
-  width: 100%;
-  margin-top: 8px;
-  justify-content: center;
-}
-
 /* Telefon: dłuższy licznik może przenieść sortowanie do kolejnego wiersza. */
 @media (max-width: 520px) {
+  .apt-list__item { grid-template-columns: minmax(0, 1fr) 44px; }
+  .apt-list__fav { width: 44px; height: 44px; }
+  .apt-list__sort select { min-height: 44px; }
+  .apt-list__more { min-height: 44px; }
   .apt-list__head {
     flex-wrap: wrap;
   }
