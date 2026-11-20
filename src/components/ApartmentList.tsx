@@ -134,8 +134,8 @@ export function ApartmentList() {
       return Boolean(a0 && ax && formatHour(a0.from) === formatHour(ax.from) && formatHour(a0.to) === formatHour(ax.to))
     })
   const commonSun = sameSun ? sunOf(shown[0]) : null
-  // zakres dla całego wyniku (nie tylko pokazanych wierszy), żeby zdanie nie przeczyło liczbom z rozdziału 03
-  const visibleHours = visible.map((x) => (shares.get(x.id) ?? 0) * totalHours)
+  // zdanie mówi wprost o pokazanych wierszach (z ich liczbą), więc nie przeczy innym mieszkaniom z wyniku
+  const visibleHours = shown.map((x) => (shares.get(x.id) ?? 0) * totalHours)
   const lo = hoursFormat.format(Math.min(...visibleHours))
   const hi = hoursFormat.format(Math.max(...visibleHours))
   const shareRange = lo === hi ? hi : `${lo}⁠–⁠${hi}`
@@ -275,7 +275,7 @@ export function ApartmentList() {
             <div className="apt-list__common">
               <SunBar sun={commonSun} home={home} ticks className="apt-list__common-bar" />
               <p>
-                <strong>Mieszkania z wyniku:</strong> słońce w salonie {formatHour(commonSun.from)}–{formatHour(commonSun.to)}
+                <strong>{shown.length === visible.length ? 'Wszystkie' : `Tych ${shown.length}`} {flatsWord(shown.length)} na liście:</strong> słońce w salonie {formatHour(commonSun.from)}–{formatHour(commonSun.to)}
                 {home.length > 0 && ` · ${shareRange} z ${hoursFormat.format(totalHours)} h, kiedy jesteś w domu`}
               </p>
             </div>
