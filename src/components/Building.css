@@ -489,6 +489,13 @@
   stroke: #e8792a;
   stroke-width: 1.5;
 }
+.sunpath__ghost {
+  fill: rgb(255 198 92 / 0.18);
+  stroke: #e8792a;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  opacity: 0.85;
+}
 
 /* telefon: karta pod bryłą niższa, żeby pora dnia mieściła się na pierwszym ekranie z budynkiem */
 @media (max-width: 560px) {

@@ -1,42 +1,50 @@
 .mobile-building__chip { display: none; }
 
 @media (max-width: 980px) {
-  .mobile-building__chip {
-    position: fixed;
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    z-index: 40;
+  /* w pasku nagłówka, przed „Menu”: nic nie zasłania; poza zakresem rozdziałów 02–04 znika, ale trzyma miejsce */
+  .topbar > .mobile-building__chip {
+    order: 1;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    min-height: 44px;
-    padding: 0 16px;
-    border: 0;
+    gap: 7px;
+    min-height: 36px;
+    margin-left: auto;
+    padding: 0 10px;
+    border: 1px solid var(--line-2);
     border-radius: var(--radius);
-    background: var(--ink);
-    color: var(--paper);
-    font: 600 14px var(--font-body);
-    box-shadow: 0 6px 18px color-mix(in srgb, var(--ink) 25%, transparent);
+    background: transparent;
+    color: var(--ink);
+    font: 600 13px var(--font-body);
+    white-space: nowrap;
     cursor: pointer;
     opacity: 0;
-    transform: translateY(8px);
     visibility: hidden;
     pointer-events: none;
-    transition: opacity var(--hover) var(--ease-hover), transform var(--hover) var(--ease-hover),
+    transition: opacity var(--hover) var(--ease-hover), border-color var(--hover) var(--ease-hover),
       visibility 0s var(--hover);
   }
-  .mobile-building__chip.is-visible {
+  .topbar > .mobile-building__chip.is-visible {
     opacity: 1;
-    transform: none;
     visibility: visible;
     pointer-events: auto;
     transition-delay: 0s;
   }
-  .mobile-building__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+  .topbar:has(> .mobile-building__chip) > .topbar__nav {
+    order: 2;
+    margin-left: 6px;
+  }
+  .topbar > .topbar__cta {
+    order: 3;
+  }
+  /* liczba podświetlonych mieszkań: mała plakietka w kolorze słońca */
+  .mobile-building__count {
+    min-width: 20px;
+    padding: 1px 5px;
+    border-radius: 999px;
     background: var(--sun);
+    color: var(--ink);
+    font-size: 12px;
+    text-align: center;
   }
   .mobile-building__scrim {
     position: fixed;

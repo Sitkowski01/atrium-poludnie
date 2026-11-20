@@ -8,6 +8,9 @@ export function MobileBuilding() {
   const [visible, setVisible] = useState(false)
   const [phase, setPhase] = useState<'closed' | 'open' | 'closing'>('closed')
   const [scene, setScene] = useState<HTMLElement | null>(null)
+  // przycisk mieszka w pasku nagłówka (obok „Menu”): pływający w rogu zasłaniał ceny i serca na liście
+  const [bar, setBar] = useState<HTMLElement | null>(null)
+  useEffect(() => setBar(document.querySelector<HTMLElement>('.topbar')), [])
   const chip = useRef<HTMLButtonElement>(null)
   const closeButton = useRef<HTMLButtonElement>(null)
   const restoreFocus = useRef(true)
@@ -20,35 +23,21 @@ export function MobileBuilding() {
     const end = document.querySelector<HTMLElement>('.stage__end')
     if (!building || !slot || !end) return
     let frame = 0
-    // przycisk nie zasłania treści, którą właśnie czytasz: chowa się przy przewijaniu w dół,
-    // wraca przy ruchu w górę albo chwilę po zatrzymaniu
-    let lastY = window.scrollY
-    let goingDown = false
-    let idle = 0
+    // przycisk w pasku nagłówka widać, gdy bryła jest już nad ekranem, a lista mieszkań jeszcze trwa
     const update = () => {
       frame = 0
       const mobile = window.innerWidth <= 980
-      const inRange = mobile && slot.getBoundingClientRect().bottom <= 0 && end.getBoundingClientRect().top > window.innerHeight
-      const y = window.scrollY
-      if (Math.abs(y - lastY) > 4) goingDown = y > lastY
-      lastY = y
-      setVisible(inRange && !goingDown)
+      setVisible(mobile && slot.getBoundingClientRect().bottom <= 0 && end.getBoundingClientRect().top > window.innerHeight)
       if (!mobile) setPhase('closed')
     }
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update)
-      window.clearTimeout(idle)
-      idle = window.setTimeout(() => {
-        goingDown = false
-        if (!frame) frame = requestAnimationFrame(update)
-      }, 450)
     }
     update()
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', schedule)
     return () => {
       cancelAnimationFrame(frame)
-      window.clearTimeout(idle)
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
     }
@@ -153,7 +142,7 @@ export function MobileBuilding() {
     setPhase('open')
   }
 
-  return <>
+  const chipButton = (
     <button ref={chip} type="button"
       className={`mobile-building__chip${visible && state.selectedId === null ? ' is-visible' : ''}`}
       aria-expanded={active} aria-controls="budynek" onClick={open}>
@@ -161,10 +150,13 @@ export function MobileBuilding() {
         <path d="m9 1 7 4v8l-7 4-7-4V5Zm0 8 7-4M9 9 2 5m7 4v8" />
       </svg>
       Bryła
-      {/* ile mieszkań bryła teraz pokazuje (typ, pory w domu) */}
-      {state.spotlight && <span className="mobile-building__count">· {state.spotlight.ids.length}</span>}
-      {state.spotlight && <span className="mobile-building__dot" aria-hidden="true" />}
+      {/* ile mieszkań bryła teraz pokazuje (typ, pory w domu, lista) */}
+      {state.spotlight && <span className="mobile-building__count">{state.spotlight.ids.length}</span>}
     </button>
+  )
+
+  return <>
+    {bar ? createPortal(chipButton, bar) : null}
     {active && <div className="mobile-building__scrim" aria-hidden="true" onClick={() => setPhase('closing')} />}
     {active && scene && createPortal(
       <header className="mobile-building__head">

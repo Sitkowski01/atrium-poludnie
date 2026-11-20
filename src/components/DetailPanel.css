@@ -357,10 +357,11 @@ dialog.detail[open] .detail__body > :nth-child(n + 4) {
   transform: translateY(12px);
   pointer-events: none;
   visibility: hidden;
+  /* znika szybko: przy formularzu nie może zostać blady duch drugiego „Zapytaj” */
   transition:
-    opacity var(--hover) var(--ease-hover),
-    transform var(--hover) var(--ease-hover),
-    visibility 0s linear var(--hover);
+    opacity 0.15s ease-out,
+    transform 0.15s ease-out,
+    visibility 0s linear 0.15s;
 }
 @media (prefers-reduced-motion: reduce) {
   .detail__dock,

@@ -106,6 +106,10 @@ export function SunOrbit({ hour, layer, cx, horizon, rx, ry }: Props) {
         <path key={`t${i}`} className="sunpath__track" d={d(t)} />
       ))}
       {passed.map((t, i) => t.length > 1 && <path key={`p${i}`} className="sunpath__passed" d={d(t)} />)}
+      {/* słońce za budynkiem: na pierwszym planie tylko przerywany kontur — widać, gdzie jest, i że zasłania je bryła */}
+      {layer === 'front' && sun.behind && sun.elevation > -1 && (
+        <circle className="sunpath__ghost" cx={sx} cy={sy} r="11" />
+      )}
       {showDisc && (
         <g style={{ opacity: glow }}>
           <circle cx={sx} cy={sy} r="54" fill="url(#sun-halo)" />
