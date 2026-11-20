@@ -4,13 +4,15 @@
 
 .mortgage {
   display: grid;
-  gap: 16px;
+  gap: 8px;
   min-width: 0;
 }
 
 .mortgage__slider {
   display: grid;
-  gap: 4px;
+  gap: 0;
+  min-height: 72px;
+  align-content: start;
 }
 
 .mortgage__label {
@@ -128,7 +130,7 @@
 }
 
 .mortgage__bar-interest {
-  background: var(--accent);
+  background: var(--ink-3);
 }
 
 .mortgage__legend {
@@ -159,7 +161,7 @@
 }
 
 .mortgage__swatch--interest {
-  background: var(--accent);
+  background: var(--ink-3);
 }
 
 .mortgage__note {

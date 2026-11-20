@@ -7,8 +7,8 @@
   /* palec w pionie przewija stronę, w poziomie obraca panoramę */
   touch-action: pan-y;
   transition:
-    transform 0.26s var(--ease),
-    opacity 0.26s var(--ease);
+    transform var(--hover) var(--ease-hover),
+    opacity var(--hover) var(--ease-hover);
   animation: pano-enter 0.32s var(--ease) backwards;
 }
 .pano:active {
@@ -44,7 +44,7 @@
   padding: 4px;
   border: 0;
   background: none;
-  color: #fff;
+  color: var(--paper);
   font: inherit;
   cursor: pointer;
   transform: translate(-50%, -50%);
@@ -52,22 +52,22 @@
 .pano__spot-ring {
   display: grid;
   place-items: center;
-  width: 54px;
-  height: 54px;
-  border: 3px solid #fff;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--paper);
   border-radius: 50%;
-  background: rgb(217 163 91 / 0.94);
-  color: #1c1b18;
+  background: color-mix(in srgb, var(--accent) 92%, transparent);
+  color: var(--accent-ink);
   box-shadow:
-    0 0 0 6px rgb(255 255 255 / 0.22),
-    0 8px 18px rgb(0 0 0 / 0.35);
+    0 0 0 6px color-mix(in srgb, var(--paper) 22%, transparent),
+    0 8px 18px color-mix(in srgb, var(--ink) 35%, transparent);
   transition: transform var(--hover) var(--ease-hover);
   animation: pano-pulse 2.4s ease-in-out infinite;
 }
 .pano__spot-label {
   padding: 3px 11px;
   border-radius: 999px;
-  background: rgb(15 18 26 / 0.82);
+  background: var(--scrim);
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
@@ -86,15 +86,15 @@
 .pano__spot:focus-visible .pano__spot-ring {
   animation: none; /* animacja pulsu nadpisywałaby box-shadow pierścienia fokusu */
   box-shadow:
-    0 0 0 4px #fff,
+    0 0 0 4px var(--paper),
     0 0 0 8px var(--accent);
 }
 
 @keyframes pano-pulse {
   50% {
     box-shadow:
-      0 0 0 12px rgb(255 255 255 / 0.1),
-      0 8px 18px rgb(0 0 0 / 0.35);
+      0 0 0 12px color-mix(in srgb, var(--paper) 10%, transparent),
+      0 8px 18px color-mix(in srgb, var(--ink) 35%, transparent);
   }
 }
 
@@ -107,8 +107,8 @@
   width: 30px;
   height: 30px;
   margin: -15px 0 0 -15px;
-  border: 3px solid rgb(255 255 255 / 0.3);
-  border-top-color: #fff;
+  border: 3px solid color-mix(in srgb, var(--paper) 30%, transparent);
+  border-top-color: var(--paper);
   border-radius: 50%;
   animation: pano-spin 0.8s linear infinite;
   pointer-events: none;

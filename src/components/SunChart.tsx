@@ -27,8 +27,8 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
   const markerX = xAt(currentHour)
   const labelX = Math.max(28, Math.min(WIDTH - 28, markerX))
   // Znacznik korzysta z tej samej rampy co krzywa, również między próbkami.
-  const samples = sunProfile(facade, floor, 1 / 12)
-    .filter((sample) => Math.abs(sample.hour - currentHour) > 1e-6)
+  const profile = sunProfile(facade, floor, 1 / 12)
+  const samples = profile.filter((sample) => Math.abs(sample.hour - currentHour) > 1e-6)
   samples.push({ hour: currentHour, value })
   samples.sort((a, b) => a.hour - b.hour)
   // Pomarańczowy ślad tylko nad osią: odcinki zerowe zostają neutralne.
@@ -44,7 +44,11 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
   const line = samples.map((sample, index) =>
     `${index === 0 ? 'M' : 'L'} ${xAt(sample.hour)} ${yAt(plottedValue(sample.hour, sample.value))}`,
   ).join(' ')
-  const ticks = [DAY_START, (DAY_START + DAY_END) / 2, DAY_END]
+  const ticks = Array.from({ length: (DAY_END - DAY_START) / 2 + 1 }, (_, i) => DAY_START + i * 2)
+  const labels = [DAY_START, (DAY_START + DAY_END) / 2, DAY_END]
+  const peak = profile.reduce((best, sample) =>
+    plottedValue(sample.hour, sample.value) > plottedValue(best.hour, best.value) ? sample : best,
+  )
   const summary = window
     ? `Słońce w oknach salonu: ${formatHour(window.from)}–${formatHour(window.to)} · łącznie ${formatDuration(window.total)}`
     : 'Brak bezpośredniego słońca w oknach salonu'
@@ -52,6 +56,7 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
 
   return (
     <div className="sun-chart">
+      <div className="sun-chart__plot">
       <svg
         className="sun-chart__svg"
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
@@ -78,9 +83,21 @@ export function SunChart({ facade, floor, hour, children }: { facade: Facade; fl
         <rect className="sun-chart__label-background" x={labelX - 26} y="5" width="52" height="23" rx="6" />
         <text className="sun-chart__label" x={labelX} y="20">{formatHour(currentHour)}</text>
       </svg>
+      {window && (
+        <p
+          className="sun-chart__peak"
+          style={{
+            left: `clamp(90px, ${xAt(peak.hour) / WIDTH * 100}%, calc(100% - 90px))`,
+            top: `${yAt(plottedValue(peak.hour, peak.value)) / HEIGHT * 100}%`,
+          }}
+        >
+          najwięcej słońca {formatHour(peak.hour)}
+        </p>
+      )}
+      </div>
       {children}
       <div className="sun-chart__axis" aria-hidden="true">
-        {ticks.map((tick) => (
+        {labels.map((tick) => (
           <span key={tick} style={{ left: `${xAt(tick) / WIDTH * 100}%` }}>{formatHour(tick)}</span>
         ))}
       </div>

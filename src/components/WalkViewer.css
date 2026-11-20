@@ -26,14 +26,15 @@
   left: 10px;
   max-width: calc(100% - 150px);
   margin: 0;
-  padding: 6px 12px;
-  border-radius: 999px;
+  padding: 0 12px;
+  height: 36px;
+  line-height: 36px;
+  border-radius: var(--radius);
   background: var(--scrim);
   /* nakładka na zdjęciu zostaje ciemna, więc tekst jasny bez względu na motyw strony */
   color: var(--card);
   font-size: 14px;
   font-weight: 600;
-  line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -85,6 +86,9 @@
   z-index: 3;
   top: 10px;
   right: 10px;
+  height: 36px;
+  min-height: 36px;
+  border-radius: var(--radius);
 }
 
 .walk__turn {
@@ -219,6 +223,15 @@
   height: auto;
 }
 
+.walk__map-key {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
 @media (pointer: coarse) {
   .walk__room-hit {
     pointer-events: none;
@@ -262,7 +275,7 @@
 .walk__initial {
   fill: var(--ink-2);
   font-family: var(--font-body);
-  /* 10 px po przeliczeniu jednostek viewBox na szerokość mapy 160 px. */
+  /* 12 px po przeliczeniu jednostek viewBox na szerokość mapy 160 px. */
   font-size: var(--map-label-size);
   font-weight: 600;
   text-anchor: middle;

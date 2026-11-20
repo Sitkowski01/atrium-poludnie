@@ -209,9 +209,11 @@ export function LightFinder() {
                 >
                   <span className="light__flat-id">{a.id}</span>
                   <span className="light__flat-facts">
-                    <span>{roomsLabel(a.rooms)}</span>
-                    <span>{formatArea(a.area)}</span>
-                    <span>{floorLabel(a.floor)}</span>
+                    <span className="light__flat-facts-row">
+                      <span>{roomsLabel(a.rooms)}</span>
+                      <span>{formatArea(a.area)}</span>
+                    </span>
+                    <span className="light__flat-facts-row">{floorLabel(a.floor)}</span>
                   </span>
                   <SunBar sun={sunWindow(a.facade, a.floor)} wants={wants} className="light__flat-bar" />
                   <span className="light__flat-share">
@@ -226,7 +228,11 @@ export function LightFinder() {
         )}
         {matches.length > 0 && (
           <p className="light__bar-legend">
-            <strong>{hoursText(matches[0].share)} h</strong> — tyle z Twoich godzin w domu salon jest w słońcu
+            <span className="light__keys">
+              <span className="light__key"><span className="light__key-home" aria-hidden="true" />jesteś w domu</span>
+              <span className="light__key"><span className="light__key-sun" aria-hidden="true" />słońce w salonie</span>
+            </span>
+            <span><strong>{hoursText(matches[0].share)} h</strong> — tyle z Twoich godzin w domu salon jest w słońcu</span>
           </p>
         )}
         {matches.length > SHOWN && (

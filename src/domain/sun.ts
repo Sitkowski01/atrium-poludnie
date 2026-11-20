@@ -175,3 +175,21 @@ export function sunRange(facade: Facade): SunRange | null {
   }
   return Number.isFinite(from) ? { from, to, fromLate, toEarly } : null
 }
+
+/** Kolejne piętra z identycznym oknem salonu, zaokrąglonym do 5 minut. */
+export function sunSteps(facade: Facade): { floors: [number, number]; from: number; to: number }[] {
+  const steps: { floors: [number, number]; from: number; to: number }[] = []
+  for (let floor = 0; floor < FLOORS; floor++) {
+    const window = sunWindow(facade, floor)
+    if (!window) continue
+    const from = Math.round(window.from * 12) / 12
+    const to = Math.round(window.to * 12) / 12
+    const previous = steps[steps.length - 1]
+    if (previous && previous.floors[1] === floor - 1 && previous.from === from && previous.to === to) {
+      previous.floors[1] = floor
+    } else {
+      steps.push({ floors: [floor, floor], from, to })
+    }
+  }
+  return steps
+}

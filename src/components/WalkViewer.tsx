@@ -225,6 +225,15 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
     onGo: () => through(l),
   }))
 
+  // Te same inicjały co na mapie; np. K może oznaczać kuchnię i korytarz.
+  const mapKey = new Map<string, Set<string>>()
+  for (const room of plan) {
+    const initial = room.label.slice(0, 1).toLocaleUpperCase('pl-PL')
+    const labels = mapKey.get(initial) ?? new Set<string>()
+    labels.add(room.label.toLocaleLowerCase('pl-PL'))
+    mapKey.set(initial, labels)
+  }
+
   return (
     <div ref={rootRef} className={`walk${expanded ? ' walk--expanded' : ''}`} onKeyDown={onKeyDown}>
       <div ref={frameRef} className="walk__frame" tabIndex={0} role="group" aria-label={`Spacer po mieszkaniu ${apartment.id}`}>
@@ -323,6 +332,9 @@ export function WalkViewer({ apartment }: { apartment: Apartment }) {
           </div>
         </div>
         <MiniMap apartment={apartment} room={view.room} at={center} yaw={view.yaw} onPick={jump} />
+        <p className="walk__map-key">
+          {Array.from(mapKey, ([initial, labels]) => `${initial} ${Array.from(labels).join(' / ')}`).join(' · ')}
+        </p>
       </div>
     </div>
   )
@@ -353,7 +365,7 @@ function MiniMap({
   return (
     <svg
       className="walk__map"
-      style={{ '--map-label-size': `${(maxX - minX + pad * 2) / 16}px` } as CSSProperties}
+      style={{ '--map-label-size': `${(maxX - minX + pad * 2) * 12 / 160}px` } as CSSProperties}
       viewBox={`${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`}
       // skrót dla myszy; klawiatura i czytniki mają tę samą nawigację w liście przejść pod kadrem
       aria-hidden="true"
