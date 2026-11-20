@@ -94,7 +94,7 @@ function SunTimetable({ lines }: { lines: Line[] }) {
                     <>
                       {formatHour(line.sun.from)}
                       <span className="timetable__arrow" aria-hidden="true">
-                        →
+                        –
                       </span>
                       <span className="visually-hidden"> do </span>
                       {formatHour(line.sun.to)}
@@ -164,7 +164,8 @@ export function Hero() {
     <header className="hero">
       <p className="hero__kicker">
         <span className="hero__kicker-num">01</span>
-        <span>Szczecin · odbiór 2027</span>
+        <span>Budynek</span>
+        <span className="hero__kicker-meta">Szczecin · odbiór 2027</span>
       </p>
       <h1 className="hero__title">
         Dom, w&nbsp;którym <em>słońce</em>&nbsp;ma swój rozkład.

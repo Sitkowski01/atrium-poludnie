@@ -61,7 +61,7 @@
 }
 .contact__title em {
   font-style: normal;
-  color: var(--accent);
+  color: inherit;
 }
 .contact__lead {
   max-width: 52ch;

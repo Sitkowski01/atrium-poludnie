@@ -7,14 +7,14 @@ type Key = [hour: number, rgb: [number, number, number], alpha: number]
 
 const KEYS: Key[] = [
   [4.5, [96, 100, 150], 0.08], // noc
-  [5.6, [170, 120, 160], 0.08], // fiolet przed wschodem
-  [6.6, [255, 160, 120], 0.09], // brzoskwiniowy świt
-  [9, [255, 214, 170], 0.04],
-  [12, [210, 220, 235], 0.02], // południe: prawie nic, ledwie chłodniej
-  [14.5, [230, 220, 200], 0.02],
+  [5.6, [160, 130, 175], 0.07], // fiolet przed wschodem
+  [6.6, [255, 175, 135], 0.06], // krótki brzoskwiniowy świt
+  [8, [196, 212, 232], 0.05], // poranek: chłodny, przejrzysty
+  [12, [210, 220, 235], 0.02], // południe: prawie nic
+  [14.5, [235, 222, 198], 0.02],
   [16.5, [245, 196, 120], 0.07], // złote popołudnie
-  [19, [240, 140, 90], 0.1], // zachód
-  [20.3, [170, 110, 150], 0.09], // zmierzch
+  [19, [240, 165, 80], 0.1], // bursztyn przed zachodem
+  [20.3, [190, 120, 140], 0.09], // po zachodzie: róż w fiolet
   [21.2, [96, 100, 150], 0.09], // noc
 ]
 

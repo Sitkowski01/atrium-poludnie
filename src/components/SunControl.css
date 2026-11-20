@@ -166,3 +166,15 @@
 .sun-control__presets .chip {
   padding: 0 11px;
 }
+
+/* telefon: odtwarzanie i trzy pory w jednej równej siatce, do prawej krawędzi */
+@container sun-control (max-width: 420px) {
+  .sun-control__presets {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .sun-control__presets .chip {
+    padding: 0 6px;
+  }
+}

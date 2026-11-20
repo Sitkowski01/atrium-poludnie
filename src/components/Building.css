@@ -287,7 +287,7 @@
   height: 10px;
   border: 1.5px solid var(--accent);
   border-radius: 1px;
-  background: rgb(232 121 42 / 0.3);
+  background: rgb(232 121 42 / 0.17);
 }
 .building__spotnote-label {
   font-weight: 600;
@@ -311,21 +311,23 @@
 .building__legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 6px 20px;
 }
 .building__legend-item {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 36px;
-  padding: 0 12px 0 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-s);
+  /* legenda jak na rysunku: kropka i słowo, bez ramek przycisków; wybrana grupa podkreślona */
+  padding: 0 4px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
   background: transparent;
   color: var(--ink-2);
   font: inherit;
   font-size: 13px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: color var(--hover) var(--ease-hover), border-color var(--hover) var(--ease-hover), background var(--hover) var(--ease-hover);
 }
@@ -337,18 +339,17 @@
 @media (hover: hover) {
   .building__legend-item:hover:not([aria-disabled='true']):not(.is-on) {
     color: var(--ink);
-    border-color: var(--ink-3);
-    background: var(--pick-soft);
+    border-bottom-color: var(--line-2);
   }
 }
 /* włączona grupa: grafit jak inne stany wybrane (pomarańcz zostaje dla słońca i wybranego mieszkania) */
 .building__legend-item.is-on {
-  color: var(--pick-ink);
-  border-color: var(--pick);
-  background: var(--pick);
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+  background: transparent;
 }
 .building__legend-item.is-on .building__legend-count {
-  color: var(--pick-ink);
+  color: var(--ink);
   font-weight: 600;
 }
 /* pusta grupa: przerywana ramka zamiast przezroczystości, tekst nadal czytelny */
@@ -386,7 +387,7 @@
 }
 .building__box.is-spotting .building__cell.is-spot .building__hit {
   /* wybrane mieszkania w ciepłym świetle, nie w bieli (biel czytała się jak „niedostępne”) */
-  fill: rgb(232 121 42 / 0.3);
+  fill: rgb(232 121 42 / 0.17);
   stroke: var(--accent);
   stroke-width: 1.6;
   animation: building-spot 0.5s var(--ease) backwards;
