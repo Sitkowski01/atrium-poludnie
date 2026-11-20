@@ -85,7 +85,7 @@ export default function App() {
                 Pięć układów, jedno <em>światło</em>
               </>
             }
-            lead="Każdy typ powtarza się na siedmiu piętrach. Wskaż kartę, a bryła pokaże, gdzie są te mieszkania; wybierz ją, żeby zobaczyć je w wyszukiwarce."
+            lead="Każdy typ powtarza się na siedmiu piętrach. Wskaż rzut albo wiersz tabeli, a bryła pokaże, gdzie są te mieszkania; kliknij, żeby zobaczyć je w wyszukiwarce."
           >
             <TypeGallery />
           </Chapter>
