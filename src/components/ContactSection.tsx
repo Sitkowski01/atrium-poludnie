@@ -69,7 +69,7 @@ export function ContactSection() {
             </div>
           </div>
 
-          <aside className="contact__office" aria-labelledby="biuro-title">
+          <div className="contact__office">
             <h3 className="contact__office-title" id="biuro-title">
               Biuro sprzedaży
             </h3>
@@ -107,7 +107,7 @@ export function ContactSection() {
                 </dd>
               </div>
             </dl>
-          </aside>
+          </div>
         </div>
       </div>
     </section>

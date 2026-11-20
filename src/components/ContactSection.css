@@ -280,7 +280,7 @@
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--ink-3);
+  color: var(--ink-2);
   transition: color var(--hover) var(--ease-hover);
 }
 .site-footer__go {

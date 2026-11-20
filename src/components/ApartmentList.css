@@ -276,9 +276,14 @@
 
 /* najechanie: numer kremowy; wybór: numer w złocie (po regule sprzedanych, żeby ją przebić) */
 
-/* Przygasa przycisk mieszkania; osobny przycisk serca zachowuje swój wygląd. */
-.apt-list__item--sold .apt-list__main {
-  opacity: .55;
+/* Sprzedane: tekst w szarości --ink-2 (6:1, czytelny), przygasa tylko grafika paska słońca.
+   Wcześniej cały wiersz miał krycie .55 i tekst spadał poniżej 4,5:1. */
+.apt-list__item--sold .apt-list__main,
+.apt-list__item--sold .apt-list__main * {
+  color: var(--ink-2);
+}
+.apt-list__item--sold .apt-list__sunbar {
+  opacity: 0.45;
 }
 
 .apt-list__item--sold .apt-list__id,
