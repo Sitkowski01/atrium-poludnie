@@ -356,3 +356,6 @@
 @container typegallery (width < 520px) {
   .typetable__type button { min-height: 44px; }
 }
+
+/* cena typu na telefonie: ta sama grubość co cena pod rzutem i w przykładach (500) */
+.typetable__price { font-weight: 500; }
