@@ -79,11 +79,16 @@ describe('pory w domu jako kryterium jednej listy', () => {
   })
 })
 
-describe('sortowanie domyślne: najwięcej słońca', () => {
-  it('pierwsze mieszkanie ma najdłuższe słońce w salonie, a kolejne nie więcej', () => {
+describe('sortowanie domyślne „Polecane”', () => {
+  it('sprzedane na końcu, a w każdym typie od największego słońca', () => {
     const sorted = sortApartments(APARTMENTS, 'sun-desc')
+    const firstSold = sorted.findIndex((a) => a.status === 'sprzedane')
+    expect(sorted.slice(firstSold).every((a) => a.status === 'sprzedane')).toBe(true)
     const sun = (a: (typeof APARTMENTS)[number]) => sunWindow(a.facade, a.floor)?.total ?? 0
-    for (let i = 1; i < sorted.length; i++) expect(sun(sorted[i])).toBeLessThanOrEqual(sun(sorted[i - 1]) + 1e-9)
+    for (const slot of [0, 1, 2, 3, 4]) {
+      const free = sorted.filter((a) => a.slot === slot && a.status === 'wolne')
+      for (let i = 1; i < free.length; i++) expect(sun(free[i])).toBeLessThanOrEqual(sun(free[i - 1]) + 1e-9)
+    }
   })
   it('na początku listy stoją różne typy, nie siedem takich samych kawalerek', () => {
     const first = sortApartments(APARTMENTS, 'sun-desc').slice(0, 8)

@@ -20,7 +20,7 @@ import './ApartmentList.css'
 
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: 'sun-home', label: 'Najwięcej słońca w domu' },
-  { value: 'sun-desc', label: 'Najwięcej słońca' },
+  { value: 'sun-desc', label: 'Polecane' },
   { value: 'price-asc', label: 'Cena rosnąco' },
   { value: 'price-desc', label: 'Cena malejąco' },
   { value: 'area-desc', label: 'Największe' },

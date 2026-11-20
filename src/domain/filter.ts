@@ -62,9 +62,23 @@ export function sortApartments(list: readonly Apartment[], key: SortKey, home: r
       return out.sort((a, b) => (ranks.get(a.id) ?? Infinity) - (ranks.get(b.id) ?? Infinity) || a.price - b.price)
     }
     case 'sun-desc': {
-      // domyślnie: najwięcej słońca w salonie; przy równym — wyżej, potem taniej (różne typy obok siebie)
+      // „Polecane”: najpierw dostępne (wolne, potem zarezerwowane, sprzedane na końcu); w każdym typie
+      // od największego słońca, a typy na przemian — pierwsze wiersze to pięć różnych układów i dwie strony budynku
       const sun = (a: Apartment) => sunWindow(a.facade, a.floor)?.total ?? 0
-      return out.sort((a, b) => sun(b) - sun(a) || b.floor - a.floor || a.price - b.price)
+      const rank = { wolne: 0, rezerwacja: 1, sprzedane: 2 } as const
+      const byType = new Map<number, Apartment[]>()
+      for (const a of [...out].sort((x, y) => sun(y) - sun(x) || y.floor - x.floor || x.price - y.price)) {
+        byType.set(a.slot, [...(byType.get(a.slot) ?? []), a])
+      }
+      const pos = new Map<string, number>()
+      for (const list of byType.values()) list.forEach((a, i) => pos.set(a.id, i))
+      return out.sort(
+        (a, b) =>
+          rank[a.status] - rank[b.status] ||
+          (pos.get(a.id) ?? 0) - (pos.get(b.id) ?? 0) ||
+          sun(b) - sun(a) ||
+          a.slot - b.slot,
+      )
     }
     case 'price-asc':
       return out.sort((a, b) => a.price - b.price)
