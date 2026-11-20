@@ -54,6 +54,7 @@ const TYPE_INFO: Record<number, TypeInfo> = {
 }
 
 const ORDER = [2, 0, 1, 3, 4]
+const THOUSANDS = new Intl.NumberFormat('pl-PL', { useGrouping: 'always' } as Intl.NumberFormatOptions)
 const SHORT_NAMES: Record<number, string> = {
   2: 'Cztery pokoje', 0: 'Trzy pokoje', 1: 'Dwa pokoje, południe',
   3: 'Dwa pokoje, wschód', 4: 'Kawalerka',
@@ -252,6 +253,12 @@ function TypePlan({ card, active, onActive, onPick }: TypeInteractionProps) {
           <span className="typesheet__name">{SHORT_NAMES[card.slot]}</span>
         </span>
         <span className="typesheet__area">{formatArea(card.area)}</span>
+        {/* rzut niesie swoje dane: cena i słońce w salonie (3. piętro) — bez osobnej tabeli obok */}
+        <span className="typesheet__price">
+          {card.priceFrom == null ? 'wyprzedane' : `od ${THOUSANDS.format(Math.round(card.priceFrom / 1000))} tys. zł`}
+        </span>
+        <SunBar sun={sunWindow(card.facade, 3)} className="typesheet__bar" />
+        <span className="typesheet__sun">{presentation(card).sun}</span>
       </span>
     </button>
   )

@@ -299,3 +299,29 @@
   }
   .typetable .typetable__mobile { grid-column: 2 / -1; }
 }
+
+/* dane pod rzutem na arkuszu (komputer): cena i pasek słońca; tabela pod arkuszem tylko na telefonie */
+.typesheet__price {
+  display: block;
+  margin-top: 2px;
+  font: 500 15px/1.35 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.typesheet__bar {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+}
+.typesheet__sun {
+  display: block;
+  margin-top: 4px;
+  font: 400 12px var(--font-body);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.typetable { display: none; }
+@container typegallery (width < 520px) {
+  .typetable { display: block; }
+}
