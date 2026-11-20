@@ -387,7 +387,8 @@ function MiniMap({
   return (
     <svg
       className="walk__map"
-      style={{ '--map-label-size': `${(maxX - minX + pad * 2) * 12 / 160}px` } as CSSProperties}
+      // 12 px na ekranie: mapa mieści się w ramce ok. 160 × 140 px, więc skalę wyznacza ciaśniejszy z dwóch wymiarów
+      style={{ '--map-label-size': `${Math.max((maxX - minX + pad * 2) / 160, (maxY - minY + pad * 2) / 140) * 12}px` } as CSSProperties}
       viewBox={`${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`}
       // skrót dla myszy; klawiatura i czytniki mają tę samą nawigację w liście przejść pod kadrem
       aria-hidden="true"

@@ -20,20 +20,35 @@ export function MobileBuilding() {
     const end = document.querySelector<HTMLElement>('.stage__end')
     if (!building || !slot || !end) return
     let frame = 0
+    // przycisk nie zasłania treści, którą właśnie czytasz: chowa się przy przewijaniu w dół,
+    // wraca przy ruchu w górę albo chwilę po zatrzymaniu
+    let lastY = window.scrollY
+    let goingDown = false
+    let idle = 0
     const update = () => {
       frame = 0
       const mobile = window.innerWidth <= 980
-      setVisible(mobile && slot.getBoundingClientRect().bottom <= 0 && end.getBoundingClientRect().top > window.innerHeight)
+      const inRange = mobile && slot.getBoundingClientRect().bottom <= 0 && end.getBoundingClientRect().top > window.innerHeight
+      const y = window.scrollY
+      if (Math.abs(y - lastY) > 4) goingDown = y > lastY
+      lastY = y
+      setVisible(inRange && !goingDown)
       if (!mobile) setPhase('closed')
     }
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update)
+      window.clearTimeout(idle)
+      idle = window.setTimeout(() => {
+        goingDown = false
+        if (!frame) frame = requestAnimationFrame(update)
+      }, 900)
     }
     update()
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', schedule)
     return () => {
       cancelAnimationFrame(frame)
+      window.clearTimeout(idle)
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
     }
